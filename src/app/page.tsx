@@ -1,11 +1,20 @@
 import { Button } from "@/components/ui/button";
-import Image from "next/image";
+import { authServices } from "@/services/auth.services";
+import { dehydrate, HydrationBoundary, QueryClient } from "@tanstack/react-query";
+import ProblemList from "../components/modules/problem/ProblemList"
 
-export default function Home() {
+export default async function Home() {
+
+  const queryClient = new QueryClient()
+
+  await queryClient.prefetchQuery({
+    queryKey: ["problems"],
+    queryFn: authServices.allProblems,
+  })
+ 
   return (
-    <div className="w-screen h-screen flex justify-center items-center flex-col gap-10">
-      <Button className="text-xl cursor-pointer bg-green-400 text-black py-5 px-10">Run</Button>
-      <p>Welcome to the <span className="text-amber-600 font-bold underline">CodeArena</span></p>
-    </div>
-  );
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <ProblemList />
+    </HydrationBoundary>
+  )
 }
