@@ -1,7 +1,10 @@
 {
   "name": "code-arena-client",
+  "description": "CodeArena Client – A modern coding practice platform inspired by LeetCode where developers can solve algorithmic problems, write code, and improve their skills.",
   "version": "0.1.0",
   "private": true,
+  "author": "Luban Rahat",
+  "license": "MIT",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -14,9 +17,11 @@
     "@tanstack/react-form-devtools": "^0.2.19",
     "@tanstack/react-form-nextjs": "^1.28.5",
     "@tanstack/react-query": "^5.90.21",
+    "@tanstack/react-query-next-experimental": "^5.91.0",
     "axios": "^1.13.6",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "jsonwebtoken": "^9.0.3",
     "lucide-react": "^0.577.0",
     "next": "16.1.6",
     "radix-ui": "^1.4.3",
@@ -30,6 +35,7 @@
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@tanstack/eslint-plugin-query": "^5.91.4",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

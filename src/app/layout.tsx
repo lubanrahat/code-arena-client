@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-
 import { Inter } from "next/font/google";
 import QueryProviders from "@/providers/QueryProvider";
+import { ReactQueryStreamedHydration } from '@tanstack/react-query-next-experimental'
 
 const inter = Inter({
   subsets: ["latin"], // required
@@ -23,7 +22,11 @@ export default function RootLayout({
   return (
     <html lang="en" className={inter.className}>
       <body>
-        <QueryProviders>{children}</QueryProviders>
+        <QueryProviders>
+          <ReactQueryStreamedHydration>
+            {children}
+          </ReactQueryStreamedHydration>
+        </QueryProviders>
       </body>
     </html>
   );
