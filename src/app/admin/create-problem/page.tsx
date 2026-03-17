@@ -1,7 +1,9 @@
+import CreateProblemForm from "@/components/modules/Problem/CreateProblemForm";
+
 export default function CreateProblemPage() {
     return (
         <div>
-            <h1>Create Problem</h1>
+            <CreateProblemForm />
         </div>
     );
 }

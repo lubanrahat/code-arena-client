@@ -16,7 +16,6 @@ const axiosInstance = axios.create({
 });
 
 export interface ApiResponseOptions {
-  endpoint: string;
   params?: Record<string, unknown>;
   headers?: Record<string, string>;
 }
@@ -34,12 +33,16 @@ const httpGet = async (endpoint: string, options?: ApiResponseOptions) => {
   }
 };
 
-const httpPost = async (endpoint: string, data: unknown, options?: ApiResponseOptions) => {
+const httpPost = async (
+  endpoint: string,
+  data: unknown,
+  options?: ApiResponseOptions,
+) => {
   try {
     const response = await axiosInstance.post(endpoint, data, {
       params: options?.params,
       headers: options?.headers,
-    }); 
+    });
     return response.data;
   } catch (error) {
     console.error(`POST ${endpoint} failed:`, error);
@@ -47,12 +50,16 @@ const httpPost = async (endpoint: string, data: unknown, options?: ApiResponseOp
   }
 };
 
-const httpPut = async (endpoint: string, data: unknown, options?: ApiResponseOptions) => {
+const httpPut = async (
+  endpoint: string,
+  data: unknown,
+  options?: ApiResponseOptions,
+) => {
   try {
     const response = await axiosInstance.put(endpoint, data, {
       params: options?.params,
       headers: options?.headers,
-    }); 
+    });
     return response.data;
   } catch (error) {
     console.error(`PUT ${endpoint} failed:`, error);
@@ -65,7 +72,7 @@ const httpDelete = async (endpoint: string, options?: ApiResponseOptions) => {
     const response = await axiosInstance.delete(endpoint, {
       params: options?.params,
       headers: options?.headers,
-    }); 
+    });
     return response.data;
   } catch (error) {
     console.error(`DELETE ${endpoint} failed:`, error);
@@ -74,8 +81,8 @@ const httpDelete = async (endpoint: string, options?: ApiResponseOptions) => {
 };
 
 export const httpClient = {
-    get: httpGet,
-    post: httpPost,
-    put: httpPut,
-    delete: httpDelete,
+  get: httpGet,
+  post: httpPost,
+  put: httpPut,
+  delete: httpDelete,
 };
