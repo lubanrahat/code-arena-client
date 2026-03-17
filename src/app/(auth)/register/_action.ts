@@ -5,7 +5,7 @@ import { setCookie } from "@/lib/cookieUtils";
 import { LoginInput, loginSchema } from "@/validation/auth.validation";
 import { redirect } from "next/navigation";
 
-export const loginAction = async (payload: LoginInput) => {
+export const registerAction = async (payload: LoginInput) => {
   const parsedPayload = loginSchema.safeParse(payload);
   if (!parsedPayload.success) {
     const firstError =
