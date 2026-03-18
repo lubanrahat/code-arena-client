@@ -6,7 +6,6 @@ import { cn } from "@/lib/utils";
 import {
   IconBrandGithub,
   IconBrandGoogle,
-  IconBrandOnlyfans,
 } from "@tabler/icons-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { registerAction } from "@/app/(auth)/register/_action";
