@@ -46,6 +46,8 @@ const sampleData: ProblemCreateInput = {
     'Given a single word (a string with no spaces), print "YES" if it is a palindrome (reads the same forwards and backwards), or "NO" otherwise.',
   difficulty: Difficulty.EASY,
   tags: ["strings", "basic", "multi-language"],
+  topic: "Strings",
+  askedIn: ["Google", "Amazon", "Meta"],
   examples: [
     {
       input: "racecar",
@@ -154,6 +156,8 @@ export default function CreateProblemForm() {
       description: "",
       difficulty: Difficulty.EASY,
       tags: [""],
+      topic: "",
+      askedIn: [""],
       examples: [{ input: "", output: "", explanation: "" }],
       constraints: "",
       hints: [""],
@@ -222,6 +226,8 @@ export default function CreateProblemForm() {
         explanation: ex.explanation ?? "",
       })),
       hints: sampleData.hints ?? [],
+      askedIn: sampleData.askedIn ?? [],
+      topic: sampleData.topic ?? "",
     });
   };
 
@@ -373,7 +379,95 @@ export default function CreateProblemForm() {
                   )}
                 </form.Field>
               </div>
+
+              <div>
+                <form.Field name="topic">
+                  {(field) => (
+                    <div>
+                      <Label
+                        htmlFor={field.name}
+                        className="text-lg font-semibold"
+                      >
+                        Topic (Optional)
+                      </Label>
+                      <Input
+                        id={field.name}
+                        value={field.state.value}
+                        onChange={(e) => field.handleChange(e.target.value)}
+                        onBlur={field.handleBlur}
+                        placeholder="Ex: Array, Strings, Dynamic Programming"
+                        className="mt-2"
+                      />
+                      {field.state.meta.errors.length > 0 && (
+                        <p className="text-sm text-red-500 mt-1">
+                          {field.state.meta.errors.join(", ")}
+                        </p>
+                      )}
+                    </div>
+                  )}
+                </form.Field>
+              </div>
             </div>
+
+            {/* Asked In */}
+            <form.Field name="askedIn" mode="array">
+              {(field) => (
+                <Card className="bg-indigo-50 dark:bg-indigo-950/20">
+                  <CardHeader className="pb-4">
+                    <div className="flex items-center justify-between">
+                      <CardTitle className="text-xl flex items-center gap-2">
+                        <CheckCircle2 className="w-5 h-5 text-indigo-600" />
+                        Asked In (Optional)
+                      </CardTitle>
+                      <Button
+                        type="button"
+                        size="sm"
+                        onClick={() => field.pushValue("")}
+                        className="gap-2"
+                      >
+                        <Plus className="w-4 h-4" /> Add Company
+                      </Button>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {field.state.value.map((_, index) => (
+                        <div key={index} className="flex gap-2 items-center">
+                          <form.Field name={`askedIn[${index}]`}>
+                            {(subField) => (
+                              <Input
+                                value={subField.state.value}
+                                onChange={(e) =>
+                                  subField.handleChange(e.target.value)
+                                }
+                                onBlur={subField.handleBlur}
+                                placeholder="Enter company name"
+                                className="flex-1"
+                              />
+                            )}
+                          </form.Field>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => field.removeValue(index)}
+                            disabled={field.state.value.length === 1}
+                            className="p-2"
+                          >
+                            <Trash2 className="w-4 h-4 text-red-500" />
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                    {field.state.meta.errors.length > 0 && (
+                      <p className="text-sm text-red-500 mt-2">
+                        {field.state.meta.errors.join(", ")}
+                      </p>
+                    )}
+                  </CardContent>
+                </Card>
+              )}
+            </form.Field>
 
             {/* Tags */}
             <form.Field name="tags" mode="array">

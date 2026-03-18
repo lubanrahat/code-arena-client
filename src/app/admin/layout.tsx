@@ -70,8 +70,8 @@ export default function AdminLayout({
     return (
         <div
             className={cn(
-                "flex w-full flex-col overflow-hidden rounded-md border border-neutral-200 bg-gray-100 md:flex-row dark:border-neutral-700 dark:bg-neutral-800",
-                "h-full",
+                "flex w-full flex-col overflow-hidden bg-gray-100 md:flex-row dark:bg-neutral-800",
+                "h-screen",
             )}
         >
             <Sidebar open={open} setOpen={setOpen}>

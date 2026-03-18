@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useAuthContext } from "@/providers/AuthProvider";
 
 export interface AuthUser {
   id: string;
@@ -10,51 +11,31 @@ export interface AuthUser {
   [key: string]: unknown;
 }
 
-function getStoredUser(): AuthUser | null {
-  try {
-    const raw = localStorage.getItem("user");
-    if (!raw) return null;
-    return JSON.parse(raw) as AuthUser;
-  } catch {
-    return null;
-  }
-}
-
 export function useAuth(requiredRole?: "USER" | "ADMIN") {
   const router = useRouter();
-  const [user, setUser] = useState<AuthUser | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { user, loading } = useAuthContext();
 
   useEffect(() => {
-    const checkAuth = () => {
-      try {
-        const currentUser = getStoredUser();
+    if (loading) return;
 
-        if (!currentUser) {
-          router.push("/login");
-          return;
-        }
+    if (!user) {
+      router.push("/login");
+      return;
+    }
 
-        if (requiredRole && currentUser.role !== requiredRole) {
-          if (currentUser.role === "ADMIN") {
-            router.push("/admin");
-          } else {
-            router.push("/");
-          }
-          return;
-        }
-
-        setUser(currentUser);
-      } catch (error) {
-        console.error("Auth check failed:", error);
-        router.push("/login");
-      } finally {
-        setLoading(false);
+    if (requiredRole && user.role !== requiredRole) {
+      if (user.role === "ADMIN") {
+        router.push("/admin");
+      } else {
+        router.push("/");
       }
-    };
+    }
+  }, [user, loading, router, requiredRole]);
 
-    checkAuth();
-  }, [router, requiredRole]);
+  return { user, loading };
+}
 
+export function useAuthUser() {
+  const { user, loading } = useAuthContext();
   return { user, loading };
 }

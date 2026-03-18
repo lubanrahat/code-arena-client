@@ -8,6 +8,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "@tanstack/react-form";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useAuthContext } from "@/providers/AuthProvider";
 
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -21,6 +22,7 @@ import Link from "next/link";
 export default function LoginForm() {
   const queryClient = useQueryClient();
   const router = useRouter();
+  const { setUser } = useAuthContext();
   const [serverError, setServerError] = useState<string | null>(null);
   const { mutateAsync, isPending } = useMutation({
     mutationFn: (payload: LoginInput) => loginAction(payload),
@@ -42,6 +44,7 @@ export default function LoginForm() {
         }
         if (result?.user) {
           localStorage.setItem("user", JSON.stringify(result.user));
+          setUser(result.user);
 
           // Redirect based on role
           if (result.user.role === "ADMIN") {
