@@ -1,7 +1,20 @@
-export default function ProblemsPage() {
+import { dehydrate, HydrationBoundary, QueryClient } from "@tanstack/react-query";
+import { allProblems } from "./_acion";
+import ProblemList from "@/components/modules/Problem/ProblemList";
+
+export default async function ProblemsPage() {
+  const queryClient = new QueryClient();
+
+  await queryClient.prefetchQuery({
+    queryKey: ["problems"],
+    queryFn: allProblems,
+  });
+
   return (
     <div>
-      <h1>Problems Page</h1>
+      <HydrationBoundary state={dehydrate(queryClient)}>
+      <ProblemList   />
+    </HydrationBoundary>
     </div>
   );
 }
