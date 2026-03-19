@@ -11,10 +11,10 @@ export default async function ProblemsPage() {
   });
 
   return (
-    <div>
+    <div className="min-h-[calc(100vh-4rem)] bg-gradient-to-b from-background via-background to-muted/20">
       <HydrationBoundary state={dehydrate(queryClient)}>
-      <ProblemList   />
-    </HydrationBoundary>
+        <ProblemList />
+      </HydrationBoundary>
     </div>
   );
 }

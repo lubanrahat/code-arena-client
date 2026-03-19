@@ -46,28 +46,26 @@ export default function OutputPanel({
   isLoading,
 }: OutputPanelProps) {
   return (
-    <div className="flex h-full flex-col bg-[#1E1E1E] overflow-hidden">
+    <div className="flex h-full flex-col overflow-hidden bg-[#18181b]">
       {/* Tab Bar */}
-      <div className="flex items-center border-b border-[#333] bg-[#252525] px-1">
+      <div className="flex items-center gap-1 border-b border-white/5 bg-[#1c1c1f]/80 px-4 py-2 backdrop-blur-sm">
         <button
           onClick={() => onTabChange("run")}
-          className={`px-4 py-2 text-xs font-medium transition-all relative ${
+          className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all ${
             activeTab === "run"
-              ? "text-white after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:bg-teal-500"
-              : "text-gray-500 hover:text-gray-300"
+              ? "bg-white/10 text-white"
+              : "text-zinc-500 hover:bg-white/5 hover:text-zinc-300"
           }`}
         >
-          <span className="flex items-center gap-1.5">
-            <Terminal className="w-3.5 h-3.5" />
-            Run Result
-          </span>
+          <Terminal className="h-4 w-4" />
+          Run Result
         </button>
         <button
           onClick={() => onTabChange("submit")}
-          className={`px-4 py-2 text-xs font-medium transition-all relative ${
+          className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all ${
             activeTab === "submit"
-              ? "text-white after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:bg-teal-500"
-              : "text-gray-500 hover:text-gray-300"
+              ? "bg-white/10 text-white"
+              : "text-zinc-500 hover:bg-white/5 hover:text-zinc-300"
           }`}
         >
           Submission Result
@@ -77,9 +75,9 @@ export default function OutputPanel({
       {/* Content */}
       <div className="flex-1 overflow-y-auto p-4">
         {isLoading && (
-          <div className="flex flex-col items-center justify-center h-full gap-3 text-gray-400">
-            <Loader2 className="w-6 h-6 animate-spin text-teal-500" />
-            <span className="text-xs">
+          <div className="flex h-full flex-col items-center justify-center gap-3 text-zinc-500">
+            <Loader2 className="h-6 w-6 animate-spin text-emerald-500" />
+            <span className="text-sm">
               {activeTab === "run" ? "Running your code..." : "Submitting..."}
             </span>
           </div>
@@ -96,13 +94,13 @@ export default function OutputPanel({
                       runResult.status === "Accepted"
                         ? "text-emerald-400"
                         : runResult.status === "Error" || runResult.status === "Wrong Answer" || runResult.stderr
-                          ? "text-red-400"
-                          : "text-gray-300"
+                          ? "text-rose-400"
+                          : "text-zinc-300"
                     }`}
                   >
                     {runResult.status}
                   </span>
-                  <div className="flex items-center gap-3 text-[11px] text-gray-500">
+                  <div className="flex items-center gap-3 text-xs text-zinc-500">
                     {runResult.time && <span>⏱ {runResult.time}</span>}
                     {runResult.memory && <span>💾 {runResult.memory}</span>}
                   </div>
@@ -111,10 +109,10 @@ export default function OutputPanel({
                 {/* Stdout */}
                 {runResult.stdout && (
                   <div>
-                    <label className="text-[11px] font-medium text-gray-500 uppercase tracking-wider">
+                    <label className="text-xs font-medium uppercase tracking-wider text-zinc-500">
                       Output
                     </label>
-                    <pre className="mt-1 bg-[#252525] rounded-lg p-3 text-xs text-gray-300 font-mono border border-[#333] whitespace-pre-wrap overflow-x-auto">
+                    <pre className="mt-2 overflow-x-auto whitespace-pre-wrap rounded-xl border border-zinc-700/50 bg-zinc-900/40 p-3 font-mono text-sm text-zinc-300">
                       {runResult.stdout}
                     </pre>
                   </div>
@@ -123,10 +121,10 @@ export default function OutputPanel({
                 {/* Stderr */}
                 {runResult.stderr && (
                   <div>
-                    <label className="text-[11px] font-medium text-red-400 uppercase tracking-wider">
+                    <label className="text-xs font-medium uppercase tracking-wider text-rose-400">
                       Error
                     </label>
-                    <pre className="mt-1 bg-red-500/5 rounded-lg p-3 text-xs text-red-300 font-mono border border-red-500/20 whitespace-pre-wrap overflow-x-auto">
+                    <pre className="mt-2 overflow-x-auto whitespace-pre-wrap rounded-xl border border-rose-500/20 bg-rose-500/5 p-3 font-mono text-sm text-rose-300">
                       {runResult.stderr}
                     </pre>
                   </div>
@@ -135,18 +133,18 @@ export default function OutputPanel({
                 {/* Compile Output */}
                 {runResult.compile_output && (
                   <div>
-                    <label className="text-[11px] font-medium text-amber-400 uppercase tracking-wider">
+                    <label className="text-xs font-medium uppercase tracking-wider text-amber-400">
                       Compilation
                     </label>
-                    <pre className="mt-1 bg-amber-500/5 rounded-lg p-3 text-xs text-amber-300 font-mono border border-amber-500/20 whitespace-pre-wrap overflow-x-auto">
+                    <pre className="mt-2 overflow-x-auto whitespace-pre-wrap rounded-xl border border-amber-500/20 bg-amber-500/5 p-3 font-mono text-sm text-amber-300">
                       {runResult.compile_output}
                     </pre>
                   </div>
                 )}
               </div>
             ) : (
-              <div className="flex flex-col items-center justify-center h-full text-gray-500 text-xs gap-2">
-                <Terminal className="w-8 h-8 text-gray-600" />
+              <div className="flex h-full flex-col items-center justify-center gap-2 text-sm text-zinc-500">
+                <Terminal className="h-10 w-10 text-zinc-600" />
                 <p>Click &quot;Run&quot; to execute your code</p>
               </div>
             )}
@@ -180,43 +178,43 @@ export default function OutputPanel({
                   {submitResult.testCases?.map((tc) => (
                     <div
                       key={tc.testCase}
-                      className={`rounded-lg border p-3 ${
+                      className={`rounded-xl border p-3 ${
                         tc.passed
-                          ? "bg-emerald-500/5 border-emerald-500/20"
-                          : "bg-red-500/5 border-red-500/20"
+                          ? "border-emerald-500/20 bg-emerald-500/5"
+                          : "border-rose-500/20 bg-rose-500/5"
                       }`}
                     >
-                      <div className="flex items-center justify-between mb-2">
+                      <div className="mb-2 flex items-center justify-between">
                         <div className="flex items-center gap-2">
                           {tc.passed ? (
-                            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                            <CheckCircle2 className="h-4 w-4 text-emerald-400" />
                           ) : (
-                            <XCircle className="w-3.5 h-3.5 text-red-400" />
+                            <XCircle className="h-4 w-4 text-rose-400" />
                           )}
-                          <span className="text-xs font-medium text-gray-300">
+                          <span className="text-sm font-medium text-zinc-300">
                             Test Case {tc.testCase}
                           </span>
                         </div>
-                        <div className="flex items-center gap-2 text-[10px] text-gray-500">
+                        <div className="flex items-center gap-2 text-xs text-zinc-500">
                           {tc.time && <span>{tc.time}</span>}
                           {tc.memory && <span>{tc.memory}</span>}
                         </div>
                       </div>
 
                       {!tc.passed && (
-                        <div className="space-y-1.5 text-xs font-mono">
+                        <div className="mt-2 space-y-1.5 font-mono text-sm">
                           <div>
-                            <span className="text-gray-500">Expected: </span>
-                            <span className="text-teal-300">{tc.expected}</span>
+                            <span className="text-zinc-500">Expected: </span>
+                            <span className="text-emerald-400">{tc.expected}</span>
                           </div>
                           {tc.stdout && (
                             <div>
-                              <span className="text-gray-500">Got: </span>
-                              <span className="text-red-300">{tc.stdout}</span>
+                              <span className="text-zinc-500">Got: </span>
+                              <span className="text-rose-400">{tc.stdout}</span>
                             </div>
                           )}
                           {tc.stderr && (
-                            <pre className="text-red-300 whitespace-pre-wrap mt-1">
+                            <pre className="mt-1 whitespace-pre-wrap text-rose-400">
                               {tc.stderr}
                             </pre>
                           )}
@@ -227,8 +225,8 @@ export default function OutputPanel({
                 </div>
               </div>
             ) : (
-              <div className="flex flex-col items-center justify-center h-full text-gray-500 text-xs gap-2">
-                <Terminal className="w-8 h-8 text-gray-600" />
+              <div className="flex h-full flex-col items-center justify-center gap-2 text-sm text-zinc-500">
+                <Terminal className="h-10 w-10 text-zinc-600" />
                 <p>Click &quot;Submit&quot; to test against all test cases</p>
               </div>
             )}

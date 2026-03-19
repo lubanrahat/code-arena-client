@@ -36,6 +36,8 @@ function getQueryClient() {
   }
 }
 
+import { ReactQueryStreamedHydration } from "@tanstack/react-query-next-experimental";
+
 export default function QueryProviders({ children }: { children: React.ReactNode }) {
   // NOTE: Avoid useState when initializing the query client if you don't
   //       have a suspense boundary between this and the code that may
@@ -44,6 +46,8 @@ export default function QueryProviders({ children }: { children: React.ReactNode
   const queryClient = getQueryClient();
 
   return (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    <QueryClientProvider client={queryClient}>
+      <ReactQueryStreamedHydration>{children}</ReactQueryStreamedHydration>
+    </QueryClientProvider>
   );
 }

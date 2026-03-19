@@ -4,7 +4,6 @@ import { Inter } from "next/font/google";
 import QueryProviders from "@/providers/QueryProvider";
 import { AuthProvider } from "@/providers/AuthProvider";
 import NavbarWrapper from "@/components/layout/NavbarWrapper";
-import { ReactQueryStreamedHydration } from '@tanstack/react-query-next-experimental'
 
 const inter = Inter({
   subsets: ["latin"], // required
@@ -22,14 +21,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={inter.className}>
+    <html lang="en" className={inter.className} suppressHydrationWarning>
       <body className="antialiased font-sans">
         <AuthProvider>
           <QueryProviders>
-            <ReactQueryStreamedHydration>
-              <NavbarWrapper />
-              {children}
-            </ReactQueryStreamedHydration>
+            <NavbarWrapper />
+            {children}
           </QueryProviders>
         </AuthProvider>
       </body>

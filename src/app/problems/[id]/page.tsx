@@ -62,10 +62,10 @@ export default function ProblemDetailsPage({ params }: PageProps) {
 
   if (isFetchingProblem) {
     return (
-      <div className="flex h-screen items-center justify-center bg-[#1E1E1E]">
+      <div className="flex h-screen items-center justify-center bg-[#18181b]">
         <div className="flex flex-col items-center gap-3">
-          <div className="h-8 w-8 animate-spin rounded-full border-2 border-teal-500 border-t-transparent" />
-          <span className="text-xs text-gray-500">Loading problem...</span>
+          <div className="h-8 w-8 animate-spin rounded-full border-2 border-emerald-500/30 border-t-emerald-500" />
+          <span className="text-sm text-zinc-500">Loading problem...</span>
         </div>
       </div>
     );
@@ -73,12 +73,10 @@ export default function ProblemDetailsPage({ params }: PageProps) {
 
   if (error || !data) {
     return (
-      <div className="flex h-screen items-center justify-center bg-[#1E1E1E]">
+      <div className="flex h-screen items-center justify-center bg-[#18181b]">
         <div className="text-center">
-          <p className="text-gray-400 font-medium text-sm">
-            Failed to load problem
-          </p>
-          <p className="text-gray-600 text-xs mt-1">Please try again later.</p>
+          <p className="text-sm font-medium text-zinc-400">Failed to load problem</p>
+          <p className="mt-1 text-xs text-zinc-600">Please try again later.</p>
         </div>
       </div>
     );
@@ -87,19 +85,15 @@ export default function ProblemDetailsPage({ params }: PageProps) {
   const problem = data?.data || data;
 
   return (
-    <div className="h-screen w-full overflow-hidden bg-[#1E1E1E]">
-      <ResizablePanelGroup
-        orientation="horizontal"
-        className="h-full w-full"
-      >
-        {/* Left Panel — Problem Description */}
+    <div className="h-screen w-full overflow-hidden bg-[#18181b]">
+      <ResizablePanelGroup orientation="horizontal" className="h-full w-full">
         <ResizablePanel defaultSize={40} minSize={25}>
           <ProblemDescription problem={problem} />
         </ResizablePanel>
 
         <ResizableHandle
           withHandle
-          className="bg-[#333] data-[resize-handle-state=hover]:bg-teal-600 data-[resize-handle-state=drag]:bg-teal-500 w-[3px] transition-colors"
+          className="w-1 bg-zinc-800 transition-colors data-[resize-handle-state=hover]:bg-emerald-500/50 data-[resize-handle-state=drag]:bg-emerald-500"
         />
 
         {/* Right Panel — Editor + Output */}
@@ -118,7 +112,7 @@ export default function ProblemDetailsPage({ params }: PageProps) {
 
             <ResizableHandle
               withHandle
-              className="bg-[#333] data-[resize-handle-state=hover]:bg-teal-600 data-[resize-handle-state=drag]:bg-teal-500 h-[3px] transition-colors"
+              className="h-1 bg-zinc-800 transition-colors data-[resize-handle-state=hover]:bg-emerald-500/50 data-[resize-handle-state=drag]:bg-emerald-500"
             />
 
             {/* Output Panel */}

@@ -268,52 +268,48 @@ export default function CodeEditorPanel({
   }, [code, language, problem, isRunning, isSubmitting, onSubmitResult, onLoadingChange, onActiveTabChange]);
 
   return (
-    <div className="flex h-full flex-col bg-[#1E1E1E]">
+    <div className="flex h-full flex-col bg-[#18181b]">
       {/* Editor Toolbar */}
-      <div className="flex items-center justify-between px-3 py-1.5 bg-[#252525] text-gray-400 text-xs border-b border-[#333]">
+      <div className="flex items-center justify-between border-b border-white/5 bg-[#1c1c1f]/80 px-4 py-2.5 text-xs backdrop-blur-sm">
         <div className="flex items-center gap-4">
-          <div className="flex items-center gap-1.5 text-gray-500">
-            <Clock className="w-3.5 h-3.5" />
-            <span className="font-mono text-[11px]">{formatTime(timePassed)}</span>
+          <div className="flex items-center gap-2 text-zinc-500">
+            <Clock className="h-4 w-4" />
+            <span className="font-mono text-sm">{formatTime(timePassed)}</span>
           </div>
-          <div className="relative">
-            <select
-              value={language}
-              onChange={(e) => setLanguage(e.target.value)}
-              className="bg-[#1E1E1E] border border-[#3D3D3D] text-gray-300 text-xs rounded px-2.5 py-1 focus:outline-none focus:border-teal-500 appearance-none pr-7 cursor-pointer"
-            >
+          <select
+            value={language}
+            onChange={(e) => setLanguage(e.target.value)}
+            className="rounded-lg border border-zinc-600/50 bg-zinc-800/50 px-3 py-1.5 text-sm text-zinc-200 focus:border-emerald-500/50 focus:outline-none focus:ring-1 focus:ring-emerald-500/30"
+          >
               {LANGUAGES.map((lang) => (
                 <option key={lang.id} value={lang.id}>
                   {lang.name}
                 </option>
               ))}
             </select>
-          </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1">
           <button
             onClick={handleReset}
-            className="p-1.5 hover:text-white hover:bg-[#333] rounded transition-colors"
+            className="rounded-lg p-2 text-zinc-500 transition-colors hover:bg-white/5 hover:text-zinc-200"
             title="Reset code"
           >
-            <RotateCcw className="w-3.5 h-3.5" />
+            <RotateCcw className="h-4 w-4" />
           </button>
-          
           <Popover>
             <PopoverTrigger asChild>
-              <button className="p-1.5 hover:text-white hover:bg-[#333] rounded transition-colors" title="Settings">
-                <Settings2 className="w-3.5 h-3.5" />
+              <button className="rounded-lg p-2 text-zinc-500 transition-colors hover:bg-white/5 hover:text-zinc-200" title="Settings">
+                <Settings2 className="h-4 w-4" />
               </button>
             </PopoverTrigger>
-            <PopoverContent className="w-64 bg-[#252525] border-[#3D3D3D] text-gray-200">
-              <div className="space-y-4 p-2">
-                <h4 className="font-medium text-sm border-b border-[#3D3D3D] pb-2">Editor Settings</h4>
-                
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between text-xs">
-                    <Label className="text-gray-400">Font Size</Label>
-                    <span className="text-teal-500 font-mono">{fontSize}px</span>
+            <PopoverContent className="w-64 border-zinc-700/50 bg-zinc-900 text-zinc-200">
+              <div className="space-y-4 p-3">
+                <h4 className="border-b border-zinc-700/50 pb-2 text-sm font-medium">Editor Settings</h4>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between text-sm">
+                    <Label className="text-zinc-400">Font size</Label>
+                    <span className="font-mono text-emerald-400">{fontSize}px</span>
                   </div>
                   <Slider
                     value={[fontSize]}
@@ -326,11 +322,11 @@ export default function CodeEditorPanel({
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="text-xs text-gray-400">Theme</Label>
+                  <Label className="text-sm text-zinc-400">Theme</Label>
                   <select
                     value={theme}
                     onChange={(e) => setTheme(e.target.value)}
-                    className="w-full bg-[#1E1E1E] border border-[#3D3D3D] text-gray-300 text-xs rounded px-2.5 py-1.5 focus:outline-none focus:border-teal-500"
+                    className="w-full rounded-lg border border-zinc-600/50 bg-zinc-800/50 px-3 py-2 text-sm text-zinc-200 focus:border-emerald-500/50 focus:outline-none"
                   >
                     {THEMES.map((t) => (
                       <option key={t.id} value={t.id}>
@@ -343,8 +339,8 @@ export default function CodeEditorPanel({
             </PopoverContent>
           </Popover>
 
-          <button className="p-1.5 hover:text-white hover:bg-[#333] rounded transition-colors" title="Fullscreen">
-            <Maximize2 className="w-3.5 h-3.5" />
+          <button className="rounded-lg p-2 text-zinc-500 transition-colors hover:bg-white/5 hover:text-zinc-200" title="Fullscreen">
+            <Maximize2 className="h-4 w-4" />
           </button>
         </div>
       </div>
@@ -378,22 +374,22 @@ export default function CodeEditorPanel({
       </div>
 
       {/* Bottom Action Bar */}
-      <div className="flex items-center justify-end px-3 py-2 bg-[#252525] border-t border-[#333] gap-2">
+      <div className="flex items-center justify-end gap-3 border-t border-white/5 bg-[#1c1c1f]/80 px-4 py-3 backdrop-blur-sm">
         <button
           onClick={handleRun}
           disabled={isRunning || isSubmitting}
-          className="flex items-center gap-1.5 px-4 py-1.5 rounded-md bg-[#333] text-gray-200 hover:bg-[#444] disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-xs font-medium cursor-pointer"
+          className="flex items-center gap-2 rounded-xl border border-zinc-600/50 bg-zinc-800/50 px-5 py-2.5 text-sm font-medium text-zinc-200 transition-all hover:bg-zinc-700/50 disabled:cursor-not-allowed disabled:opacity-50"
         >
-          <Play className="w-3.5 h-3.5" />
-          <span>{isRunning ? "Running..." : "Run"}</span>
+          <Play className="h-4 w-4" />
+          {isRunning ? "Running..." : "Run"}
         </button>
         <button
           onClick={handleSubmit}
           disabled={isRunning || isSubmitting}
-          className="flex items-center gap-1.5 px-4 py-1.5 rounded-md bg-green-500 text-white hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-xs font-semibold cursor-pointer"
+          className="flex items-center gap-2 rounded-xl bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-emerald-500/20 transition-all hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-50"
         >
-          <Send className="w-3.5 h-3.5" />
-          <span>{isSubmitting ? "Submitting..." : "Submit"}</span>
+          <Send className="h-4 w-4" />
+          {isSubmitting ? "Submitting..." : "Submit"}
         </button>
       </div>
     </div>

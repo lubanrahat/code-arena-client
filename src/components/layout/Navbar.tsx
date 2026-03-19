@@ -28,6 +28,7 @@ import { useAuthUser } from "@/hooks/useAuth";
 import { useAuthContext } from "@/providers/AuthProvider";
 import { useRouter } from "next/navigation";
 
+
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { logout } = useAuthContext();
