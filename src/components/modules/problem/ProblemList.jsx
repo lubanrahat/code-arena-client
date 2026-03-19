@@ -1,8 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
-import { allProblems } from "@/app/problems/_acion";
+import { allProblems } from "@/app/problems/_action";
+import Link from "next/link";
 import {
   List,
   Bookmark,
@@ -15,15 +17,28 @@ import {
 
 export default function ProblemList() {
   const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [difficulty, setDifficulty] = useState("");
   const [status, setStatus] = useState("");
   const [topic, setTopic] = useState("");
+  const router = useRouter();
+
+  // Update debounced search after 500ms of inactivity
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 500);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [search]);
 
   const { data, isLoading } = useQuery({
-    queryKey: ["problems", { search, difficulty, status, topic }],
+    queryKey: ["problems", { search: debouncedSearch, difficulty, status, topic }],
     queryFn: () =>
       allProblems({
-        search: search || undefined,
+        search: debouncedSearch || undefined,
         difficulty: difficulty || undefined,
         status: status || undefined,
         topic: topic || undefined,
@@ -50,20 +65,29 @@ export default function ProblemList() {
     };
   };
 
+  const handlePickRandom = () => {
+    if (problems && problems.length > 0) {
+      const randomIndex = Math.floor(Math.random() * problems.length);
+      const randomProblem = problems[randomIndex];
+      router.push(`/problems/${randomProblem.id}`);
+    }
+  };
+
   return (
     <div className="mx-auto max-w-7xl p-4 md:p-6">
       {/* Tabs */}
       <div className="mb-6 flex space-x-8 border-b border-gray-100 pb-0">
         {[
-          { icon: <List className="h-4 w-4" />, label: "All Questions", active: true },
-          { icon: <Bookmark className="h-4 w-4" />, label: "Bookmarks" },
-          { icon: <CheckSquare className="h-4 w-4" />, label: "Attempted" },
-          { icon: <CheckCircle2 className="h-4 w-4" />, label: "Solved" },
+          { icon: <List className="h-4 w-4" />, label: "All Questions", value: "" },
+          { icon: <Bookmark className="h-4 w-4" />, label: "Bookmarks", value: "SAVED" },
+          { icon: <CheckSquare className="h-4 w-4" />, label: "Attempted", value: "ATTEMPTED" },
+          { icon: <CheckCircle2 className="h-4 w-4" />, label: "Solved", value: "SOLVED" },
         ].map((tab, idx) => (
           <button
             key={idx}
+            onClick={() => setStatus(tab.value)}
             className={`flex items-center space-x-2 pb-3 text-sm font-medium transition-colors ${
-              tab.active
+              status === tab.value
                 ? "border-b-2 border-blue-500 text-blue-600"
                 : "text-gray-500 hover:text-gray-700"
             }`}
@@ -112,6 +136,7 @@ export default function ProblemList() {
           >
             <option value="">Status</option>
             <option value="SOLVED">Solved</option>
+            <option value="ATTEMPTED">Attempted</option>
             <option value="UNSOLVED">Unsolved</option>
           </select>
           <ChevronDown className="absolute right-2 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 pointer-events-none opacity-50" />
@@ -135,7 +160,10 @@ export default function ProblemList() {
         </div>
 
         {/* Pick Random */}
-        <button className="flex items-center space-x-2 rounded-lg bg-[#4FD1C5] px-4 py-2 text-sm font-medium text-white hover:bg-[#38B2AC] transition-colors">
+        <button 
+          onClick={handlePickRandom}
+          className="flex items-center space-x-2 rounded-lg bg-[#9e3de3] px-4 py-2 text-sm font-medium text-white hover:bg-[#9d1fec] transition-colors cursor-pointer"
+        >
           <Zap className="h-4 w-4" />
           <span>Pick Random</span>
         </button>
@@ -164,13 +192,16 @@ export default function ProblemList() {
                 }`}
               >
                 {/* Title */}
-                <div>
-                  <a
+                <div className="flex items-center space-x-2">
+                  {problem.solvedBy?.length > 0 && (
+                    <CheckCircle2 className="h-4 w-4 text-green-500 shrink-0" />
+                  )}
+                  <Link
                     href={`/problems/${problem.id}`}
-                    className="text-sm font-medium text-blue-600 hover:text-blue-800 transition-colors"
+                    className="text-sm font-medium text-blue-600 hover:text-blue-800 transition-colors truncate"
                   >
                     {problem.title}
-                  </a>
+                  </Link>
                 </div>
 
                 {/* Topic */}
@@ -201,9 +232,9 @@ export default function ProblemList() {
                   {mock.avgTime} Mins
                 </div>
 
-                {/* Submissions (Mocked) */}
+                {/* Submissions (Mocked -> Real) */}
                 <div className="text-center text-sm text-gray-600">
-                  {mock.submissions.toLocaleString()}
+                  {problem._count?.submissions.toLocaleString() || 0}
                 </div>
 
                 {/* Asked In */}

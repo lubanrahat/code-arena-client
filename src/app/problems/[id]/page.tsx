@@ -2,7 +2,7 @@
 
 import React, { useState, use } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { getProblemById } from "@/app/problems/_acion";
+import { getProblemById } from "@/app/problems/_action";
 import {
   ResizableHandle,
   ResizablePanel,

@@ -1,5 +1,5 @@
 import { dehydrate, HydrationBoundary, QueryClient } from "@tanstack/react-query";
-import { allProblems } from "./_acion";
+import { allProblems } from "./_action";
 import ProblemList from "@/components/modules/Problem/ProblemList";
 
 export default async function ProblemsPage() {

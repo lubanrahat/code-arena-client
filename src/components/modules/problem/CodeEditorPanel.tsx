@@ -5,11 +5,14 @@ import Editor from "@monaco-editor/react";
 import {
   Play,
   Send,
-  Settings,
   Maximize2,
   RotateCcw,
   Clock,
+  Settings2,
 } from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Label } from "@/components/ui/label";
+import { Slider } from "@/components/ui/slider";
 
 interface CodeSnippet {
   code: string;
@@ -80,6 +83,64 @@ export default function CodeEditorPanel({
   const [timePassed, setTimePassed] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  // Editor Settings
+  const [fontSize, setFontSize] = useState(14);
+  const [theme, setTheme] = useState("vs-dark");
+
+  const THEMES = [
+    { id: "vs-dark", name: "Dark" },
+    { id: "light", name: "Light" },
+    { id: "monokai", name: "Monokai" },
+    { id: "night-owl", name: "Night Owl" },
+    { id: "hc-black", name: "High Contrast" },
+  ];
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleEditorWillMount = (monaco: any) => {
+    monaco.editor.defineTheme("monokai", {
+      base: "vs-dark",
+      inherit: true,
+      rules: [
+        { token: "comment", foreground: "75715e", fontStyle: "italic" },
+        { token: "keyword", foreground: "f92672" },
+        { token: "variable", foreground: "f8f8f2" },
+        { token: "string", foreground: "e6db74" },
+        { token: "number", foreground: "ae81ff" },
+        { token: "type", foreground: "66d9ef" },
+      ],
+      colors: {
+        "editor.background": "#272822",
+        "editor.foreground": "#f8f8f2",
+        "editorCursor.foreground": "#f8f8f0",
+        "editor.lineHighlightBackground": "#3e3d32",
+        "editorLineNumber.foreground": "#90908a",
+        "editor.selectionBackground": "#49483e",
+      },
+    });
+
+    monaco.editor.defineTheme("night-owl", {
+      base: "vs-dark",
+      inherit: true,
+      rules: [
+        { token: "comment", foreground: "637777", fontStyle: "italic" },
+        { token: "keyword", foreground: "c792ea" },
+        { token: "variable", foreground: "addb67" },
+        { token: "string", foreground: "ecc48d" },
+        { token: "number", foreground: "f78c6c" },
+        { token: "type", foreground: "82aaff" },
+        { token: "function", foreground: "82aaff" },
+      ],
+      colors: {
+        "editor.background": "#011627",
+        "editor.foreground": "#d6deeb",
+        "editorCursor.foreground": "#80a4c2",
+        "editor.lineHighlightBackground": "#010e17",
+        "editorLineNumber.foreground": "#4b6479",
+        "editor.selectionBackground": "#1d3b53",
+      },
+    });
+  };
 
   const currentLang = LANGUAGES.find((l) => l.id === language) || LANGUAGES[0];
 
@@ -130,7 +191,7 @@ export default function CodeEditorPanel({
     onRunResult(null);
 
     try {
-      const { runCode } = await import("@/app/problems/_acion");
+      const { runCode } = await import("@/app/problems/_action");
       const testCases = problem?.testCases || [];
       const stdin = testCases.length > 0 ? testCases[0].input : "";
 
@@ -166,7 +227,7 @@ export default function CodeEditorPanel({
     onSubmitResult(null);
 
     try {
-      const { submitCode } = await import("@/app/problems/_acion");
+      const { submitCode } = await import("@/app/problems/_action");
       const testCases = problem?.testCases || [];
 
       const response = await submitCode({
@@ -236,9 +297,50 @@ export default function CodeEditorPanel({
           >
             <RotateCcw className="w-3.5 h-3.5" />
           </button>
-          <button className="p-1.5 hover:text-white hover:bg-[#333] rounded transition-colors" title="Settings">
-            <Settings className="w-3.5 h-3.5" />
-          </button>
+          
+          <Popover>
+            <PopoverTrigger asChild>
+              <button className="p-1.5 hover:text-white hover:bg-[#333] rounded transition-colors" title="Settings">
+                <Settings2 className="w-3.5 h-3.5" />
+              </button>
+            </PopoverTrigger>
+            <PopoverContent className="w-64 bg-[#252525] border-[#3D3D3D] text-gray-200">
+              <div className="space-y-4 p-2">
+                <h4 className="font-medium text-sm border-b border-[#3D3D3D] pb-2">Editor Settings</h4>
+                
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between text-xs">
+                    <Label className="text-gray-400">Font Size</Label>
+                    <span className="text-teal-500 font-mono">{fontSize}px</span>
+                  </div>
+                  <Slider
+                    value={[fontSize]}
+                    min={10}
+                    max={24}
+                    step={1}
+                    onValueChange={(val) => setFontSize(val[0])}
+                    className="py-2"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-xs text-gray-400">Theme</Label>
+                  <select
+                    value={theme}
+                    onChange={(e) => setTheme(e.target.value)}
+                    className="w-full bg-[#1E1E1E] border border-[#3D3D3D] text-gray-300 text-xs rounded px-2.5 py-1.5 focus:outline-none focus:border-teal-500"
+                  >
+                    {THEMES.map((t) => (
+                      <option key={t.id} value={t.id}>
+                        {t.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            </PopoverContent>
+          </Popover>
+
           <button className="p-1.5 hover:text-white hover:bg-[#333] rounded transition-colors" title="Fullscreen">
             <Maximize2 className="w-3.5 h-3.5" />
           </button>
@@ -250,13 +352,14 @@ export default function CodeEditorPanel({
         <Editor
           height="100%"
           language={currentLang.monacoId}
-          theme="vs-dark"
+          theme={theme}
+          beforeMount={handleEditorWillMount}
           value={code}
           onChange={(value) => setCode(value || "")}
           options={{
             minimap: { enabled: false },
-            fontSize: 14,
-            lineHeight: 22,
+            fontSize: fontSize,
+            lineHeight: Math.round(fontSize * 1.5),
             padding: { top: 12 },
             scrollBeyondLastLine: false,
             smoothScrolling: true,
@@ -277,7 +380,7 @@ export default function CodeEditorPanel({
         <button
           onClick={handleRun}
           disabled={isRunning || isSubmitting}
-          className="flex items-center gap-1.5 px-4 py-1.5 rounded-md bg-[#333] text-gray-200 hover:bg-[#444] disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-xs font-medium"
+          className="flex items-center gap-1.5 px-4 py-1.5 rounded-md bg-[#333] text-gray-200 hover:bg-[#444] disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-xs font-medium cursor-pointer"
         >
           <Play className="w-3.5 h-3.5" />
           <span>{isRunning ? "Running..." : "Run"}</span>
@@ -285,7 +388,7 @@ export default function CodeEditorPanel({
         <button
           onClick={handleSubmit}
           disabled={isRunning || isSubmitting}
-          className="flex items-center gap-1.5 px-4 py-1.5 rounded-md bg-teal-600 text-white hover:bg-teal-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-xs font-semibold"
+          className="flex items-center gap-1.5 px-4 py-1.5 rounded-md bg-green-500 text-white hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-xs font-semibold cursor-pointer"
         >
           <Send className="w-3.5 h-3.5" />
           <span>{isSubmitting ? "Submitting..." : "Submit"}</span>

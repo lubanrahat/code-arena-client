@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { ThumbsUp, ThumbsDown, Bookmark, Share2, Lightbulb, ChevronDown } from "lucide-react";
+import SubmissionsList from "./SubmissionsList";
 
 interface Example {
   input: string;
@@ -199,8 +200,8 @@ export default function ProblemDescription({ problem }: ProblemDescriptionProps)
           </div>
         )}
         {activeTab === "Submissions" && (
-          <div className="text-gray-500 text-center py-16 text-sm">
-            Submissions history coming soon...
+          <div className="py-2">
+            <SubmissionsList problemId={problem.id} problemTitle={title} />
           </div>
         )}
         {activeTab === "Hints" && (
