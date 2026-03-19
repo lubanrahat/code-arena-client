@@ -31,6 +31,7 @@ export const runCode = async (payload: {
   sourceCode: string;
   language: string;
   stdin: string;
+  expectedOutput?: string;
 }) => {
   try {
     const token = await getCookie("token");

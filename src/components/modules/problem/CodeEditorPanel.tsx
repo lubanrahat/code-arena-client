@@ -194,11 +194,13 @@ export default function CodeEditorPanel({
       const { runCode } = await import("@/app/problems/_action");
       const testCases = problem?.testCases || [];
       const stdin = testCases.length > 0 ? testCases[0].input : "";
+      const expectedOutput = testCases.length > 0 ? testCases[0].output : undefined;
 
       const response = await runCode({
         sourceCode: code,
         language,
         stdin,
+        expectedOutput,
       });
 
       const result = response?.data || response;

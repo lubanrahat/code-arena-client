@@ -95,7 +95,7 @@ export default function OutputPanel({
                     className={`text-sm font-semibold ${
                       runResult.status === "Accepted"
                         ? "text-emerald-400"
-                        : runResult.status === "Error" || runResult.stderr
+                        : runResult.status === "Error" || runResult.status === "Wrong Answer" || runResult.stderr
                           ? "text-red-400"
                           : "text-gray-300"
                     }`}
