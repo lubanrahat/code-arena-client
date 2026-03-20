@@ -1,15 +1,17 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Editor from "@monaco-editor/react";
 import { useTheme } from "next-themes";
+import { motion, AnimatePresence } from "framer-motion";
+
 import {
   Play,
   Send,
   Maximize2,
   RotateCcw,
-  Clock,
   Settings2,
+
   ChevronDown,
   Terminal,
   Settings,
@@ -100,7 +102,10 @@ export default function CodeEditorPanel({
   const [language, setLanguage] = useState(LANGUAGES[0].id);
   const [code, setCode] = useState("");
   const [timePassed, setTimePassed] = useState(0);
+  const [isTimerActive, setIsTimerActive] = useState(false);
   const [isRunning, setIsRunning] = useState(false);
+
+
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Editor Settings
@@ -169,11 +174,17 @@ export default function CodeEditorPanel({
 
   // Timer
   useEffect(() => {
-    const timer = setInterval(() => {
-      setTimePassed((prev) => prev + 1);
-    }, 1000);
-    return () => clearInterval(timer);
-  }, []);
+    let timer: NodeJS.Timeout;
+    if (isTimerActive) {
+      timer = setInterval(() => {
+        setTimePassed((prev) => prev + 1);
+      }, 1000);
+    }
+    return () => {
+      if (timer) clearInterval(timer);
+    };
+  }, [isTimerActive]);
+
 
   const formatTime = (seconds: number) => {
     const h = Math.floor(seconds / 3600);
@@ -380,18 +391,75 @@ export default function CodeEditorPanel({
               </DropdownMenuRadioGroup>
             </DropdownMenuContent>
           </DropdownMenu>
+        </div>
 
+        {/* Centered Modern Timer */}
+        <div className="absolute left-1/2 flex -translate-x-1/2 items-center">
           <div
             className={cn(
-              "flex items-center gap-2 rounded-lg px-3 py-1.5 font-mono text-sm shadow-sm transition-colors",
+              "flex items-center gap-1.5 rounded-full px-2 py-1.5 shadow-sm backdrop-blur-md transition-all duration-300",
               isDark
-                ? "bg-zinc-800/40 text-emerald-400/90 ring-1 ring-white/5"
-                : "bg-emerald-50 text-emerald-700 ring-1 ring-emerald-100"
+                ? "bg-zinc-800/40 ring-1 ring-white/5"
+                : "bg-white/80 ring-1 ring-neutral-200"
             )}
-            title="Time elapsed"
           >
-            <Clock className="h-3.5 w-3.5 animate-pulse" />
-            <span>{formatTime(timePassed)}</span>
+            {/* Play/Pause Button */}
+            <button
+              onClick={() => setIsTimerActive(!isTimerActive)}
+              className={cn(
+                "flex h-7 w-7 items-center justify-center rounded-full transition-all hover:scale-110 active:scale-95",
+                isTimerActive
+                  ? "bg-emerald-500/10 text-emerald-500"
+                  : "bg-zinc-500/10 text-zinc-500 hover:text-emerald-500"
+              )}
+              title={isTimerActive ? "Pause timer" : "Start timer"}
+            >
+              <AnimatePresence mode="wait">
+                {isTimerActive ? (
+                  <motion.div
+                    key="pause"
+                    initial={{ opacity: 0, scale: 0.5 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.5 }}
+                    className="flex gap-0.5"
+                  >
+                    <div className="h-2.5 w-0.5 bg-current rounded-full" />
+                    <div className="h-2.5 w-0.5 bg-current rounded-full" />
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="play"
+                    initial={{ opacity: 0, scale: 0.5 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.5 }}
+                  >
+                    <Play size={12} className="fill-current" />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </button>
+
+            {/* Time Display */}
+            <div
+              className={cn(
+                "min-w-[64px] text-center font-mono text-xs font-medium tracking-tight px-1 transition-colors",
+                isTimerActive ? "text-emerald-400" : "text-zinc-500"
+              )}
+            >
+              {formatTime(timePassed)}
+            </div>
+
+            {/* Reset Button */}
+            <button
+              onClick={() => {
+                setTimePassed(0);
+                setIsTimerActive(false);
+              }}
+              className="flex h-7 w-7 items-center justify-center rounded-full text-zinc-500 transition-all hover:bg-zinc-500/10 hover:text-rose-500 hover:scale-110 active:scale-95"
+              title="Reset timer"
+            >
+              <RotateCcw size={12} />
+            </button>
           </div>
         </div>
 

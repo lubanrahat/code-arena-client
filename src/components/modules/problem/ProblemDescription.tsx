@@ -12,10 +12,13 @@ import {
   FileCode2,
   HelpCircle,
   Bot,
+  ArrowLeft,
 } from "lucide-react";
 import SubmissionsList from "./SubmissionsList";
 import AiDiscussion from "./AiDiscussion";
 import { cn } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
+import Link from "next/link";
 
 interface Example {
   input: string;
@@ -51,6 +54,9 @@ const TABS = [
 export default function ProblemDescription({ problem }: ProblemDescriptionProps) {
   const [activeTab, setActiveTab] = useState("Description");
   const [expandedHints, setExpandedHints] = useState<number[]>([]);
+  const [isTopicsExpanded, setIsTopicsExpanded] = useState(false);
+  const [isCompaniesExpanded, setIsCompaniesExpanded] = useState(false);
+
 
   const title = problem?.title || "Loading...";
   const topic = problem?.topic || "Programming";
@@ -76,6 +82,10 @@ export default function ProblemDescription({ problem }: ProblemDescriptionProps)
     <div className="flex h-full flex-col bg-background overflow-hidden text-foreground">
       {/* Tabs — pill style */}
       <div className="flex w-full items-center gap-1 border-b border-border/50 bg-background/70 px-4 py-2 backdrop-blur-sm">
+        <Link href="/problems" className="mr-2">
+          <ArrowLeft className="h-5 w-5" />
+        </Link>
+
         {TABS.map((tab) => (
           <button
             key={tab.id}
@@ -102,9 +112,6 @@ export default function ProblemDescription({ problem }: ProblemDescriptionProps)
               <h1 className="text-2xl font-bold tracking-tight text-foreground">
                 {title}
               </h1>
-              <p className="mt-2 text-sm text-muted-foreground">
-                Programming &gt; {topic}
-              </p>
             </div>
 
             {/* Badges row */}
@@ -117,15 +124,9 @@ export default function ProblemDescription({ problem }: ProblemDescriptionProps)
               >
                 {difficulty.charAt(0) + difficulty.slice(1).toLowerCase()}
               </span>
-              {tags.map((tag) => (
-                <span
-                  key={tag}
-                  className="rounded-lg border border-border/60 bg-muted/50 px-3 py-1 text-xs font-medium text-foreground dark:bg-zinc-800/50 dark:text-zinc-300"
-                >
-                  {tag}
-                </span>
-              ))}
-
+              <Badge variant="outline">Topics</Badge>
+              <Badge variant="outline">Companies</Badge>
+              <Badge variant="outline">Hint</Badge>
             </div>
 
             {/* Actions */}
@@ -149,7 +150,7 @@ export default function ProblemDescription({ problem }: ProblemDescriptionProps)
             </div>
 
             {/* Asked In */}
-            {askedIn.length > 0 && (
+            {/* {askedIn.length > 0 && (
               <div className="flex flex-wrap items-center gap-2">
                 <span className="text-xs font-medium text-muted-foreground">Asked in</span>
                 <div className="flex flex-wrap gap-2">
@@ -163,7 +164,7 @@ export default function ProblemDescription({ problem }: ProblemDescriptionProps)
                   ))}
                 </div>
               </div>
-            )}
+            )} */}
 
             {/* Description */}
             <div
@@ -222,45 +223,126 @@ export default function ProblemDescription({ problem }: ProblemDescriptionProps)
               </div>
             )}
 
+            {/* topic */}
+            <div className="space-y-3">
+              <button
+                onClick={() => setIsTopicsExpanded(!isTopicsExpanded)}
+                className="w-full text-left"
+              >
+                <div className="overflow-hidden rounded-xl border border-border/60 bg-muted/30 transition-colors hover:border-emerald-500/30 dark:border-zinc-700/50 dark:bg-zinc-900/40">
+                  <div className="flex items-center justify-between px-4 py-3">
+                    <div className="flex items-center gap-2 text-emerald-400">
+                      <FileCode2 className="h-4 w-4" />
+                      <span className="font-medium text-foreground">Topics</span>
+                    </div>
+                    <ChevronDown
+                      className={cn(
+                        "h-4 w-4 text-muted-foreground transition-transform dark:text-zinc-500",
+                        isTopicsExpanded && "rotate-180"
+                      )}
+                    />
+                  </div>
+                  {isTopicsExpanded && (
+                    <div className="flex flex-wrap gap-2 border-t border-border/60 px-4 py-4 dark:border-zinc-700/50">
+                      {tags.length > 0 ? (
+                        tags.map((tag) => (
+                          <Badge
+                            key={tag}
+                            variant="secondary"
+                            className="bg-zinc-100 text-zinc-900 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700"
+                          >
+                            {tag}
+                          </Badge>
+                        ))
+                      ) : (
+                        <span className="text-xs text-muted-foreground">No topics available</span>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </button>
+            </div>
+
+
+            {/* company */}
+            <div className="space-y-3">
+              <button
+                onClick={() => setIsCompaniesExpanded(!isCompaniesExpanded)}
+                className="w-full text-left"
+              >
+                <div className="overflow-hidden rounded-xl border border-border/60 bg-muted/30 transition-colors hover:border-primary/30 dark:border-zinc-700/50 dark:bg-zinc-900/40">
+                  <div className="flex items-center justify-between px-4 py-3">
+                    <div className="flex items-center gap-2 text-primary">
+                      <Bookmark className="h-4 w-4" />
+                      <span className="font-medium text-foreground">Companies</span>
+                    </div>
+                    <ChevronDown
+                      className={cn(
+                        "h-4 w-4 text-muted-foreground transition-transform dark:text-zinc-500",
+                        isCompaniesExpanded && "rotate-180"
+                      )}
+                    />
+                  </div>
+                  {isCompaniesExpanded && (
+                    <div className="flex flex-wrap gap-2 border-t border-border/60 px-4 py-4 dark:border-zinc-700/50">
+                      {askedIn.length > 0 ? (
+                        askedIn.map((company) => (
+                          <Badge
+                            key={company}
+                            variant="secondary"
+                            className="bg-zinc-100 text-zinc-900 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700"
+                          >
+                            {company}
+                          </Badge>
+                        ))
+                      ) : (
+                        <span className="text-xs text-muted-foreground">No company information available</span>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </button>
+            </div>
+
 
             <div className="space-y-3">
-            {problem?.hints && problem.hints.length > 0 ? (
-              problem.hints.map((hint: string, idx: number) => (
-                <button
-                  key={idx}
-                  onClick={() => toggleHint(idx)}
-                  className="w-full text-left"
-                >
-                  <div className="overflow-hidden rounded-xl border border-border/60 bg-muted/30 transition-colors hover:border-amber-500/30 dark:border-zinc-700/50 dark:bg-zinc-900/40">
-                    <div className="flex items-center justify-between px-4 py-3">
-                      <div className="flex items-center gap-2 text-amber-400">
-                        <Lightbulb className="h-4 w-4" />
-                        <span className="font-medium">Hint {idx + 1}</span>
+              {problem?.hints && problem.hints.length > 0 ? (
+                problem.hints.map((hint: string, idx: number) => (
+                  <button
+                    key={idx}
+                    onClick={() => toggleHint(idx)}
+                    className="w-full text-left"
+                  >
+                    <div className="overflow-hidden rounded-xl border border-border/60 bg-muted/30 transition-colors hover:border-amber-500/30 dark:border-zinc-700/50 dark:bg-zinc-900/40">
+                      <div className="flex items-center justify-between px-4 py-3">
+                        <div className="flex items-center gap-2 text-amber-400">
+                          <Lightbulb className="h-4 w-4" />
+                          <span className="font-medium">Hint {idx + 1}</span>
+                        </div>
+                        <ChevronDown
+                          className={cn(
+                            "h-4 w-4 text-muted-foreground transition-transform dark:text-zinc-500",
+                            expandedHints.includes(idx) && "rotate-180"
+                          )}
+                        />
                       </div>
-                      <ChevronDown
-                        className={cn(
-                          "h-4 w-4 text-muted-foreground transition-transform dark:text-zinc-500",
-                          expandedHints.includes(idx) && "rotate-180"
-                        )}
-                      />
+                      {expandedHints.includes(idx) && (
+                        <div className="border-t border-border/60 px-4 py-3 text-sm text-muted-foreground dark:border-zinc-700/50 dark:text-zinc-400">
+                          {hint}
+                        </div>
+                      )}
                     </div>
-                    {expandedHints.includes(idx) && (
-                      <div className="border-t border-border/60 px-4 py-3 text-sm text-muted-foreground dark:border-zinc-700/50 dark:text-zinc-400">
-                        {hint}
-                      </div>
-                    )}
-                  </div>
-                </button>
-              ))
-            ) : (
-              <div className="flex flex-col items-center justify-center py-20 text-center">
-                <HelpCircle className="h-12 w-12 text-zinc-600" />
-                <p className="mt-4 text-sm text-muted-foreground">No hints available</p>
-              </div>
-            )}
-          </div>
+                  </button>
+                ))
+              ) : (
+                <div className="flex flex-col items-center justify-center py-20 text-center">
+                  <HelpCircle className="h-12 w-12 text-zinc-600" />
+                  <p className="mt-4 text-sm text-muted-foreground">No hints available</p>
+                </div>
+              )}
+            </div>
 
-            
+
           </div>
         )}
 
