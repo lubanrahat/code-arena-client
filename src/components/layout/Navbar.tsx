@@ -27,6 +27,7 @@ import { LayoutDashboard, LogOut, Sparkles, Terminal } from "lucide-react";
 import { useAuthUser } from "@/hooks/useAuth";
 import { useAuthContext } from "@/providers/AuthProvider";
 import { useRouter } from "next/navigation";
+import ThemeDropdown from "@/components/ui/theme-dropdown";
 
 
 export default function Navbar() {
@@ -67,6 +68,7 @@ export default function Navbar() {
         <Logo />
         <NavItems items={navItems} />
         <div className="flex items-center space-x-3">
+          <ThemeDropdown />
           {user ? (
             <div className="flex items-center gap-3">
               <DropdownMenu>
@@ -108,6 +110,13 @@ export default function Navbar() {
                     >
                       <LayoutDashboard className="mr-2 h-4 w-4" />
                       <span>Dashboard</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => router.push("/profile")}
+                      className="cursor-pointer py-2"
+                    >
+                      <LayoutDashboard className="mr-2 h-4 w-4" />
+                      <span>Profile</span>
                     </DropdownMenuItem>
                   </DropdownMenuGroup>
                   <DropdownMenuSeparator />
@@ -156,6 +165,9 @@ export default function Navbar() {
             items={navItems}
             className="flex flex-col space-x-0 space-y-4 relative w-full items-start"
           />
+          <div className="w-full flex items-center justify-end pr-1">
+            <ThemeDropdown />
+          </div>
           <div className="border-t border-gray-100 dark:border-neutral-800 my-4 w-full" />
           <div className="flex flex-col gap-4 w-full">
             {user ? (

@@ -3,6 +3,7 @@ import "./globals.css";
 import { Inter } from "next/font/google";
 import QueryProviders from "@/providers/QueryProvider";
 import { AuthProvider } from "@/providers/AuthProvider";
+import ThemeProvider from "@/providers/ThemeProvider";
 import NavbarWrapper from "@/components/layout/NavbarWrapper";
 
 const inter = Inter({
@@ -23,12 +24,14 @@ export default function RootLayout({
   return (
     <html lang="en" className={inter.className} suppressHydrationWarning>
       <body className="antialiased font-sans">
-        <AuthProvider>
-          <QueryProviders>
-            <NavbarWrapper />
-            {children}
-          </QueryProviders>
-        </AuthProvider>
+        <ThemeProvider>
+          <AuthProvider>
+            <QueryProviders>
+              <NavbarWrapper />
+              {children}
+            </QueryProviders>
+          </AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

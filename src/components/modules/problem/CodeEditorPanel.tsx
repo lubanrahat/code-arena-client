@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from "react";
 import Editor from "@monaco-editor/react";
+import { useTheme } from "next-themes";
 import {
   Play,
   Send,
@@ -13,6 +14,7 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
+import { cn } from "@/lib/utils";
 
 interface CodeSnippet {
   code: string;
@@ -86,7 +88,11 @@ export default function CodeEditorPanel({
   
   // Editor Settings
   const [fontSize, setFontSize] = useState(14);
-  const [theme, setTheme] = useState("vs-dark");
+  const [editorTheme, setEditorTheme] = useState("vs-dark");
+  const [autoTheme, setAutoTheme] = useState(true);
+
+  const { resolvedTheme, setTheme: setAppTheme } = useTheme();
+  const isDark = resolvedTheme === "dark";
 
   const THEMES = [
     { id: "vs-dark", name: "Dark" },
@@ -173,6 +179,12 @@ export default function CodeEditorPanel({
       setCode(`// Write your ${currentLang.name} code here\n`);
     }
   }, [language, problem, currentLang.name]);
+
+  // Keep Monaco theme in sync with the app theme unless user picks a custom one.
+  useEffect(() => {
+    if (!autoTheme) return;
+    setEditorTheme(isDark ? "vs-dark" : "light");
+  }, [autoTheme, isDark]);
 
   const handleReset = () => {
     const snippets = problem?.codeSnippets;
@@ -268,18 +280,40 @@ export default function CodeEditorPanel({
   }, [code, language, problem, isRunning, isSubmitting, onSubmitResult, onLoadingChange, onActiveTabChange]);
 
   return (
-    <div className="flex h-full flex-col bg-[#18181b]">
+    <div
+      className={cn(
+        "flex h-full flex-col",
+        isDark ? "bg-[#18181b]" : "bg-white"
+      )}
+    >
       {/* Editor Toolbar */}
-      <div className="flex items-center justify-between border-b border-white/5 bg-[#1c1c1f]/80 px-4 py-2.5 text-xs backdrop-blur-sm">
+      <div
+        className={cn(
+          "flex items-center justify-between border-b bg-opacity-80 px-4 py-2.5 text-xs backdrop-blur-sm",
+          isDark
+            ? "border-white/5 bg-[#1c1c1f]/80"
+            : "border-neutral-200/70 bg-white/70"
+        )}
+      >
         <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2 text-zinc-500">
+          <div
+            className={cn(
+              "flex items-center gap-2",
+              isDark ? "text-zinc-500" : "text-neutral-600"
+            )}
+          >
             <Clock className="h-4 w-4" />
             <span className="font-mono text-sm">{formatTime(timePassed)}</span>
           </div>
           <select
             value={language}
             onChange={(e) => setLanguage(e.target.value)}
-            className="rounded-lg border border-zinc-600/50 bg-zinc-800/50 px-3 py-1.5 text-sm text-zinc-200 focus:border-emerald-500/50 focus:outline-none focus:ring-1 focus:ring-emerald-500/30"
+            className={cn(
+              "rounded-lg border px-3 py-1.5 text-sm focus:border-emerald-500/50 focus:outline-none focus:ring-1 focus:ring-emerald-500/30",
+              isDark
+                ? "border-zinc-600/50 bg-zinc-800/50 text-zinc-200"
+                : "border-neutral-200 bg-white/80 text-neutral-900"
+            )}
           >
               {LANGUAGES.map((lang) => (
                 <option key={lang.id} value={lang.id}>
@@ -292,23 +326,56 @@ export default function CodeEditorPanel({
         <div className="flex items-center gap-1">
           <button
             onClick={handleReset}
-            className="rounded-lg p-2 text-zinc-500 transition-colors hover:bg-white/5 hover:text-zinc-200"
+            className={cn(
+              "rounded-lg p-2 transition-colors",
+              isDark
+                ? "text-zinc-500 hover:bg-white/5 hover:text-zinc-200"
+                : "text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900"
+            )}
             title="Reset code"
           >
             <RotateCcw className="h-4 w-4" />
           </button>
           <Popover>
             <PopoverTrigger asChild>
-              <button className="rounded-lg p-2 text-zinc-500 transition-colors hover:bg-white/5 hover:text-zinc-200" title="Settings">
+              <button
+                className={cn(
+                  "rounded-lg p-2 transition-colors",
+                  isDark
+                    ? "text-zinc-500 hover:bg-white/5 hover:text-zinc-200"
+                    : "text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900"
+                )}
+                title="Settings"
+              >
                 <Settings2 className="h-4 w-4" />
               </button>
             </PopoverTrigger>
-            <PopoverContent className="w-64 border-zinc-700/50 bg-zinc-900 text-zinc-200">
+            <PopoverContent
+              className={cn(
+                "w-64 border bg-opacity-95 backdrop-blur",
+                isDark
+                  ? "border-zinc-700/50 bg-zinc-900 text-zinc-200"
+                  : "border-neutral-200 bg-white text-neutral-900"
+              )}
+            >
               <div className="space-y-4 p-3">
-                <h4 className="border-b border-zinc-700/50 pb-2 text-sm font-medium">Editor Settings</h4>
+                <h4
+                  className={cn(
+                    "border-b pb-2 text-sm font-medium",
+                    isDark ? "border-zinc-700/50" : "border-neutral-200"
+                  )}
+                >
+                  Editor Settings
+                </h4>
                 <div className="space-y-3">
                   <div className="flex items-center justify-between text-sm">
-                    <Label className="text-zinc-400">Font size</Label>
+                    <Label
+                      className={cn(
+                        isDark ? "text-zinc-400" : "text-neutral-600"
+                      )}
+                    >
+                      Font size
+                    </Label>
                     <span className="font-mono text-emerald-400">{fontSize}px</span>
                   </div>
                   <Slider
@@ -322,11 +389,36 @@ export default function CodeEditorPanel({
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="text-sm text-zinc-400">Theme</Label>
+                  <Label className={cn("text-sm", isDark ? "text-zinc-400" : "text-neutral-600")}>Theme</Label>
                   <select
-                    value={theme}
-                    onChange={(e) => setTheme(e.target.value)}
-                    className="w-full rounded-lg border border-zinc-600/50 bg-zinc-800/50 px-3 py-2 text-sm text-zinc-200 focus:border-emerald-500/50 focus:outline-none"
+                    value={editorTheme}
+                    onChange={(e) => {
+                      const next = e.target.value;
+
+                      // If user picks standard Light/Dark, apply it to the whole app.
+                      if (next === "light") {
+                        setAutoTheme(true);
+                        setAppTheme("light");
+                        setEditorTheme("light");
+                        return;
+                      }
+                      if (next === "vs-dark") {
+                        setAutoTheme(true);
+                        setAppTheme("dark");
+                        setEditorTheme("vs-dark");
+                        return;
+                      }
+
+                      // Otherwise, treat it as a custom editor-only override.
+                      setAutoTheme(false);
+                      setEditorTheme(next);
+                    }}
+                    className={cn(
+                      "w-full rounded-lg border px-3 py-2 text-sm focus:border-emerald-500/50 focus:outline-none",
+                      isDark
+                        ? "border-zinc-600/50 bg-zinc-800/50 text-zinc-200"
+                        : "border-neutral-200 bg-white text-neutral-900"
+                    )}
                   >
                     {THEMES.map((t) => (
                       <option key={t.id} value={t.id}>
@@ -339,7 +431,15 @@ export default function CodeEditorPanel({
             </PopoverContent>
           </Popover>
 
-          <button className="rounded-lg p-2 text-zinc-500 transition-colors hover:bg-white/5 hover:text-zinc-200" title="Fullscreen">
+          <button
+            className={cn(
+              "rounded-lg p-2 transition-colors",
+              isDark
+                ? "text-zinc-500 hover:bg-white/5 hover:text-zinc-200"
+                : "text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900"
+            )}
+            title="Fullscreen"
+          >
             <Maximize2 className="h-4 w-4" />
           </button>
         </div>
@@ -350,7 +450,7 @@ export default function CodeEditorPanel({
         <Editor
           height="100%"
           language={currentLang.monacoId}
-          theme={theme}
+          theme={editorTheme}
           beforeMount={handleEditorWillMount}
           value={code}
           onChange={(value) => setCode(value || "")}
@@ -374,11 +474,23 @@ export default function CodeEditorPanel({
       </div>
 
       {/* Bottom Action Bar */}
-      <div className="flex items-center justify-end gap-3 border-t border-white/5 bg-[#1c1c1f]/80 px-4 py-3 backdrop-blur-sm">
+      <div
+        className={cn(
+          "flex items-center justify-end gap-3 border-t bg-opacity-80 px-4 py-3 backdrop-blur-sm",
+          isDark
+            ? "border-white/5 bg-[#1c1c1f]/80"
+            : "border-neutral-200/70 bg-white/70"
+        )}
+      >
         <button
           onClick={handleRun}
           disabled={isRunning || isSubmitting}
-          className="flex items-center gap-2 rounded-xl border border-zinc-600/50 bg-zinc-800/50 px-5 py-2.5 text-sm font-medium text-zinc-200 transition-all hover:bg-zinc-700/50 disabled:cursor-not-allowed disabled:opacity-50"
+          className={cn(
+            "flex items-center gap-2 rounded-xl border px-5 py-2.5 text-sm font-medium transition-all disabled:cursor-not-allowed disabled:opacity-50",
+            isDark
+              ? "border-zinc-600/50 bg-zinc-800/50 text-zinc-200 hover:bg-zinc-700/50"
+              : "border-neutral-200 bg-white/80 text-neutral-900 hover:bg-neutral-100/70"
+          )}
         >
           <Play className="h-4 w-4" />
           {isRunning ? "Running..." : "Run"}

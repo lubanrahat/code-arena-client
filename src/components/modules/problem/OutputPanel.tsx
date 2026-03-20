@@ -46,15 +46,15 @@ export default function OutputPanel({
   isLoading,
 }: OutputPanelProps) {
   return (
-    <div className="flex h-full flex-col overflow-hidden bg-[#18181b]">
+    <div className="flex h-full flex-col overflow-hidden bg-background">
       {/* Tab Bar */}
-      <div className="flex items-center gap-1 border-b border-white/5 bg-[#1c1c1f]/80 px-4 py-2 backdrop-blur-sm">
+      <div className="flex items-center gap-1 border-b border-border/50 bg-background/70 px-4 py-2 backdrop-blur-sm">
         <button
           onClick={() => onTabChange("run")}
           className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all ${
             activeTab === "run"
-              ? "bg-white/10 text-white"
-              : "text-zinc-500 hover:bg-white/5 hover:text-zinc-300"
+              ? "bg-primary/10 text-foreground dark:bg-white/10 dark:text-white"
+              : "text-muted-foreground hover:bg-primary/5 hover:text-foreground dark:text-zinc-500 dark:hover:bg-white/5 dark:hover:text-zinc-300"
           }`}
         >
           <Terminal className="h-4 w-4" />
@@ -64,8 +64,8 @@ export default function OutputPanel({
           onClick={() => onTabChange("submit")}
           className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all ${
             activeTab === "submit"
-              ? "bg-white/10 text-white"
-              : "text-zinc-500 hover:bg-white/5 hover:text-zinc-300"
+              ? "bg-primary/10 text-foreground dark:bg-white/10 dark:text-white"
+              : "text-muted-foreground hover:bg-primary/5 hover:text-foreground dark:text-zinc-500 dark:hover:bg-white/5 dark:hover:text-zinc-300"
           }`}
         >
           Submission Result
@@ -75,7 +75,7 @@ export default function OutputPanel({
       {/* Content */}
       <div className="flex-1 overflow-y-auto p-4">
         {isLoading && (
-          <div className="flex h-full flex-col items-center justify-center gap-3 text-zinc-500">
+          <div className="flex h-full flex-col items-center justify-center gap-3 text-muted-foreground dark:text-zinc-500">
             <Loader2 className="h-6 w-6 animate-spin text-emerald-500" />
             <span className="text-sm">
               {activeTab === "run" ? "Running your code..." : "Submitting..."}
@@ -95,12 +95,12 @@ export default function OutputPanel({
                         ? "text-emerald-400"
                         : runResult.status === "Error" || runResult.status === "Wrong Answer" || runResult.stderr
                           ? "text-rose-400"
-                          : "text-zinc-300"
+                          : "text-foreground dark:text-zinc-300"
                     }`}
                   >
                     {runResult.status}
                   </span>
-                  <div className="flex items-center gap-3 text-xs text-zinc-500">
+                  <div className="flex items-center gap-3 text-xs text-muted-foreground dark:text-zinc-500">
                     {runResult.time && <span>⏱ {runResult.time}</span>}
                     {runResult.memory && <span>💾 {runResult.memory}</span>}
                   </div>
@@ -109,10 +109,10 @@ export default function OutputPanel({
                 {/* Stdout */}
                 {runResult.stdout && (
                   <div>
-                    <label className="text-xs font-medium uppercase tracking-wider text-zinc-500">
+                    <label className="text-xs font-medium uppercase tracking-wider text-muted-foreground dark:text-zinc-500">
                       Output
                     </label>
-                    <pre className="mt-2 overflow-x-auto whitespace-pre-wrap rounded-xl border border-zinc-700/50 bg-zinc-900/40 p-3 font-mono text-sm text-zinc-300">
+                    <pre className="mt-2 overflow-x-auto whitespace-pre-wrap rounded-xl border border-border/60 bg-muted/30 p-3 font-mono text-sm text-foreground dark:border-zinc-700/50 dark:bg-zinc-900/40 dark:text-zinc-300">
                       {runResult.stdout}
                     </pre>
                   </div>
@@ -143,8 +143,8 @@ export default function OutputPanel({
                 )}
               </div>
             ) : (
-              <div className="flex h-full flex-col items-center justify-center gap-2 text-sm text-zinc-500">
-                <Terminal className="h-10 w-10 text-zinc-600" />
+              <div className="flex h-full flex-col items-center justify-center gap-2 text-sm text-muted-foreground">
+                <Terminal className="h-10 w-10 text-zinc-600 dark:text-zinc-600" />
                 <p>Click &quot;Run&quot; to execute your code</p>
               </div>
             )}
@@ -191,11 +191,11 @@ export default function OutputPanel({
                           ) : (
                             <XCircle className="h-4 w-4 text-rose-400" />
                           )}
-                          <span className="text-sm font-medium text-zinc-300">
+                          <span className="text-sm font-medium text-foreground dark:text-zinc-300">
                             Test Case {tc.testCase}
                           </span>
                         </div>
-                        <div className="flex items-center gap-2 text-xs text-zinc-500">
+                        <div className="flex items-center gap-2 text-xs text-muted-foreground dark:text-zinc-500">
                           {tc.time && <span>{tc.time}</span>}
                           {tc.memory && <span>{tc.memory}</span>}
                         </div>
@@ -204,12 +204,16 @@ export default function OutputPanel({
                       {!tc.passed && (
                         <div className="mt-2 space-y-1.5 font-mono text-sm">
                           <div>
-                            <span className="text-zinc-500">Expected: </span>
+                            <span className="text-muted-foreground dark:text-zinc-500">
+                              Expected:{" "}
+                            </span>
                             <span className="text-emerald-400">{tc.expected}</span>
                           </div>
                           {tc.stdout && (
                             <div>
-                              <span className="text-zinc-500">Got: </span>
+                              <span className="text-muted-foreground dark:text-zinc-500">
+                                Got:{" "}
+                              </span>
                               <span className="text-rose-400">{tc.stdout}</span>
                             </div>
                           )}
@@ -225,8 +229,8 @@ export default function OutputPanel({
                 </div>
               </div>
             ) : (
-              <div className="flex h-full flex-col items-center justify-center gap-2 text-sm text-zinc-500">
-                <Terminal className="h-10 w-10 text-zinc-600" />
+              <div className="flex h-full flex-col items-center justify-center gap-2 text-sm text-muted-foreground dark:text-zinc-500">
+                <Terminal className="h-10 w-10 text-zinc-600 dark:text-zinc-600" />
                 <p>Click &quot;Submit&quot; to test against all test cases</p>
               </div>
             )}
