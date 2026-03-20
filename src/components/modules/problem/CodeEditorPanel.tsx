@@ -10,11 +10,28 @@ import {
   RotateCcw,
   Clock,
   Settings2,
+  ChevronDown,
+  Terminal,
+  Settings,
 } from "lucide-react";
+
+
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import ThemeDropdown from "@/components/ui/theme-dropdown";
+import UserMenu from "@/components/layout/UserMenu";
+
+
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { cn } from "@/lib/utils";
+import confetti from "canvas-confetti";
 
 interface CodeSnippet {
   code: string;
@@ -85,7 +102,7 @@ export default function CodeEditorPanel({
   const [timePassed, setTimePassed] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
+
   // Editor Settings
   const [fontSize, setFontSize] = useState(14);
   const [editorTheme, setEditorTheme] = useState("vs-dark");
@@ -254,6 +271,39 @@ export default function CodeEditorPanel({
 
       const result = response?.data || response;
       onSubmitResult(result);
+
+      // Trigger confetti if all test cases passed
+      if (result && result.status === "Accepted") {
+        const end = Date.now() + 3 * 1000; // 3 seconds
+        const colors = ["#a786ff", "#fd8bbc", "#eca18", "#f8deb1"];
+
+        const frame = () => {
+          if (Date.now() > end) return;
+
+          confetti({
+            particleCount: 2,
+            angle: 60,
+            spread: 55,
+            startVelocity: 60,
+            origin: { x: 0, y: 0.5 },
+            colors: colors,
+            zIndex: 9999,
+          });
+          confetti({
+            particleCount: 2,
+            angle: 120,
+            spread: 55,
+            startVelocity: 60,
+            origin: { x: 1, y: 0.5 },
+            colors: colors,
+            zIndex: 9999,
+          });
+
+          requestAnimationFrame(frame);
+        };
+
+        frame();
+      }
     } catch (error: unknown) {
       const errMsg = error instanceof Error ? error.message : "Submission failed";
       onSubmitResult({
@@ -295,39 +345,67 @@ export default function CodeEditorPanel({
             : "border-neutral-200/70 bg-white/70"
         )}
       >
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button
+                className={cn(
+                  "flex items-center gap-2 rounded-lg border px-3 py-1.5 text-sm transition-all hover:bg-zinc-100/10 active:scale-95",
+                  isDark
+                    ? "border-zinc-700/50 bg-zinc-800/40 text-zinc-200"
+                    : "border-neutral-200 bg-white/50 text-neutral-900"
+                )}
+              >
+                <div className="flex h-4 w-4 items-center justify-center rounded-sm bg-emerald-500/20 text-emerald-500">
+                  <Terminal className="h-3 w-3" />
+                </div>
+                <span className="font-medium">{currentLang.name}</span>
+                <ChevronDown className="h-3.5 w-3.5 opacity-50" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-48">
+              <DropdownMenuRadioGroup
+                value={language}
+                onValueChange={(val) => setLanguage(val)}
+              >
+                {LANGUAGES.map((lang) => (
+                  <DropdownMenuRadioItem
+                    key={lang.id}
+                    value={lang.id}
+                    className="cursor-pointer"
+                  >
+                    {lang.name}
+                  </DropdownMenuRadioItem>
+                ))}
+              </DropdownMenuRadioGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
           <div
             className={cn(
-              "flex items-center gap-2",
-              isDark ? "text-zinc-500" : "text-neutral-600"
-            )}
-          >
-            <Clock className="h-4 w-4" />
-            <span className="font-mono text-sm">{formatTime(timePassed)}</span>
-          </div>
-          <select
-            value={language}
-            onChange={(e) => setLanguage(e.target.value)}
-            className={cn(
-              "rounded-lg border px-3 py-1.5 text-sm focus:border-emerald-500/50 focus:outline-none focus:ring-1 focus:ring-emerald-500/30",
+              "flex items-center gap-2 rounded-lg px-3 py-1.5 font-mono text-sm shadow-sm transition-colors",
               isDark
-                ? "border-zinc-600/50 bg-zinc-800/50 text-zinc-200"
-                : "border-neutral-200 bg-white/80 text-neutral-900"
+                ? "bg-zinc-800/40 text-emerald-400/90 ring-1 ring-white/5"
+                : "bg-emerald-50 text-emerald-700 ring-1 ring-emerald-100"
             )}
+            title="Time elapsed"
           >
-              {LANGUAGES.map((lang) => (
-                <option key={lang.id} value={lang.id}>
-                  {lang.name}
-                </option>
-              ))}
-            </select>
+            <Clock className="h-3.5 w-3.5 animate-pulse" />
+            <span>{formatTime(timePassed)}</span>
+          </div>
         </div>
 
+
         <div className="flex items-center gap-1">
+          <div className="mr-2 flex items-center gap-1.5 py-1 px-2 rounded-full bg-zinc-500/10">
+             <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+             <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">Ready</span>
+          </div>
+          
           <button
             onClick={handleReset}
             className={cn(
-              "rounded-lg p-2 transition-colors",
+              "rounded-lg p-2 transition-all hover:scale-105 active:scale-95",
               isDark
                 ? "text-zinc-500 hover:bg-white/5 hover:text-zinc-200"
                 : "text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900"
@@ -336,104 +414,107 @@ export default function CodeEditorPanel({
           >
             <RotateCcw className="h-4 w-4" />
           </button>
+
+          
+          
           <Popover>
             <PopoverTrigger asChild>
               <button
                 className={cn(
-                  "rounded-lg p-2 transition-colors",
+                  "rounded-lg p-2 transition-all hover:scale-105 active:scale-95",
                   isDark
                     ? "text-zinc-500 hover:bg-white/5 hover:text-zinc-200"
                     : "text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900"
                 )}
                 title="Settings"
               >
-                <Settings2 className="h-4 w-4" />
+                <Settings className="h-4 w-4" />
               </button>
             </PopoverTrigger>
             <PopoverContent
+              align="end"
               className={cn(
-                "w-64 border bg-opacity-95 backdrop-blur",
-                isDark
-                  ? "border-zinc-700/50 bg-zinc-900 text-zinc-200"
-                  : "border-neutral-200 bg-white text-neutral-900"
+                "w-72 border-none p-0 shadow-2xl ring-1",
+                isDark ? "bg-[#1c1c1f] ring-white/10" : "bg-white ring-black/5"
               )}
             >
-              <div className="space-y-4 p-3">
-                <h4
-                  className={cn(
-                    "border-b pb-2 text-sm font-medium",
-                    isDark ? "border-zinc-700/50" : "border-neutral-200"
-                  )}
-                >
-                  Editor Settings
-                </h4>
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between text-sm">
-                    <Label
-                      className={cn(
-                        isDark ? "text-zinc-400" : "text-neutral-600"
-                      )}
-                    >
-                      Font size
-                    </Label>
-                    <span className="font-mono text-emerald-400">{fontSize}px</span>
+              <div className="p-4">
+                <div className="flex items-center gap-2 border-b pb-3 mb-4">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-500">
+                    <Settings2 className="h-4 w-4" />
                   </div>
-                  <Slider
-                    value={[fontSize]}
-                    min={10}
-                    max={24}
-                    step={1}
-                    onValueChange={(val) => setFontSize(val[0])}
-                    className="py-2"
-                  />
+                  <div>
+                    <h4 className="text-sm font-semibold">Editor Settings</h4>
+                    <p className="text-[10px] text-muted-foreground">Customize your coding environment</p>
+                  </div>
                 </div>
 
-                <div className="space-y-2">
-                  <Label className={cn("text-sm", isDark ? "text-zinc-400" : "text-neutral-600")}>Theme</Label>
-                  <select
-                    value={editorTheme}
-                    onChange={(e) => {
-                      const next = e.target.value;
+                <div className="space-y-6">
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <Label className="text-xs font-medium text-muted-foreground">Font Size</Label>
+                      <span className="rounded-md bg-emerald-500/10 px-2 py-0.5 font-mono text-xs font-bold text-emerald-500">
+                        {fontSize}px
+                      </span>
+                    </div>
+                    <Slider
+                      value={[fontSize]}
+                      min={12}
+                      max={20}
+                      step={1}
+                      onValueChange={(val) => setFontSize(val[0])}
+                      className="cursor-pointer"
+                    />
+                  </div>
 
-                      // If user picks standard Light/Dark, apply it to the whole app.
-                      if (next === "light") {
-                        setAutoTheme(true);
-                        setAppTheme("light");
-                        setEditorTheme("light");
-                        return;
-                      }
-                      if (next === "vs-dark") {
-                        setAutoTheme(true);
-                        setAppTheme("dark");
-                        setEditorTheme("vs-dark");
-                        return;
-                      }
-
-                      // Otherwise, treat it as a custom editor-only override.
-                      setAutoTheme(false);
-                      setEditorTheme(next);
-                    }}
-                    className={cn(
-                      "w-full rounded-lg border px-3 py-2 text-sm focus:border-emerald-500/50 focus:outline-none",
-                      isDark
-                        ? "border-zinc-600/50 bg-zinc-800/50 text-zinc-200"
-                        : "border-neutral-200 bg-white text-neutral-900"
-                    )}
-                  >
-                    {THEMES.map((t) => (
-                      <option key={t.id} value={t.id}>
-                        {t.name}
-                      </option>
-                    ))}
-                  </select>
+                  <div className="space-y-3">
+                    <Label className="text-xs font-medium text-muted-foreground">Color Theme</Label>
+                    <div className="grid grid-cols-1 gap-2">
+                       <select
+                        value={editorTheme}
+                        onChange={(e) => {
+                          const next = e.target.value;
+                          if (next === "light") {
+                            setAutoTheme(true);
+                            setAppTheme("light");
+                            setEditorTheme("light");
+                            return;
+                          }
+                          if (next === "vs-dark") {
+                            setAutoTheme(true);
+                            setAppTheme("dark");
+                            setEditorTheme("vs-dark");
+                            return;
+                          }
+                          setAutoTheme(false);
+                          setEditorTheme(next);
+                        }}
+                        className={cn(
+                          "w-full rounded-lg border px-3 py-2 text-sm transition-all focus:outline-hidden focus:ring-1 focus:ring-emerald-500/50",
+                          isDark
+                            ? "border-zinc-700/50 bg-zinc-800/50 text-zinc-200"
+                            : "border-neutral-200 bg-zinc-50 text-neutral-900"
+                        )}
+                      >
+                        {THEMES.map((t) => (
+                          <option key={t.id} value={t.id}>
+                            {t.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
                 </div>
+              </div>
+              <div className={cn("border-t p-3 text-center", isDark ? "border-white/5" : "border-neutral-100")}>
+                 <p className="text-[10px] text-muted-foreground italic">Settings are saved locally</p>
               </div>
             </PopoverContent>
           </Popover>
 
           <button
             className={cn(
-              "rounded-lg p-2 transition-colors",
+              "rounded-lg p-2 transition-all hover:scale-105 active:scale-95",
               isDark
                 ? "text-zinc-500 hover:bg-white/5 hover:text-zinc-200"
                 : "text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900"
@@ -442,7 +523,14 @@ export default function CodeEditorPanel({
           >
             <Maximize2 className="h-4 w-4" />
           </button>
+          
+          <div className="flex items-center gap-1.5 ml-2 pl-2 border-l border-zinc-500/20">
+            <ThemeDropdown />
+            <UserMenu />
+          </div>
         </div>
+
+
       </div>
 
       {/* Monaco Editor */}

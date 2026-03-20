@@ -44,8 +44,9 @@ const TABS = [
   { id: "Description", icon: FileCode2, label: "Description" },
   { id: "Discussion", icon: MessageCircle, label: "Discussion" },
   { id: "Submissions", icon: FileCode2, label: "Submissions" },
-  { id: "ai-discussion", icon: Bot, label: "AI Discussion" },
+  { id: "ai-discussion", icon: Bot, label: "CodeArenaBot" },
 ];
+
 
 export default function ProblemDescription({ problem }: ProblemDescriptionProps) {
   const [activeTab, setActiveTab] = useState("Description");

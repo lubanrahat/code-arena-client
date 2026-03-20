@@ -143,9 +143,8 @@ export default function AiDiscussion({ problem }: AiDiscussionProps) {
           </div>
           <div>
             <h3 className="text-sm font-semibold text-zinc-100">
-              CodeArena Bot
+              CodeArenaBot
             </h3>
-            <p className="text-[10px] text-zinc-500">Powered by Gemini</p>
           </div>
         </div>
         <button
@@ -203,6 +202,7 @@ export default function AiDiscussion({ problem }: AiDiscussionProps) {
                           className,
                           children,
                           ...props
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
                         }: any) {
                           const match = /language-(\w+)/.exec(className || "");
                           return !inline && match ? (
@@ -282,8 +282,9 @@ export default function AiDiscussion({ problem }: AiDiscussionProps) {
                 )}
               </div>
               <span className="text-[10px] text-zinc-600 px-1">
-                {msg.role === "user" ? "You" : "AI"}
+                {msg.role === "user" ? "You" : "CodeArenaBot"}
               </span>
+
             </motion.div>
           ))}
         </AnimatePresence>
@@ -298,7 +299,7 @@ export default function AiDiscussion({ problem }: AiDiscussionProps) {
               <Bot size={16} />
             </div>
             <Loader2 size={16} className="animate-spin" />
-            <span className="text-xs italic">Tutor is thinking...</span>
+            <span className="text-xs italic">CodeArenaBot is thinking...</span>
           </motion.div>
         )}
       </div>
