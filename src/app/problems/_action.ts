@@ -79,3 +79,16 @@ export const getSubmissionsForProblem = async (problemId: string) => {
     throw error;
   }
 };
+export const getAllSubmissions = async () => {
+  try {
+    const token = await getCookie("token");
+    const headers = token ? { Cookie: `token=${token}` } : undefined;
+    const response = await httpClient.get("/submission/get-all-submissions", {
+      headers,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch all submissions:", error);
+    throw error;
+  }
+};

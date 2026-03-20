@@ -2,8 +2,9 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { Send, Bot, Loader2, RefreshCcw, Copy, Check } from "lucide-react";
+import { Send, Bot, RefreshCcw, Copy, Check } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { LoaderOne } from "@/components/ui/loader";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
@@ -298,8 +299,11 @@ export default function AiDiscussion({ problem }: AiDiscussionProps) {
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-400">
               <Bot size={16} />
             </div>
-            <Loader2 size={16} className="animate-spin" />
-            <span className="text-xs italic">CodeArenaBot is thinking...</span>
+            <div className="flex items-center gap-3">
+              <LoaderOne />
+              <span className="text-xs italic text-zinc-500">CodeArenaBot is thinking...</span>
+            </div>
+
           </motion.div>
         )}
       </div>

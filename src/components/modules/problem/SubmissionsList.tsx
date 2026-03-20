@@ -2,7 +2,9 @@
 
 import React, { useEffect, useState } from "react";
 import { getSubmissionsForProblem } from "@/app/problems/_action";
-import { Clock, Loader2, Lightbulb } from "lucide-react";
+import { Clock, Lightbulb } from "lucide-react";
+import { LoaderOne } from "@/components/ui/loader";
+
 import { format } from "date-fns";
 import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
 import { X } from "lucide-react";
@@ -49,12 +51,13 @@ export default function SubmissionsList({ problemId, problemTitle }: Submissions
 
   if (loading) {
     return (
-      <div className="flex h-40 items-center justify-center text-gray-400">
-        <Loader2 className="w-6 h-6 animate-spin mr-2" />
+      <div className="flex h-40 flex-col items-center justify-center text-gray-400 gap-3">
+        <LoaderOne />
         <span className="text-sm">Loading submissions...</span>
       </div>
     );
   }
+
 
   if (error) {
     return (

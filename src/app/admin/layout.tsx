@@ -8,7 +8,9 @@ import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
 import { Sidebar, SidebarBody, SidebarLink } from "@/components/ui/sidebar";
 import { useAuth } from "@/hooks/useAuth";
-import { Code2, Loader2, Plus } from "lucide-react";
+import { Code2, Plus } from "lucide-react";
+import { LoaderOne } from "@/components/ui/loader";
+
 import Link from "next/link";
 
 export default function AdminLayout({
@@ -53,8 +55,8 @@ export default function AdminLayout({
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+      <div className="flex h-[80vh] items-center justify-center">
+        <LoaderOne />
       </div>
     );
   }

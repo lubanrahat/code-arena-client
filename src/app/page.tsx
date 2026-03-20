@@ -9,11 +9,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import LoaderOneDemo from "@/components/ui/loader-one-demo";
 
 export default function Home() {
   return (
     <div className="relative min-h-screen w-full bg-background overflow-hidden">
-      {/* Diagonal grid background (bottom-left fade) */}
+      
       <div
         className="absolute inset-0 pointer-events-none opacity-90 dark:opacity-0"
         style={{

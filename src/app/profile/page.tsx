@@ -6,7 +6,9 @@ import MyProgress from "@/components/modules/Profile/MyProgress";
 import MyActivity from "@/components/modules/Profile/MyActivity";
 import ProblemStats from "@/components/modules/Profile/ProblemStats";
 import SkillAnalysis from "@/components/modules/Profile/SkillAnalysis";
+import UserSubmissions from "@/components/modules/Profile/UserSubmissions";
 import { Skeleton } from "@/components/ui/skeleton";
+
 import { useAuthUser } from "@/hooks/useAuth";
 
 export default function ProfilePage() {
@@ -67,7 +69,12 @@ export default function ProfilePage() {
         <MyActivity stats={profileData.stats} />
         <ProblemStats stats={profileData.stats} />
         <SkillAnalysis stats={profileData.stats} />
+        
+        <div className="mt-8 pt-8 border-t border-white/5">
+          <UserSubmissions />
+        </div>
       </div>
+
     </div>
   );
 }

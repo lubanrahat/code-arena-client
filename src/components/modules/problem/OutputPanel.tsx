@@ -1,7 +1,9 @@
 "use client";
 
 import React from "react";
-import { CheckCircle2, XCircle, Loader2, Terminal } from "lucide-react";
+import { CheckCircle2, XCircle, Terminal } from "lucide-react";
+import { LoaderOne } from "@/components/ui/loader";
+
 
 interface RunResult {
   stdout: string | null;
@@ -75,11 +77,9 @@ export default function OutputPanel({
       {/* Content */}
       <div className="flex-1 overflow-y-auto p-4">
         {isLoading && (
-          <div className="flex h-full flex-col items-center justify-center gap-3 text-muted-foreground dark:text-zinc-500">
-            <Loader2 className="h-6 w-6 animate-spin text-emerald-500" />
-            <span className="text-sm">
-              {activeTab === "run" ? "Running your code..." : "Submitting..."}
-            </span>
+          <div className="flex flex-col items-center justify-center py-12 space-y-4">
+            <LoaderOne />
+            <p className="text-zinc-500 text-sm font-medium animate-pulse">Running code...</p>
           </div>
         )}
 
