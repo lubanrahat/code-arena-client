@@ -73,9 +73,13 @@ export const problemCreateSchema = z.preprocess(
 
   editorial: z
     .string()
-    .min(10, "Editorial must be at least 10 characters")
     .max(20000, "Editorial must not exceed 20,000 characters")
-    .trim(),
+    .trim()
+    .optional(),
+
+  videoUrl: z.string().url("Invalid video URL").optional(),
+
+
 
   testCases: z
     .array(

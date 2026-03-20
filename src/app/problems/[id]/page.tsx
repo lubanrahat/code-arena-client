@@ -2,7 +2,12 @@
 
 import React, { useState, use } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { getProblemById } from "@/app/problems/_action";
+import {
+  getProblemById,
+  getSubmissionsForProblem,
+} from "@/app/problems/_action";
+
+import { motion } from "framer-motion";
 import {
   ResizableHandle,
   ResizablePanel,
@@ -11,6 +16,7 @@ import {
 import ProblemDescription from "@/components/modules/Problem/ProblemDescription";
 import CodeEditorPanel from "@/components/modules/Problem/CodeEditorPanel";
 import OutputPanel from "@/components/modules/Problem/OutputPanel";
+import { LoaderOne } from "@/components/ui/loader";
 
 interface RunResult {
   stdout: string | null;
@@ -60,13 +66,26 @@ export default function ProblemDetailsPage({ params }: PageProps) {
     queryFn: () => getProblemById(id),
   });
 
+  const { data: submissionsData } = useQuery({
+    queryKey: ["submissions", id],
+    queryFn: () => getSubmissionsForProblem(id),
+  });
+
+  const submissions = submissionsData?.data || submissionsData || [];
+
   if (isFetchingProblem) {
     return (
-      <div className="flex h-screen items-center justify-center bg-background">
-        <div className="flex flex-col items-center gap-3">
-          <div className="h-8 w-8 animate-spin rounded-full border-2 border-emerald-500/30 border-t-emerald-500" />
-          <span className="text-sm text-muted-foreground">Loading problem...</span>
-        </div>
+      <div className="flex h-screen w-full flex-col items-center justify-center bg-background">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="flex flex-col items-center gap-4"
+        >
+          <LoaderOne />
+          <span className="text-xs font-medium text-muted-foreground animate-pulse">
+            Loading challenge...
+          </span>
+        </motion.div>
       </div>
     );
   }
@@ -75,7 +94,9 @@ export default function ProblemDetailsPage({ params }: PageProps) {
     return (
       <div className="flex h-screen items-center justify-center bg-background">
         <div className="text-center">
-          <p className="text-sm font-medium text-muted-foreground">Failed to load problem</p>
+          <p className="text-sm font-medium text-muted-foreground">
+            Failed to load problem
+          </p>
           <p className="mt-1 text-xs text-muted-foreground/70">
             Please try again later.
           </p>
@@ -105,6 +126,7 @@ export default function ProblemDetailsPage({ params }: PageProps) {
             <ResizablePanel defaultSize={65} minSize={30}>
               <CodeEditorPanel
                 problem={problem}
+                submissions={submissions}
                 onRunResult={setRunResult}
                 onSubmitResult={setSubmitResult}
                 onLoadingChange={setIsLoading}

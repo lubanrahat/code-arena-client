@@ -62,7 +62,9 @@ const sampleData: ProblemCreateInput = {
   ],
   editorial:
     "The simplest approach is to reverse the string and check if it equals the original. A two-pointer approach works equally well: compare characters at positions i and n-1-i for i from 0 to n/2. A single-character string is always a palindrome.",
+  videoUrl: "https://www.youtube.com/watch?v=0hW6P9G5yP0",
   testCases: [
+
     { input: "racecar", output: "YES", isHidden: false },
     { input: "hello", output: "NO", isHidden: true },
     { input: "a", output: "YES", isHidden: false },
@@ -162,7 +164,9 @@ export default function CreateProblemForm() {
       constraints: "",
       hints: [""],
       editorial: "",
+      videoUrl: "",
       testCases: [{ input: "", output: "", isHidden: false }],
+
       codeSnippets: {
         JAVASCRIPT: {
           code: "function solution() {\n  // Write your code here\n}",
@@ -957,7 +961,7 @@ export default function CreateProblemForm() {
                           value={field.state.value || ""}
                           onChange={(e) => field.handleChange(e.target.value)}
                           onBlur={field.handleBlur}
-                          placeholder="Enter problem editorial/solution explanation"
+                          placeholder="Enter problem editorial/solution explanation (Supports HTML/Markdown)"
                           className="mt-2 min-h-32 resize-y"
                         />
                         {field.state.meta.errors.length > 0 && (
@@ -969,6 +973,31 @@ export default function CreateProblemForm() {
                     )}
                   </form.Field>
                 </div>
+                <div>
+                  <form.Field name="videoUrl">
+                    {(field) => (
+                      <>
+                        <Label htmlFor={field.name} className="font-medium">
+                          Video Tutorial URL (Optional)
+                        </Label>
+                        <Input
+                          id={field.name}
+                          value={field.state.value || ""}
+                          onChange={(e) => field.handleChange(e.target.value)}
+                          onBlur={field.handleBlur}
+                          placeholder="Ex: https://www.youtube.com/watch?v=..."
+                          className="mt-2"
+                        />
+                        {field.state.meta.errors.length > 0 && (
+                          <p className="text-sm text-red-500 mt-1">
+                            {field.state.meta.errors.join(", ")}
+                          </p>
+                        )}
+                      </>
+                    )}
+                  </form.Field>
+                </div>
+
               </CardContent>
             </Card>
 

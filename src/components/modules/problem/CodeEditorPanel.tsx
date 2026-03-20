@@ -79,11 +79,14 @@ interface SubmitResult {
 
 interface CodeEditorPanelProps {
   problem: Problem;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  submissions?: any[];
   onRunResult: (result: RunResult | null) => void;
   onSubmitResult: (result: SubmitResult | null) => void;
   onLoadingChange: (loading: boolean) => void;
   onActiveTabChange: (tab: "run" | "submit") => void;
 }
+
 
 const LANGUAGES = [
   { id: "JAVASCRIPT", name: "JavaScript", monacoId: "javascript" },
@@ -94,11 +97,13 @@ const LANGUAGES = [
 
 export default function CodeEditorPanel({
   problem,
+  submissions = [],
   onRunResult,
   onSubmitResult,
   onLoadingChange,
   onActiveTabChange,
 }: CodeEditorPanelProps) {
+
   const [language, setLanguage] = useState(LANGUAGES[0].id);
   const [code, setCode] = useState("");
   const [timePassed, setTimePassed] = useState(0);
@@ -193,8 +198,34 @@ export default function CodeEditorPanel({
     return `${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
   };
 
-  // Set initial code from problem's code snippets when language changes
+  // Set initial code from submissions or problem's code snippets when language changes
   useEffect(() => {
+    // Helper to parse sourceCode which might be a JSON string or object
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const parseSourceCode = (sourceCode: any) => {
+      if (!sourceCode) return null;
+      try {
+        const parsed = typeof sourceCode === "string" ? JSON.parse(sourceCode) : sourceCode;
+        return parsed?.code || (typeof parsed === "string" ? parsed : null);
+      } catch {
+        return typeof sourceCode === "string" ? sourceCode : null;
+      }
+    };
+
+    // 1. Try to find the latest submission for this language
+    const latestSubmission = [...submissions]
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+      .find((s) => s.language?.toUpperCase() === language?.toUpperCase());
+
+    if (latestSubmission) {
+      const savedCode = parseSourceCode(latestSubmission.sourceCode);
+      if (savedCode) {
+        setCode(savedCode);
+        return;
+      }
+    }
+
+    // 2. Fallback to problem snippets
     const snippets = problem?.codeSnippets;
     if (snippets && typeof snippets === "object") {
       const snippet = snippets[language];
@@ -206,7 +237,8 @@ export default function CodeEditorPanel({
     } else {
       setCode(`// Write your ${currentLang.name} code here\n`);
     }
-  }, [language, problem, currentLang.name]);
+  }, [language, problem, submissions, currentLang.name]);
+
 
   // Keep Monaco theme in sync with the app theme unless user picks a custom one.
   useEffect(() => {
