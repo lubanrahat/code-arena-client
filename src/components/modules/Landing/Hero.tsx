@@ -86,15 +86,13 @@ export default function Hero() {
   const [snippetIndex, setSnippetIndex] = useState(0);
   const [displayedCode, setDisplayedCode] = useState("");
   const [isTyping, setIsTyping] = useState(true);
-  const [isDone, setIsDone] = useState(false);
 
   const currentSnippet = codeSnippets[snippetIndex];
+  const isDone = isTyping && displayedCode.length === currentSnippet.code.length;
 
   useEffect(() => {
     let timeout: NodeJS.Timeout;
     const currentCode = currentSnippet.code;
-
-    setIsDone(false);
 
     if (isTyping) {
       if (displayedCode.length < currentCode.length) {
@@ -102,7 +100,6 @@ export default function Hero() {
           setDisplayedCode(currentCode.slice(0, displayedCode.length + 1));
         }, 22);
       } else {
-        setIsDone(true);
         timeout = setTimeout(() => setIsTyping(false), 2500);
       }
     } else {
@@ -119,7 +116,7 @@ export default function Hero() {
     }
 
     return () => clearTimeout(timeout);
-  }, [displayedCode, isTyping, snippetIndex, currentSnippet.code]);
+  }, [displayedCode, isTyping, currentSnippet.code]);
 
   return (
     <div className="relative min-h-screen flex flex-col justify-center overflow-hidden bg-white dark:bg-zinc-950">
@@ -253,6 +250,7 @@ export default function Hero() {
           <motion.div
             initial={{ opacity: 0, x: 40, scale: 0.96 }}
             animate={{ opacity: 1, x: 0, scale: 1 }}
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             transition={{ duration: 0.8, delay: 0.3, ease: [0.21, 0.47, 0.32, 0.98] as any }}
             className="flex-1 w-full max-w-[580px] lg:max-w-none"
           >
