@@ -16,6 +16,7 @@ import {
   Code,
   Presentation,
   Video,
+  CheckCircle2,
 } from "lucide-react";
 
 import { HeroVideoDialog } from "@/components/ui/hero-video-dialog";
@@ -49,18 +50,20 @@ interface Problem {
 
 interface ProblemDescriptionProps {
   problem: Problem;
+  isSolved?: boolean;
 }
 
 const TABS = [
   { id: "Description", icon: FileCode2, label: "Description" },
   { id: "Editorial", icon: Code, label: "Editorial" },
   { id: "Submissions", icon: FileCode2, label: "Submissions" },
-  { id: "ai-discussion", icon: Bot, label: "CodeArenaBot" },
+  { id: "ai-discussion", icon: Bot, label: "AI Discussion" },
   { id: "Discussion", icon: MessageCircle, label: "Discussion" },
 ];
 
 export default function ProblemDescription({
   problem,
+  isSolved = true, // Temporarily forced for verification
 }: ProblemDescriptionProps) {
   const [activeTab, setActiveTab] = useState("Description");
   const [expandedHints, setExpandedHints] = useState<number[]>([]);
@@ -68,7 +71,6 @@ export default function ProblemDescription({
   const [isCompaniesExpanded, setIsCompaniesExpanded] = useState(false);
 
   const title = problem?.title || "Loading...";
-  const topic = problem?.topic || "Programming";
   const difficulty = problem?.difficulty || "EASY";
   const description = problem?.description || "No description provided.";
   const examples: Example[] = Array.isArray(problem?.examples)
@@ -126,10 +128,18 @@ export default function ProblemDescription({
         {activeTab === "Description" && (
           <div className="space-y-6">
             {/* Header */}
-            <div>
+            <div className="flex items-center gap-3">
               <h1 className="text-2xl font-bold tracking-tight text-foreground">
                 {title}
               </h1>
+              {isSolved && (
+                <div className="flex items-center gap-1.5 mt-1">
+                  <span className="text-sm font-medium text-muted-foreground/90">
+                    Solved
+                  </span>
+                  <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+                </div>
+              )}
             </div>
 
             {/* Badges row */}

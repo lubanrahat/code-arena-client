@@ -45,6 +45,11 @@ interface SubmitResult {
   testCases: TestCaseResult[];
 }
 
+interface Submission {
+  id: string;
+  status: string;
+}
+
 interface PageProps {
   params: Promise<{ id: string }>;
 }
@@ -72,6 +77,11 @@ export default function ProblemDetailsPage({ params }: PageProps) {
   });
 
   const submissions = submissionsData?.data || submissionsData || [];
+  const isSolved = Array.isArray(submissions)
+    ? submissions.some((sub: Submission) =>
+        sub.status?.toLowerCase().includes("accepted"),
+      )
+    : false;
 
   if (isFetchingProblem) {
     return (
@@ -111,7 +121,7 @@ export default function ProblemDetailsPage({ params }: PageProps) {
     <div className="h-screen w-full overflow-hidden bg-background">
       <ResizablePanelGroup orientation="horizontal" className="h-full w-full">
         <ResizablePanel defaultSize={40} minSize={25}>
-          <ProblemDescription problem={problem} />
+          <ProblemDescription problem={problem} isSolved={isSolved} />
         </ResizablePanel>
 
         <ResizableHandle
