@@ -148,7 +148,7 @@ export default function Navbar() {
   );
 }
 
-const Logo = () => {
+export const Logo = () => {
   return (
     <Link
       href="/"

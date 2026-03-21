@@ -8,7 +8,7 @@ import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
 import { Sidebar, SidebarBody, SidebarLink } from "@/components/ui/sidebar";
 import { useAuth } from "@/hooks/useAuth";
-import { Code2, Plus } from "lucide-react";
+import { Code2, Plus, Terminal } from "lucide-react";
 import { LoaderOne } from "@/components/ui/loader";
 
 import Link from "next/link";
@@ -108,20 +108,34 @@ export default function AdminLayout({
   );
 }
 
+// export const Logo = () => {
+//   return (
+//     <Link
+//       href="/"
+//       className="relative z-20 flex items-center space-x-2 py-1 text-sm font-normal text-black"
+//     >
+//       <div className="h-5 w-6 shrink-0 rounded-tl-lg rounded-tr-sm rounded-br-lg rounded-bl-sm bg-black dark:bg-white" />
+//       <motion.span
+//         initial={{ opacity: 0 }}
+//         animate={{ opacity: 1 }}
+//         className="font-medium whitespace-pre text-black dark:text-white"
+//       >
+//         Code Arena
+//       </motion.span>
+//     </Link>
+//   );
+// };
+
 export const Logo = () => {
   return (
     <Link
       href="/"
-      className="relative z-20 flex items-center space-x-2 py-1 text-sm font-normal text-black"
+      className="relative z-20 flex items-center space-x-2 px-2 py-1 text-xl font-bold text-neutral-800 dark:text-neutral-100"
     >
-      <div className="h-5 w-6 shrink-0 rounded-tl-lg rounded-tr-sm rounded-br-lg rounded-bl-sm bg-black dark:bg-white" />
-      <motion.span
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        className="font-medium whitespace-pre text-black dark:text-white"
-      >
-        Code Arena
-      </motion.span>
+      <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-linear-to-br from-blue-600 to-indigo-600 shadow-lg">
+        <Terminal className="h-5 w-5 text-white" />
+      </div>
+      <span className="tracking-tight">CodeArena</span>
     </Link>
   );
 };
@@ -132,7 +146,9 @@ export const LogoIcon = () => {
       href="/"
       className="relative z-20 flex items-center space-x-2 py-1 text-sm font-normal text-black"
     >
-      <div className="h-5 w-6 shrink-0 rounded-tl-lg rounded-tr-sm rounded-br-lg rounded-bl-sm bg-black dark:bg-white" />
+      <div className="flex h-8 w-9 items-center justify-center rounded-xl bg-linear-to-br from-blue-600 to-indigo-600 shadow-lg">
+        <Terminal className="h-5 w-5 text-white" />
+      </div>
     </Link>
   );
 };

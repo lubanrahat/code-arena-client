@@ -5,6 +5,8 @@ import QueryProviders from "@/providers/QueryProvider";
 import { AuthProvider } from "@/providers/AuthProvider";
 import ThemeProvider from "@/providers/ThemeProvider";
 import NavbarWrapper from "@/components/layout/NavbarWrapper";
+import Footer from "@/components/layout/Footer";
+import FooterWrapper from "@/components/layout/FooterWrapper";
 
 const inter = Inter({
   subsets: ["latin"], // required
@@ -29,6 +31,7 @@ export default function RootLayout({
             <QueryProviders>
               <NavbarWrapper />
               {children}
+              <FooterWrapper />
             </QueryProviders>
           </AuthProvider>
         </ThemeProvider>
