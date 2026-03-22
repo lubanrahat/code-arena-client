@@ -19,7 +19,6 @@ import {
   CheckCircle2,
 } from "lucide-react";
 
-import { HeroVideoDialog } from "@/components/ui/hero-video-dialog";
 
 import SubmissionsList from "./SubmissionsList";
 import AiDiscussion from "./AiDiscussion";
@@ -227,12 +226,15 @@ export default function ProblemDescription({
                         </p>
                       )}
                       {example.explanation && (
-                        <p className="mt-2 font-sans text-xs leading-relaxed text-muted-foreground dark:text-zinc-500">
+                        <div className="mt-2 font-sans text-xs leading-relaxed text-muted-foreground dark:text-zinc-500">
                           <span className="font-medium text-muted-foreground dark:text-zinc-400">
                             Explanation:{" "}
                           </span>
-                          {example.explanation}
-                        </p>
+                          <span 
+                            dangerouslySetInnerHTML={{ __html: example.explanation }} 
+                            className="[&_code]:rounded-md [&_code]:bg-muted [&_code]:px-1 [&_code]:py-0.5 [&_code]:text-emerald-600 dark:[&_code]:bg-zinc-800/80 dark:[&_code]:text-emerald-400 [&_code]:text-[11px]"
+                          />
+                        </div>
                       )}
                     </div>
                   </div>
@@ -459,12 +461,12 @@ export default function ProblemDescription({
 
                   <div className="relative w-full overflow-hidden rounded-2xl border border-border/40 shadow-inner group/video">
                     {getYoutubeId(problem.videoUrl) ? (
-                      <HeroVideoDialog
-                        animationStyle="from-center"
-                        videoSrc={`https://www.youtube.com/embed/${getYoutubeId(problem.videoUrl)}`}
-                        thumbnailSrc={`https://img.youtube.com/vi/${getYoutubeId(problem.videoUrl)}/maxresdefault.jpg`}
-                        thumbnailAlt="Expert Video Walkthrough"
-                        className="w-full transform transition duration-500 group-hover/video:scale-[1.01]"
+                      <iframe
+                        src={`https://www.youtube.com/embed/${getYoutubeId(problem.videoUrl)}`}
+                        title="Expert Video Walkthrough"
+                        className="aspect-video w-full rounded-2xl border-0 bg-black"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        allowFullScreen
                       />
                     ) : (
                       <div className="aspect-video w-full flex flex-col items-center justify-center bg-muted/30 text-muted-foreground gap-3">

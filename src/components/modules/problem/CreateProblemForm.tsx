@@ -169,21 +169,23 @@ export default function CreateProblemForm() {
         - referenceSolutions MUST be complete runnable programs (not just functions) that read from stdin and write to stdout.
         - testCases input/output must match what the referenceSolutions read/print (they are verified by running the reference solution with that stdin and checking stdout).
         - Ensure testCases are sufficient (at least 4) and include hidden ones.
+        - For the "description", "editorial", "explanation", "constraints", and "hints" fields, you MUST use HTML tags for formatting (e.g., <p>, <strong>, <code>, <ul>, <li>) because they will be rendered directly in the browser via dangerouslySetInnerHTML.
+        - DO NOT use LaTeX inline math formatting like $k$ or $O(N)$. Use standard HTML code tags like <code>k</code> or <code>O(N)</code> for variable names and time complexities.
         - The response must ONLY contain the JSON object. Do not include any markdown formatting like \`\`\`json.
       `;
 
       const result = await model.generateContent(prompt);
       const response = await result.response;
       const text = response.text();
-      
+
       console.log("AI Response Raw Text:", text);
-      
+
       // More robust JSON extraction
       const jsonMatch = text.match(/\{[\s\S]*\}/);
       if (!jsonMatch) {
         throw new Error("The AI response did not contain a valid JSON object.");
       }
-      
+
       const jsonStr = jsonMatch[0];
 
       // AI-generated code snippets often contain raw escape sequences that break JSON.parse.
@@ -227,14 +229,14 @@ export default function CreateProblemForm() {
       if (generatedProblem.hints) form.setFieldValue("hints", generatedProblem.hints as string[]);
       if (generatedProblem.editorial) form.setFieldValue("editorial", generatedProblem.editorial as string);
       if (generatedProblem.videoUrl) form.setFieldValue("videoUrl", generatedProblem.videoUrl as string);
-      
+
       if (generatedProblem.codeSnippets) {
         form.setFieldValue("codeSnippets", {
           ...form.state.values.codeSnippets,
           ...generatedProblem.codeSnippets
         });
       }
-      
+
       if (generatedProblem.referenceSolutions) {
         form.setFieldValue("referenceSolutions", {
           ...form.state.values.referenceSolutions,
@@ -356,9 +358,9 @@ export default function CreateProblemForm() {
               </Button>
             </div>
           </div>
-          
+
           <Separator className="my-6" />
-          
+
           <div className="flex flex-col md:flex-row items-center justify-between gap-4 bg-muted/30 p-4 rounded-xl border border-muted-foreground/10">
             <div className="flex flex-col gap-1">
               <h4 className="font-semibold flex items-center gap-2">
@@ -367,9 +369,9 @@ export default function CreateProblemForm() {
               </h4>
               <p className="text-xs text-muted-foreground">Choose how you want to build this problem</p>
             </div>
-            
-            <Tabs 
-              value={creationMethod} 
+
+            <Tabs
+              value={creationMethod}
               onValueChange={(val) => setCreationMethod(val as "manual" | "ai")}
               className="w-full md:w-auto"
             >
@@ -385,7 +387,7 @@ export default function CreateProblemForm() {
           </div>
 
           {creationMethod === "ai" && (
-            <div 
+            <div
               className="mt-4 p-6 bg-indigo-50 dark:bg-indigo-950/20 rounded-xl border border-indigo-200 dark:border-indigo-900 shadow-inner"
             >
               <div className="space-y-4">
@@ -394,7 +396,7 @@ export default function CreateProblemForm() {
                     <Wand2 className="w-4 h-4 text-indigo-600" />
                     What kind of problem should AI generate?
                   </Label>
-                  <Textarea 
+                  <Textarea
                     placeholder="Ex: Generate an EASY problem about Palindromes, or a HARD problem involving Dijkstra spanning across multiple cities..."
                     value={aiPrompt}
                     onChange={(e) => setAiPrompt(e.target.value)}
@@ -406,10 +408,10 @@ export default function CreateProblemForm() {
                   <p className="text-[11px] text-muted-foreground italic max-w-md">
                     Describe the difficulty and topic above. AI will handle descriptions, examples, solutions, and test cases.
                   </p>
-                  
-                  <Button 
+
+                  <Button
                     type="button"
-                    onClick={handleGenerateAiProblem} 
+                    onClick={handleGenerateAiProblem}
                     disabled={isAiGenerating}
                     className="w-full md:w-auto min-w-44 h-11 bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg shadow-indigo-500/20 gap-2 font-semibold transition-all hover:scale-[1.02]"
                   >
@@ -831,7 +833,7 @@ export default function CreateProblemForm() {
                     {field.state.meta.errors.length > 0 && (
                       <p className="text-sm text-red-500 mt-2">
                         {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                        {field.state.meta.errors.map((error: any) => typeof error === 'string' ? error  : error?.message || JSON.stringify(error)).join(", ")}
+                        {field.state.meta.errors.map((error: any) => typeof error === 'string' ? error : error?.message || JSON.stringify(error)).join(", ")}
                       </p>
                     )}
                   </CardContent>
