@@ -71,6 +71,25 @@ interface Problem {
   _count?: { submissions?: number };
 }
 
+const companyLogo: Record<string, string> = {
+  "Microsoft": "<svg viewBox=\"0 0 40 40\" width=\"52\" height=\"52\" xmlns=\"http://www.w3.org/2000/svg\"><rect x=\"2\" y=\"2\" width=\"17\" height=\"17\" fill=\"#F25022\"/><rect x=\"21\" y=\"2\" width=\"17\" height=\"17\" fill=\"#7FBA00\"/><rect x=\"2\" y=\"21\" width=\"17\" height=\"17\" fill=\"#00A4EF\"/><rect x=\"21\" y=\"21\" width=\"17\" height=\"17\" fill=\"#FFB900\"/></svg>",
+  "Google": "<svg viewBox=\"0 0 48 48\" width=\"52\" height=\"52\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M44.5 20H24v8h11.7C34.1 33.1 29.6 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3 0 5.7 1.1 7.8 2.9l5.7-5.7C33.8 6.5 29.2 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20c11 0 20-8 20-20 0-1.3-.2-2.7-.5-4z\" fill=\"#4285F4\"/><path d=\"M6.3 14.7l6.6 4.8C14.5 16 18.9 13 24 13c3 0 5.7 1.1 7.8 2.9l5.7-5.7C33.8 6.5 29.2 4 24 4c-7.5 0-14 4.1-17.7 10.7z\" fill=\"#EA4335\"/><path d=\"M24 44c5.2 0 9.9-1.8 13.5-4.8l-6.2-5.2C29.4 35.6 26.8 36 24 36c-5.5 0-10.1-2.9-11.7-8.1l-6.6 5.1C9.8 39.7 16.4 44 24 44z\" fill=\"#34A853\"/><path d=\"M44.5 20H24v8h11.7c-.7 2.4-2.2 4.4-4.4 5.8l6.2 5.2C41.6 35.3 44.5 30.2 44.5 24c0-1.3-.2-2.7-.5-4z\" fill=\"#FBBC05\"/></svg>",
+  "DE Shaw": "<svg viewBox=\"0 0 52 52\" width=\"52\" height=\"52\" xmlns=\"http://www.w3.org/2000/svg\"><rect x=\"4\" y=\"4\" width=\"44\" height=\"44\" rx=\"4\" fill=\"#003366\"/><text x=\"26\" y=\"22\" text-anchor=\"middle\" font-family=\"serif\" font-weight=\"700\" font-size=\"11\" fill=\"#FFFFFF\">D.E.</text><text x=\"26\" y=\"36\" text-anchor=\"middle\" font-family=\"serif\" font-weight=\"700\" font-size=\"11\" fill=\"#FFFFFF\">SHAW</text><line x1=\"10\" y1=\"26\" x2=\"42\" y2=\"26\" stroke=\"#7EB3D8\" stroke-width=\"1\"/></svg>",
+  "Amazon": "<svg viewBox=\"0 0 52 52\" width=\"52\" height=\"52\" xmlns=\"http://www.w3.org/2000/svg\"><text x=\"26\" y=\"30\" text-anchor=\"middle\" font-family=\"Arial,sans-serif\" font-weight=\"700\" font-size=\"16\" fill=\"#FFFFFF\">amazon</text><path d=\"M10 36 Q26 44 42 36\" stroke=\"#FF9900\" stroke-width=\"2.5\" fill=\"none\" stroke-linecap=\"round\"/><path d=\"M38 33 L42 36 L38 38\" fill=\"#FF9900\"/></svg>",
+  "Yahoo": "<svg viewBox=\"0 0 52 52\" width=\"52\" height=\"52\" xmlns=\"http://www.w3.org/2000/svg\"><text x=\"26\" y=\"24\" text-anchor=\"middle\" font-family=\"Arial,sans-serif\" font-weight=\"900\" font-size=\"18\" fill=\"#6001D2\">Yahoo</text><text x=\"44\" y=\"20\" text-anchor=\"middle\" font-family=\"Arial,sans-serif\" font-weight=\"900\" font-size=\"10\" fill=\"#6001D2\">!</text></svg>",
+  "LinkedIn": "<svg viewBox=\"0 0 52 52\" width=\"52\" height=\"52\" xmlns=\"http://www.w3.org/2000/svg\"><rect x=\"2\" y=\"2\" width=\"48\" height=\"48\" rx=\"8\" fill=\"#0A66C2\"/><rect x=\"11\" y=\"20\" width=\"7\" height=\"22\" fill=\"#fff\"/><circle cx=\"14.5\" cy=\"14.5\" r=\"4\" fill=\"#fff\"/><path d=\"M24 20h7v3.5s2-3.5 7-3.5c6 0 8 4 8 10v12h-7V32c0-3-1-5-4-5s-4 2.5-4 5v10h-7V20z\" fill=\"#fff\"/></svg>",
+  "Facebook": "<svg viewBox=\"0 0 52 52\" width=\"52\" height=\"52\" xmlns=\"http://www.w3.org/2000/svg\"><rect x=\"0\" y=\"0\" width=\"52\" height=\"52\" rx=\"10\" fill=\"#1877F2\"/><path d=\"M32 10h-4c-4 0-7 3-7 7v4h-4v6h4v14h6V27h4l1-6h-5v-3c0-1.5.7-2 2-2h3V10z\" fill=\"#fff\"/></svg>",
+  "eBay": "<svg viewBox=\"0 0 64 32\" width=\"80\" height=\"40\" xmlns=\"http://www.w3.org/2000/svg\"><text x=\"0\" y=\"26\" font-family=\"Arial,sans-serif\" font-weight=\"900\" font-size=\"26\" fill=\"#E53238\">e</text><text x=\"15\" y=\"26\" font-family=\"Arial,sans-serif\" font-weight=\"900\" font-size=\"26\" fill=\"#0064D2\">b</text><text x=\"28\" y=\"26\" font-family=\"Arial,sans-serif\" font-weight=\"900\" font-size=\"26\" fill=\"#F5AF02\">a</text><text x=\"41\" y=\"26\" font-family=\"Arial,sans-serif\" font-weight=\"900\" font-size=\"26\" fill=\"#86B817\">y</text></svg>",
+  "Directi": "<svg viewBox=\"0 0 52 52\" width=\"52\" height=\"52\" xmlns=\"http://www.w3.org/2000/svg\"><circle cx=\"26\" cy=\"26\" r=\"24\" fill=\"#E8231A\"/><text x=\"26\" y=\"32\" text-anchor=\"middle\" font-family=\"Arial,sans-serif\" font-weight=\"700\" font-size=\"11\" fill=\"#FFFFFF\">DIRECTI</text></svg>",
+  "Twitter": "<svg viewBox=\"0 0 52 52\" width=\"52\" height=\"52\" xmlns=\"http://www.w3.org/2000/svg\"><rect width=\"52\" height=\"52\" rx=\"12\" fill=\"#000\"/><path d=\"M10 10h9l8 10.5 9-10.5h4L28 23l14 19H33L24 30l-10 12H10l13-16L10 10zm5 2 20 26h3L18 12h-3z\" fill=\"#fff\"/></svg>",
+  "IBM": "<svg viewBox=\"0 0 64 32\" width=\"80\" height=\"40\" xmlns=\"http://www.w3.org/2000/svg\">\n    <g fill=\"#1F70C1\">\n      <rect x=\"1\" y=\"3\" width=\"12\" height=\"2.5\"/><rect x=\"1\" y=\"8.5\" width=\"12\" height=\"2.5\"/><rect x=\"1\" y=\"14\" width=\"12\" height=\"2.5\"/><rect x=\"1\" y=\"19.5\" width=\"12\" height=\"2.5\"/><rect x=\"1\" y=\"25\" width=\"12\" height=\"2.5\"/>\n      <rect x=\"17\" y=\"3\" width=\"13\" height=\"2.5\"/><rect x=\"17\" y=\"25\" width=\"13\" height=\"2.5\"/><rect x=\"17\" y=\"8.5\" width=\"13\" height=\"2.5\"/><rect x=\"17\" y=\"19.5\" width=\"13\" height=\"2.5\"/><rect x=\"17\" y=\"13\" width=\"10\" height=\"2.5\"/><rect x=\"17\" y=\"8.5\" width=\"3\" height=\"16\" rx=\"1.5\"/>\n      <rect x=\"34\" y=\"3\" width=\"4\" height=\"24.5\"/><rect x=\"50\" y=\"3\" width=\"4\" height=\"24.5\"/><rect x=\"34\" y=\"3\" width=\"20\" height=\"3\"/><rect x=\"34\" y=\"14\" width=\"20\" height=\"3\"/><rect x=\"34\" y=\"24.5\" width=\"20\" height=\"3\"/>\n    </g>\n  </svg>",
+  "Apple": "<svg viewBox=\"0 0 44 52\" width=\"44\" height=\"52\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M36 18c-2-2.5-5-4-8-3.8 0 0-.5-4.5 4-7.2 0 0-4.5-1-8 3.5-3.5 4.5-3 10-3 10C14 21.5 10 27 10 33c0 8 6 16 11 16 2 0 4-1.5 6-1.5s4 1.5 6 1.5c5 0 11-8 11-16 0-5-3.5-10.5-8-15zm-8-10c1-2 3-3.5 5-3.5-0.5 2-1.5 4-3 5s-3 1.5-4.5 1c.5-1 1.5-2.5 2.5-2.5z\" fill=\"#555\"/></svg>",
+  "Netflix": "<svg viewBox=\"0 0 52 52\" width=\"52\" height=\"52\" xmlns=\"http://www.w3.org/2000/svg\"><rect width=\"52\" height=\"52\" fill=\"#141414\"/><path d=\"M14 8v36l7-18 7 18V8h-7v18L14 8z\" fill=\"#E50914\"/><path d=\"M28 8v36h7V27l-7-19z\" fill=\"#B81D24\"/></svg>",
+  "Uber": "<svg viewBox=\"0 0 52 52\" width=\"52\" height=\"52\" xmlns=\"http://www.w3.org/2000/svg\"><rect width=\"52\" height=\"52\" fill=\"#000\"/><text x=\"26\" y=\"32\" text-anchor=\"middle\" font-family=\"Arial,sans-serif\" font-weight=\"700\" font-size=\"15\" letter-spacing=\"1\" fill=\"#fff\">UBER</text></svg>",
+  "Adobe": "<svg viewBox=\"0 0 52 52\" width=\"52\" height=\"52\" xmlns=\"http://www.w3.org/2000/svg\"><polygon points=\"26,4 48,48 4,48\" fill=\"#FF0000\"/><polygon points=\"26,18 38,44 14,44\" fill=\"#FF0000\" opacity=\"0.3\"/><path d=\"M20 36 L26 20 L32 36\" stroke=\"#fff\" stroke-width=\"1.5\" fill=\"none\" stroke-linecap=\"round\"/><line x1=\"22\" y1=\"31\" x2=\"30\" y2=\"31\" stroke=\"#fff\" stroke-width=\"1.5\"/></svg>",
+  "Oracle": "<svg viewBox=\"0 0 80 32\" width=\"90\" height=\"36\" xmlns=\"http://www.w3.org/2000/svg\"><ellipse cx=\"22\" cy=\"16\" rx=\"18\" ry=\"11\" fill=\"none\" stroke=\"#C74634\" stroke-width=\"5.5\"/><text x=\"44\" y=\"21\" font-family=\"Arial,sans-serif\" font-weight=\"700\" font-size=\"16\" fill=\"#C74634\">ORACLE</text></svg>"
+};
+
 function companyInitial(name: string) {
   const map: Record<string, { char: string; color: string }> = {
     Google:    { char: "G", color: "#4285F4" },
@@ -91,7 +110,6 @@ function companyInitial(name: string) {
   };
   return map[name] ?? { char: name.substring(0, 1).toUpperCase(), color: "#888888" };
 }
-
 
 function DropdownMenu({
   label,
@@ -185,7 +203,6 @@ function CheckboxDropdown({
   );
 }
 
-// ─── Tab Button ───────────────────────────────────────────────────────────────
 
 function TabButton({ label, icon, active, onClick }: { label: string; icon: React.ReactNode; active: boolean; onClick: () => void }) {
   return (
@@ -626,12 +643,24 @@ export default function ProblemList() {
                       <div className="flex items-center gap-1.5">
                         <span className="text-xs text-muted-foreground mr-0.5">Asked in</span>
                         {displayCompanies.map((c) => {
+                          const svgStr = companyLogo[c as keyof typeof companyLogo];
+                          if (svgStr) {
+                            return (
+                              <span
+                                key={c}
+                                title={c}
+                                className="inline-flex items-center justify-center w-[22px] h-[22px] shrink-0 [&>svg]:w-[18px] [&>svg]:h-[18px] rounded overflow-hidden bg-white/5"
+                                dangerouslySetInnerHTML={{ __html: svgStr }}
+                              />
+                            );
+                          }
+
                           const { char, color } = companyInitial(c);
                           return (
                             <span
                               key={c}
                               title={c}
-                              className="inline-flex items-center justify-center w-6 h-6 rounded-md text-[10px] font-black border border-border/60 bg-background shadow-sm"
+                              className="inline-flex items-center justify-center w-[22px] h-[22px] shrink-0 rounded text-[9px] font-black border border-border/60 bg-background shadow-sm"
                               style={{ color }}
                             >
                               {char}
@@ -639,7 +668,7 @@ export default function ProblemList() {
                           );
                         })}
                         {overflow > 0 && (
-                          <span className="text-xs font-bold text-blue-500">+{overflow}</span>
+                          <span className="text-xs font-bold text-blue-500 ml-1">+{overflow}</span>
                         )}
                       </div>
                     ) : (
