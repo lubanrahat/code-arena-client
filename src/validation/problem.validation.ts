@@ -95,6 +95,7 @@ export const problemCreateSchema = z.preprocess(
     z.string(),
     z.object({
       code: z.string().min(1, "Code snippet cannot be empty"),
+      boilerplate: z.string().optional(),
       language: z.string(),
     }),
   ),

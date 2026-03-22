@@ -82,19 +82,23 @@ const sampleData: ProblemCreateInput = {
   },
   codeSnippets: {
     PYTHON: {
-      code: '# Read a string and print YES if it is a palindrome, NO otherwise\n# Example input: "racecar"\n# Example output: "YES"\n\nimport sys\n\ndef main():\n    input_data = sys.stdin.read().strip()\n    # Your code here\n    pass\n\nif __name__ == \'__main__\':\n    main()',
+      code: 'def isPalindrome(s: str) -> bool:\n    # Your code here\n    pass',
+      boilerplate: 'import sys\n\n{{USER_CODE}}\n\ndef main():\n    input_data = sys.stdin.read().strip()\n    if not input_data:\n        return\n    print("YES" if isPalindrome(input_data) else "NO")\n\nif __name__ == "__main__":\n    main()',
       language: "python",
     },
     JAVASCRIPT: {
-      code: "// Read a string and print YES if it is a palindrome, NO otherwise\n// Example input: \"racecar\"\n// Example output: \"YES\"\n\nconst input = require('fs').readFileSync(0, 'utf-8').trim();\n// Your code here",
+      code: "function isPalindrome(s) {\n  // Your code here\n}",
+      boilerplate: "{{USER_CODE}}\n\nconst input = require('fs').readFileSync(0, 'utf-8').trim();\nif (input) {\n  console.log(isPalindrome(input) ? 'YES' : 'NO');\n}",
       language: "javascript",
     },
     CPP: {
-      code: '// Read a string and print YES if it is a palindrome, NO otherwise\n// Example input: "racecar"\n// Example output: "YES"\n\n#include <iostream>\n#include <string>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    string s;\n    cin >> s;\n    // Your code here\n    return 0;\n}',
+      code: 'class Solution {\npublic:\n    bool isPalindrome(string s) {\n        // Your code here\n    }\n};',
+      boilerplate: '#include <iostream>\n#include <string>\n#include <algorithm>\nusing namespace std;\n\n{{USER_CODE}}\n\nint main() {\n    string s;\n    cin >> s;\n    Solution sol;\n    cout << (sol.isPalindrome(s) ? "YES" : "NO") << endl;\n    return 0;\n}',
       language: "cpp",
     },
     GO: {
-      code: '// Read a string and print YES if it is a palindrome, NO otherwise\n// Example input: "racecar"\n// Example output: "YES"\n\npackage main\n\nimport (\n    "bufio"\n    "fmt"\n    "os"\n)\n\nfunc main() {\n    scanner := bufio.NewScanner(os.Stdin)\n    if scanner.Scan() {\n        s := scanner.Text()\n        // Your code here\n        _ = s\n        fmt.Println()\n    }\n}',
+      code: 'func isPalindrome(s string) bool {\n    // Your code here\n}',
+      boilerplate: 'package main\n\nimport (\n    "bufio"\n    "fmt"\n    "os"\n)\n\n{{USER_CODE}}\n\nfunc main() {\n    scanner := bufio.NewScanner(os.Stdin)\n    if scanner.Scan() {\n        s := scanner.Text()\n        if isPalindrome(s) {\n            fmt.Println("YES")\n        } else {\n            fmt.Println("NO")\n        }\n    }\n}',
       language: "go",
     },
   },
@@ -170,18 +174,22 @@ export default function CreateProblemForm() {
       codeSnippets: {
         JAVASCRIPT: {
           code: "function solution() {\n  // Write your code here\n}",
+          boilerplate: "// Write your boilerplate here, use {{USER_CODE}} as placeholder\n{{USER_CODE}}",
           language: "javascript",
         },
         PYTHON: {
           code: "def solution():\n    # Write your code here\n    pass",
+          boilerplate: "# Write your boilerplate here, use {{USER_CODE}} as placeholder\n{{USER_CODE}}",
           language: "python",
         },
         CPP: {
-          code: "int main() {\n  // Write your code here\n  return 0;\n}",
+          code: "class Solution {\npublic:\n    void solve() {\n        // Write your code here\n    }\n};",
+          boilerplate: "#include <iostream>\nusing namespace std;\n\n{{USER_CODE}}\n\nint main() {\n    Solution sol;\n    sol.solve();\n    return 0;\n}",
           language: "cpp",
         },
         GO: {
-          code: "package main\n\nfunc main() {\n    // Write your code here\n}",
+          code: "func solve() {\n    // Write your code here\n}",
+          boilerplate: "package main\n\nimport \"fmt\"\n\n{{USER_CODE}}\n\nfunc main() {\n    solve()\n}",
           language: "go",
         },
       },
@@ -813,6 +821,44 @@ export default function CreateProblemForm() {
                     </CardHeader>
                     <CardContent>
                       <form.Field name={`codeSnippets.${language}.code`}>
+                        {(field) => (
+                          <>
+                            <CodeEditor
+                              value={field.state.value || ""}
+                              onChange={(val: string | undefined) => {
+                                field.handleChange(val || "");
+                              }}
+                              language={language}
+                            />
+                            {field.state.meta.errors.length > 0 && (
+                              <p className="text-sm text-red-500 mt-2">
+                                {field.state.meta.errors.join(", ")}
+                              </p>
+                            )}
+                          </>
+                        )}
+                      </form.Field>
+                    </CardContent>
+                  </Card>
+
+                  {/* Hidden Boilerplate */}
+                  <Card>
+                    <CardHeader>
+                      <div className="flex items-center justify-between">
+                        <CardTitle className="text-lg flex items-center gap-2">
+                          <Trash2 className="w-5 h-5 text-slate-400" />
+                          Hidden Boilerplate
+                        </CardTitle>
+                        <Badge variant="outline" className="text-[10px] uppercase">
+                          Hidden from users
+                        </Badge>
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-xs text-muted-foreground mb-3">
+                        Use <code className="bg-muted px-1 rounded">{"{{USER_CODE}}"}</code> as a placeholder where the user&apos;s starter code will be injected.
+                      </p>
+                      <form.Field name={`codeSnippets.${language}.boilerplate`}>
                         {(field) => (
                           <>
                             <CodeEditor

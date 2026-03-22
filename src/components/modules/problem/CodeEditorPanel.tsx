@@ -273,6 +273,7 @@ export default function CodeEditorPanel({
         language,
         stdin,
         expectedOutput,
+        problemId: problem.id,
       });
 
       const result = response?.data || response;

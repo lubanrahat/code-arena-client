@@ -58,7 +58,7 @@ const TABS = [
   { id: "Editorial", icon: Code, label: "Editorial" },
   { id: "Submissions", icon: FileCode2, label: "Submissions" },
   { id: "ai-discussion", icon: Bot, label: "AI Discussion" },
-  { id: "Discussion", icon: MessageCircle, label: "Discussion" },
+  { id: "Solution", icon: CheckCircle2, label: "Solution" },
 ];
 
 export default function ProblemDescription({
@@ -487,11 +487,11 @@ export default function ProblemDescription({
           </div>
         )}
 
-        {activeTab === "Discussion" && (
+        {activeTab === "Solution" && (
           <div className="flex flex-col items-center justify-center py-20 text-center">
             <MessageCircle className="h-12 w-12 text-zinc-600 dark:text-zinc-600" />
             <p className="mt-4 text-sm text-muted-foreground">
-              Discussions coming soon
+              Solutions coming soon
             </p>
             <p className="mt-1 text-xs text-muted-foreground/70">
               Share your approach and learn from others
