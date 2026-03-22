@@ -33,6 +33,11 @@ interface Example {
   explanation?: string;
 }
 
+interface CodeSnippet {
+  code: string;
+  language: string;
+}
+
 interface Problem {
   id: string;
   title: string;
@@ -46,6 +51,7 @@ interface Problem {
   hints?: string[];
   editorial?: string;
   videoUrl?: string;
+  codeSnippets?: Record<string, CodeSnippet>;
 }
 
 interface ProblemDescriptionProps {
@@ -483,7 +489,7 @@ export default function ProblemDescription({
 
         {activeTab === "ai-discussion" && (
           <div className="h-full">
-            <AiDiscussion problem={problem} />
+            <AiDiscussion problem={problem} codeSnippets={problem?.codeSnippets} />
           </div>
         )}
 

@@ -47,7 +47,7 @@ export const problemCreateSchema = z.preprocess(
     .min(1, "At least one tag is required")
     .max(10, "Cannot have more than 10 tags"),
 
-  topic: z.string().min(1).max(100).trim().optional(),
+  topic: z.string().max(100).trim().optional().or(z.literal("")),
 
   askedIn: z.array(z.string().min(1).max(100).trim()).optional(),
 
@@ -77,7 +77,7 @@ export const problemCreateSchema = z.preprocess(
     .trim()
     .optional(),
 
-  videoUrl: z.string().url("Invalid video URL").optional(),
+  videoUrl: z.string().url("Invalid video URL").optional().or(z.literal("")),
 
 
 

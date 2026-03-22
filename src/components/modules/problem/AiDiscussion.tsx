@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { Send, Bot, RefreshCcw, Copy, Check } from "lucide-react";
+import { Send, Bot, RefreshCcw, Copy, Check, ChevronDown } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { LoaderOne } from "@/components/ui/loader";
 import ReactMarkdown from "react-markdown";
@@ -21,6 +21,11 @@ interface Message {
   content: string;
 }
 
+interface CodeSnippet {
+  code: string;
+  language: string;
+}
+
 interface Problem {
   id: string;
   title: string;
@@ -31,19 +36,29 @@ interface Problem {
 
 interface AiDiscussionProps {
   problem: Problem;
+  codeSnippets?: Record<string, CodeSnippet>;
 }
+
+const LANGUAGES = [
+  { id: "JAVASCRIPT", label: "JavaScript" },
+  { id: "PYTHON", label: "Python" },
+  { id: "CPP", label: "C++" },
+  { id: "GO", label: "Go" },
+];
 
 const genAI = new GoogleGenerativeAI(
   process.env.NEXT_PUBLIC_GMAINE_API_KEY || "",
 );
 
-export default function AiDiscussion({ problem }: AiDiscussionProps) {
+export default function AiDiscussion({ problem, codeSnippets }: AiDiscussionProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [selectedLanguage, setSelectedLanguage] = useState("JAVASCRIPT");
+  const [langMenuOpen, setLangMenuOpen] = useState(false);
 
   useEffect(() => {
     const fetchHistory = async () => {
@@ -78,16 +93,46 @@ export default function AiDiscussion({ problem }: AiDiscussionProps) {
     try {
       const model = genAI.getGenerativeModel({ model: "gemini-flash-latest" });
 
-      const systemPrompt = `You are a helpful coding assistant on CodeArena. 
-      The user is working on the problem: "${problem.title}".
-      Difficulty: ${problem.difficulty}.
-      Description: ${problem.description}.
-      Constraints: ${problem.constraints}.
-      
-      Your goal is to guide the user without giving away the full solution immediately unless they ask for it. 
-      Provide hints, explain time complexity, and help debug their logic.
-      Always format your responses with markdown, using headers, bullet points, and code blocks where appropriate.
-      Be encouraging and concise.`;
+      // Get the starter code for the selected language so AI knows the exact function signature
+      const starterCode = codeSnippets?.[selectedLanguage]?.code || null;
+      const langLabel = LANGUAGES.find((l) => l.id === selectedLanguage)?.label || selectedLanguage;
+
+      const systemPrompt = `You are CodeArenaBot, a helpful coding assistant on CodeArena.
+The user is working on the problem: "${problem.title}" (${problem.difficulty}).
+Description: ${problem.description}
+Constraints: ${problem.constraints}
+
+${
+  starterCode
+    ? `The code editor is currently showing this ${langLabel} starter code:
+\`\`\`${selectedLanguage.toLowerCase()}
+${starterCode}
+\`\`\`
+
+CRITICAL RULES when the user asks for a solution or code:
+1. ONLY write the solution INSIDE the existing function(s) shown above — do NOT write a new function, do NOT add a main() function, do NOT add package/import statements unless they are already in the starter code.
+2. Return exactly the starter code with the solution filled in between the existing function's braces.
+3. The code must compile and run correctly when pasted directly into the editor as-is.
+4. Use the exact function name and signature from the starter code above.
+
+Example: if the starter code is:
+\`\`\`
+func findThreshold(n int, k int64, arr []int64) int {
+
+}
+\`\`\`
+Then your solution code block must look like:
+\`\`\`go
+func findThreshold(n int, k int64, arr []int64) int {
+    // your solution here
+    return ...
+}
+\`\`\`
+Never wrap it in a package main or add imports not in the original.`
+    : `The user is coding in ${langLabel}. When providing code solutions, write only the function body — do NOT add a main() function, package declarations, or unnecessary imports.`
+}
+
+Always format responses with markdown. Be encouraging and concise. Guide the user with hints first; only provide the full solution if explicitly asked (e.g. "show me the code" or "give me the solution").`;
 
       const chat = model.startChat({
         history: messages.map((m) => ({
@@ -148,13 +193,43 @@ export default function AiDiscussion({ problem }: AiDiscussionProps) {
             </h3>
           </div>
         </div>
-        <button
-          onClick={clearHistory}
-          className="rounded-lg p-1.5 text-zinc-500 transition-colors hover:bg-white/5 hover:text-zinc-300"
-          title="Clear History"
-        >
-          <RefreshCcw size={16} />
-        </button>
+        <div className="flex items-center gap-2">
+          {/* Language selector */}
+          {codeSnippets && (
+            <div className="relative">
+              <button
+                onClick={() => setLangMenuOpen((o) => !o)}
+                className="flex items-center gap-1.5 rounded-lg border border-white/10 bg-zinc-800/60 px-3 py-1.5 text-xs font-medium text-zinc-300 hover:bg-zinc-700/60 transition-colors"
+              >
+                {LANGUAGES.find((l) => l.id === selectedLanguage)?.label ?? selectedLanguage}
+                <ChevronDown size={12} className="opacity-60" />
+              </button>
+              {langMenuOpen && (
+                <div className="absolute right-0 top-full mt-1 z-50 w-36 rounded-xl border border-white/10 bg-zinc-800 shadow-xl overflow-hidden">
+                  {LANGUAGES.map((lang) => (
+                    <button
+                      key={lang.id}
+                      onClick={() => { setSelectedLanguage(lang.id); setLangMenuOpen(false); }}
+                      className={cn(
+                        "w-full px-3 py-2 text-left text-xs transition-colors hover:bg-zinc-700/60",
+                        selectedLanguage === lang.id ? "text-emerald-400 font-semibold" : "text-zinc-300"
+                      )}
+                    >
+                      {lang.label}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+          <button
+            onClick={clearHistory}
+            className="rounded-lg p-1.5 text-zinc-500 transition-colors hover:bg-white/5 hover:text-zinc-300"
+            title="Clear History"
+          >
+            <RefreshCcw size={16} />
+          </button>
+        </div>
       </div>
 
       <div

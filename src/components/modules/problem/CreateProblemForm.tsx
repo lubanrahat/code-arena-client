@@ -11,8 +11,12 @@ import {
   Lightbulb,
   BookOpen,
   CheckCircle2,
-  Download,
+  Bot,
+  Sparkles,
+  Wand2,
 } from "lucide-react";
+import { GoogleGenerativeAI } from "@google/generative-ai";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -39,70 +43,6 @@ import {
 import { createProblemAction } from "@/app/admin/create-problem/_action";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-// Sample Data from User Request
-const sampleData: ProblemCreateInput = {
-  title: "Palindrome Check",
-  description:
-    'Given a single word (a string with no spaces), print "YES" if it is a palindrome (reads the same forwards and backwards), or "NO" otherwise.',
-  difficulty: Difficulty.EASY,
-  tags: ["strings", "basic", "multi-language"],
-  topic: "Strings",
-  askedIn: ["Google", "Amazon", "Meta"],
-  examples: [
-    {
-      input: "racecar",
-      output: "YES",
-    },
-  ],
-  constraints:
-    "The input string consists of lowercase English letters only. Length is between 1 and 100.",
-  hints: [
-    "Compare the string to its reverse",
-    "Alternatively, use two pointers — one starting from the front and one from the back — and check if they always match",
-  ],
-  editorial:
-    "The simplest approach is to reverse the string and check if it equals the original. A two-pointer approach works equally well: compare characters at positions i and n-1-i for i from 0 to n/2. A single-character string is always a palindrome.",
-  videoUrl: "https://www.youtube.com/watch?v=0hW6P9G5yP0",
-  testCases: [
-
-    { input: "racecar", output: "YES", isHidden: false },
-    { input: "hello", output: "NO", isHidden: true },
-    { input: "a", output: "YES", isHidden: false },
-    { input: "abba", output: "YES", isHidden: true },
-    { input: "abcba", output: "YES", isHidden: true },
-    { input: "abcd", output: "NO", isHidden: true },
-  ],
-  referenceSolutions: {
-    PYTHON:
-      "import sys\n\ndef main():\n    input_data = sys.stdin.read().strip()\n    if not input_data:\n        return\n    print('YES' if input_data == input_data[::-1] else 'NO')\n\nif __name__ == '__main__':\n    main()",
-    JAVASCRIPT:
-      "const input = require('fs').readFileSync(0, 'utf-8').trim();\nif (input) {\n  const reversed = input.split('').reverse().join('');\n  console.log(input === reversed ? 'YES' : 'NO');\n}",
-    CPP: '#include <iostream>\n#include <string>\n#include <algorithm>\nusing namespace std;\n\nint main() {\n    string s;\n    cin >> s;\n    string r = s;\n    reverse(r.begin(), r.end());\n    cout << (s == r ? "YES" : "NO") << endl;\n    return 0;\n}',
-    GO: 'package main\n\nimport (\n    "bufio"\n    "fmt"\n    "os"\n)\n\nfunc main() {\n    scanner := bufio.NewScanner(os.Stdin)\n    if scanner.Scan() {\n        s := scanner.Text()\n        runes := []rune(s)\n        isPalin := true\n        for i, j := 0, len(runes)-1; i < j; i, j = i+1, j-1 {\n            if runes[i] != runes[j] {\n                isPalin = false\n                break\n            }\n        }\n        if isPalin {\n            fmt.Println("YES")\n        } else {\n            fmt.Println("NO")\n        }\n    }\n}',
-  },
-  codeSnippets: {
-    PYTHON: {
-      code: 'def isPalindrome(s: str) -> bool:\n    # Your code here\n    pass',
-      boilerplate: 'import sys\n\n{{USER_CODE}}\n\ndef main():\n    input_data = sys.stdin.read().strip()\n    if not input_data:\n        return\n    print("YES" if isPalindrome(input_data) else "NO")\n\nif __name__ == "__main__":\n    main()',
-      language: "python",
-    },
-    JAVASCRIPT: {
-      code: "function isPalindrome(s) {\n  // Your code here\n}",
-      boilerplate: "{{USER_CODE}}\n\nconst input = require('fs').readFileSync(0, 'utf-8').trim();\nif (input) {\n  console.log(isPalindrome(input) ? 'YES' : 'NO');\n}",
-      language: "javascript",
-    },
-    CPP: {
-      code: 'class Solution {\npublic:\n    bool isPalindrome(string s) {\n        // Your code here\n    }\n};',
-      boilerplate: '#include <iostream>\n#include <string>\n#include <algorithm>\nusing namespace std;\n\n{{USER_CODE}}\n\nint main() {\n    string s;\n    cin >> s;\n    Solution sol;\n    cout << (sol.isPalindrome(s) ? "YES" : "NO") << endl;\n    return 0;\n}',
-      language: "cpp",
-    },
-    GO: {
-      code: 'func isPalindrome(s string) bool {\n    // Your code here\n}',
-      boilerplate: 'package main\n\nimport (\n    "bufio"\n    "fmt"\n    "os"\n)\n\n{{USER_CODE}}\n\nfunc main() {\n    scanner := bufio.NewScanner(os.Stdin)\n    if scanner.Scan() {\n        s := scanner.Text()\n        if isPalindrome(s) {\n            fmt.Println("YES")\n        } else {\n            fmt.Println("NO")\n        }\n    }\n}',
-      language: "go",
-    },
-  },
-};
 
 const CodeEditor = ({
   value,
@@ -151,8 +91,168 @@ export default function CreateProblemForm() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const [isLoading, setIsLoading] = useState(false);
+  const [creationMethod, setCreationMethod] = useState<"manual" | "ai">("manual");
+  const [aiPrompt, setAiPrompt] = useState("");
+  const [isAiGenerating, setIsAiGenerating] = useState(false);
 
-  const { mutateAsync, isPending } = useMutation({
+  const genAI = new GoogleGenerativeAI(
+    process.env.NEXT_PUBLIC_GMAINE_API_KEY || "",
+  );
+
+  const handleGenerateAiProblem = async () => {
+    setIsAiGenerating(true);
+    try {
+      const model = genAI.getGenerativeModel({ model: "gemini-flash-latest" });
+
+      const prompt = `
+        You are an expert competitive programming problem setter.
+        Create a new, original coding problem based on the following instructions from the admin:
+        "${aiPrompt || "Create a random interesting coding problem."}"
+
+        CRITICAL: The test cases and reference solutions MUST be compatible with an online judge (Judge0).
+        This means:
+        1. Test case "input" must be raw stdin content (e.g., "5\\n1 2 3 4 5" for n=5 followed by an array).
+        2. Test case "output" must be the raw stdout content the program should print (e.g., "15\\n").
+        3. Reference solutions MUST be complete, self-contained programs that:
+           - Read input from stdin (using standard input reading for each language)
+           - Solve the problem
+           - Print the answer to stdout (with a trailing newline)
+           - They must NOT be just function definitions — they must be full runnable programs.
+
+        Example of CORRECT referenceSolution for JAVASCRIPT (reads from stdin, prints to stdout):
+        "const lines = require('fs').readFileSync('/dev/stdin','utf8').trim().split('\\n'); const n = parseInt(lines[0]); const arr = lines[1].split(' ').map(Number); console.log(arr.reduce((a,b)=>a+b,0));"
+
+        Example of CORRECT referenceSolution for PYTHON:
+        "import sys\\ndef solve():\\n    data = sys.stdin.read().split()\\n    n = int(data[0])\\n    arr = list(map(int, data[1:n+1]))\\n    print(sum(arr))\\nsolve()"
+
+        Example of CORRECT referenceSolution for CPP:
+        "#include<bits/stdc++.h>\\nusing namespace std;\\nint main(){int n; cin>>n; int s=0; for(int i=0;i<n;i++){int x; cin>>x; s+=x;} cout<<s<<endl;}"
+
+        Example of CORRECT referenceSolution for GO:
+        "package main\\nimport(\"bufio\"\\\"fmt\"\\\"os\")\\nfunc main(){reader:=bufio.NewReader(os.Stdin);var n int;fmt.Fscan(reader,&n);s:=0;for i:=0;i<n;i++{var x int;fmt.Fscan(reader,&x);s+=x};fmt.Println(s)}"
+
+        The response MUST be a valid JSON object strictly following this structure:
+        {
+          "title": "Problem Title",
+          "description": "Clear and concise problem description with objective and context.",
+          "difficulty": "EASY | MEDIUM | HARD",
+          "topic": "Main Topic (e.g. Dynamic Programming, Arrays, etc.)",
+          "tags": ["tag1", "tag2"],
+          "askedIn": ["Company1", "Company2"],
+          "constraints": "Clear constraints for input size and values.",
+          "examples": [
+            { "input": "raw stdin for example", "output": "raw stdout for example", "explanation": "..." }
+          ],
+          "testCases": [
+            { "input": "raw stdin line(s)", "output": "expected stdout output", "isHidden": false },
+            { "input": "raw stdin line(s)", "output": "expected stdout output", "isHidden": true }
+          ],
+          "hints": ["Hint 1", "Hint 2"],
+          "editorial": "Explanation of the optimal approach.",
+          "codeSnippets": {
+            "JAVASCRIPT": { "code": "// starter code with {{USER_CODE}}", "boilerplate": "complete program template with {{USER_CODE}} placeholder", "language": "javascript" },
+            "PYTHON": { "code": "# starter code with {{USER_CODE}}", "boilerplate": "complete program template with {{USER_CODE}} placeholder", "language": "python" },
+            "CPP": { "code": "// starter code with {{USER_CODE}}", "boilerplate": "complete program template with {{USER_CODE}} placeholder", "language": "cpp" },
+            "GO": { "code": "// starter code with {{USER_CODE}}", "boilerplate": "complete program template with {{USER_CODE}} placeholder", "language": "go" }
+          },
+          "referenceSolutions": {
+            "JAVASCRIPT": "COMPLETE PROGRAM that reads stdin and prints to stdout",
+            "PYTHON": "COMPLETE PROGRAM that reads stdin and prints to stdout",
+            "CPP": "COMPLETE PROGRAM that reads stdin and prints to stdout",
+            "GO": "COMPLETE PROGRAM that reads stdin and prints to stdout"
+          }
+        }
+
+        Requirements:
+        - The "difficulty" must be exactly one of: "EASY", "MEDIUM", or "HARD".
+        - For codeSnippets boilerplate, use "{{USER_CODE}}" as a placeholder where the user's solution function/class will be injected.
+        - referenceSolutions MUST be complete runnable programs (not just functions) that read from stdin and write to stdout.
+        - testCases input/output must match what the referenceSolutions read/print (they are verified by running the reference solution with that stdin and checking stdout).
+        - Ensure testCases are sufficient (at least 4) and include hidden ones.
+        - The response must ONLY contain the JSON object. Do not include any markdown formatting like \`\`\`json.
+      `;
+
+      const result = await model.generateContent(prompt);
+      const response = await result.response;
+      const text = response.text();
+      
+      console.log("AI Response Raw Text:", text);
+      
+      // More robust JSON extraction
+      const jsonMatch = text.match(/\{[\s\S]*\}/);
+      if (!jsonMatch) {
+        throw new Error("The AI response did not contain a valid JSON object.");
+      }
+      
+      const jsonStr = jsonMatch[0];
+
+      // AI-generated code snippets often contain raw escape sequences that break JSON.parse.
+      // We fix invalid escape sequences by parsing string values carefully.
+      let generatedProblem: Record<string, unknown>;
+      try {
+        generatedProblem = JSON.parse(jsonStr);
+      } catch {
+        // Fix common AI JSON issues: invalid escape sequences inside string values
+        // Replace any backslash not followed by a valid JSON escape char with \\\\
+        const sanitized = jsonStr.replace(
+          /"((?:[^"\\]|\\[\s\S])*)"/g,
+          (_match: string, inner: string) => {
+            // Re-escape any invalid escape sequences inside string values
+            const fixed = inner
+              .replace(/\\(?!["\\/bfnrtu])/g, "\\\\"); // fix bad escapes
+            return `"${fixed}"`;
+          }
+        );
+        try {
+          generatedProblem = JSON.parse(sanitized);
+        } catch (sanitizeError) {
+          throw new Error(`Failed to parse AI response as JSON. The AI may have returned malformed output. Raw error: ${sanitizeError instanceof Error ? sanitizeError.message : String(sanitizeError)}`);
+        }
+      }
+
+      console.log("Parsed AI Problem:", generatedProblem);
+
+      // Populate form fields individually to ensure re-renders are triggered correctly
+      if (generatedProblem.title) form.setFieldValue("title", generatedProblem.title as string);
+      if (generatedProblem.description) form.setFieldValue("description", generatedProblem.description as string);
+      if (generatedProblem.difficulty) form.setFieldValue("difficulty", generatedProblem.difficulty as Difficulty);
+      if (generatedProblem.topic) form.setFieldValue("topic", generatedProblem.topic as string);
+      if (generatedProblem.tags) form.setFieldValue("tags", generatedProblem.tags as string[]);
+      if (generatedProblem.askedIn) form.setFieldValue("askedIn", generatedProblem.askedIn as string[]);
+      if (generatedProblem.constraints) form.setFieldValue("constraints", generatedProblem.constraints as string);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      if (generatedProblem.examples) form.setFieldValue("examples", generatedProblem.examples as any);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      if (generatedProblem.testCases) form.setFieldValue("testCases", generatedProblem.testCases as any);
+      if (generatedProblem.hints) form.setFieldValue("hints", generatedProblem.hints as string[]);
+      if (generatedProblem.editorial) form.setFieldValue("editorial", generatedProblem.editorial as string);
+      if (generatedProblem.videoUrl) form.setFieldValue("videoUrl", generatedProblem.videoUrl as string);
+      
+      if (generatedProblem.codeSnippets) {
+        form.setFieldValue("codeSnippets", {
+          ...form.state.values.codeSnippets,
+          ...generatedProblem.codeSnippets
+        });
+      }
+      
+      if (generatedProblem.referenceSolutions) {
+        form.setFieldValue("referenceSolutions", {
+          ...form.state.values.referenceSolutions,
+          ...generatedProblem.referenceSolutions
+        });
+      }
+
+      toast.success("AI has successfully generated the problem!");
+    } catch (error: unknown) {
+      console.error("AI Generation Error:", error);
+      const errorMessage = error instanceof Error ? error.message : "Please try again.";
+      toast.error(`Failed to generate: ${errorMessage}`);
+    } finally {
+      setIsAiGenerating(false);
+    }
+  };
+
+  const { mutateAsync } = useMutation({
     mutationFn: (payload: ProblemCreateInput) => createProblemAction(payload),
   });
 
@@ -227,48 +327,111 @@ export default function CreateProblemForm() {
     },
   });
 
-  const loadSampleData = () => {
-    // Map sample data to guarantee string types for optional array fields like explanation/hints
-    // exactly matching the strict types inferred from `defaultValues`
-    // @ts-expect-error: form.reset strict inference slightly misaligns with sampleData record types
-    form.reset({
-      ...sampleData,
-      examples: sampleData.examples.map((ex) => ({
-        ...ex,
-        explanation: ex.explanation ?? "",
-      })),
-      hints: sampleData.hints ?? [],
-      askedIn: sampleData.askedIn ?? [],
-      topic: sampleData.topic ?? "",
-    });
-  };
 
   return (
-    <div className="container mx-auto py-8 px-4 max-w-7xl">
-      <Card className="shadow-xl">
-        <CardHeader className="pb-6">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-            <CardTitle className="text-3xl flex items-center gap-3">
-              <FileText className="w-8 h-8 text-amber-600" />
-              Create Problem
-            </CardTitle>
-            <div className="flex flex-col md:flex-row gap-3">
+    <div className="container mx-auto py-10 max-w-5xl">
+      <Card className="shadow-xl border-t-4 border-t-indigo-500">
+        <CardHeader className="space-y-1">
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="text-3xl font-bold flex items-center gap-3">
+                <Plus className="w-8 h-8 text-indigo-500" />
+                Create New Problem
+              </CardTitle>
+              <p className="text-muted-foreground mt-1">
+                Set up a new coding challenge for the community
+              </p>
+            </div>
+            <div className="flex gap-2">
               <Button
-                type="button"
-                variant="secondary"
-                size="sm"
-                onClick={loadSampleData}
+                variant="outline"
+                onClick={() => {
+                  if (confirm("Are you sure you want to reset the form? All progress will be lost.")) {
+                    form.reset();
+                  }
+                }}
                 className="gap-2"
               >
-                <Download className="w-4 h-4" />
-                Load Sample Payload
+                <Trash2 className="w-4 h-4 text-red-500" /> Reset Form
               </Button>
             </div>
           </div>
-          <Separator />
+          
+          <Separator className="my-6" />
+          
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4 bg-muted/30 p-4 rounded-xl border border-muted-foreground/10">
+            <div className="flex flex-col gap-1">
+              <h4 className="font-semibold flex items-center gap-2">
+                <Wand2 className="w-4 h-4 text-indigo-500" />
+                Creation Method
+              </h4>
+              <p className="text-xs text-muted-foreground">Choose how you want to build this problem</p>
+            </div>
+            
+            <Tabs 
+              value={creationMethod} 
+              onValueChange={(val) => setCreationMethod(val as "manual" | "ai")}
+              className="w-full md:w-auto"
+            >
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="manual" className="gap-2">
+                  <FileText className="w-4 h-4" /> Manual
+                </TabsTrigger>
+                <TabsTrigger value="ai" className="gap-2">
+                  <Bot className="w-4 h-4" /> AI Generate
+                </TabsTrigger>
+              </TabsList>
+            </Tabs>
+          </div>
+
+          {creationMethod === "ai" && (
+            <div 
+              className="mt-4 p-6 bg-indigo-50 dark:bg-indigo-950/20 rounded-xl border border-indigo-200 dark:border-indigo-900 shadow-inner"
+            >
+              <div className="space-y-4">
+                <div className="flex flex-col gap-3">
+                  <Label className="text-sm font-semibold flex items-center gap-2">
+                    <Wand2 className="w-4 h-4 text-indigo-600" />
+                    What kind of problem should AI generate?
+                  </Label>
+                  <Textarea 
+                    placeholder="Ex: Generate an EASY problem about Palindromes, or a HARD problem involving Dijkstra spanning across multiple cities..."
+                    value={aiPrompt}
+                    onChange={(e) => setAiPrompt(e.target.value)}
+                    className="bg-background border-indigo-200 min-h-[80px] py-3 resize-y shadow-sm focus:ring-indigo-500"
+                  />
+                </div>
+
+                <div className="flex items-center justify-between pt-4 border-t border-indigo-100 dark:border-indigo-900/50">
+                  <p className="text-[11px] text-muted-foreground italic max-w-md">
+                    Describe the difficulty and topic above. AI will handle descriptions, examples, solutions, and test cases.
+                  </p>
+                  
+                  <Button 
+                    type="button"
+                    onClick={handleGenerateAiProblem} 
+                    disabled={isAiGenerating}
+                    className="w-full md:w-auto min-w-44 h-11 bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg shadow-indigo-500/20 gap-2 font-semibold transition-all hover:scale-[1.02]"
+                  >
+                    {isAiGenerating ? (
+                      <>
+                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        Generating Your Problem...
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles className="w-5 h-5" />
+                        Generate with AI
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
         </CardHeader>
 
-        <CardContent className="p-6">
+        <CardContent className="pt-6">
           <form
             onSubmit={(e) => {
               e.preventDefault();
@@ -299,7 +462,8 @@ export default function CreateProblemForm() {
                       />
                       {field.state.meta.errors.length > 0 && (
                         <p className="text-sm text-red-500 mt-1">
-                          {field.state.meta.errors.join(", ")}
+                          {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                          {field.state.meta.errors.map((error: any) => typeof error === 'string' ? error : error?.message || JSON.stringify(error)).join(", ")}
                         </p>
                       )}
                     </div>
@@ -327,7 +491,8 @@ export default function CreateProblemForm() {
                       />
                       {field.state.meta.errors.length > 0 && (
                         <p className="text-sm text-red-500 mt-1">
-                          {field.state.meta.errors.join(", ")}
+                          {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                          {field.state.meta.errors.map((error: any) => typeof error === 'string' ? error : error?.message || JSON.stringify(error)).join(", ")}
                         </p>
                       )}
                     </div>
@@ -384,7 +549,8 @@ export default function CreateProblemForm() {
                       </Select>
                       {field.state.meta.errors.length > 0 && (
                         <p className="text-sm text-red-500 mt-1">
-                          {field.state.meta.errors.join(", ")}
+                          {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                          {field.state.meta.errors.map((error: any) => typeof error === 'string' ? error : error?.message || JSON.stringify(error)).join(", ")}
                         </p>
                       )}
                     </div>
@@ -412,7 +578,8 @@ export default function CreateProblemForm() {
                       />
                       {field.state.meta.errors.length > 0 && (
                         <p className="text-sm text-red-500 mt-1">
-                          {field.state.meta.errors.join(", ")}
+                          {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                          {field.state.meta.errors.map((error: any) => typeof error === 'string' ? error : error?.message || JSON.stringify(error)).join(", ")}
                         </p>
                       )}
                     </div>
@@ -473,7 +640,8 @@ export default function CreateProblemForm() {
                     </div>
                     {field.state.meta.errors.length > 0 && (
                       <p className="text-sm text-red-500 mt-2">
-                        {field.state.meta.errors.join(", ")}
+                        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                        {field.state.meta.errors.map((error: any) => typeof error === 'string' ? error : error?.message || JSON.stringify(error)).join(", ")}
                       </p>
                     )}
                   </CardContent>
@@ -533,7 +701,8 @@ export default function CreateProblemForm() {
                     </div>
                     {field.state.meta.errors.length > 0 && (
                       <p className="text-sm text-red-500 mt-2">
-                        {field.state.meta.errors.join(", ")}
+                        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                        {field.state.meta.errors.map((error: any) => typeof error === 'string' ? error : error?.message || JSON.stringify(error)).join(", ")}
                       </p>
                     )}
                   </CardContent>
@@ -661,7 +830,8 @@ export default function CreateProblemForm() {
                     ))}
                     {field.state.meta.errors.length > 0 && (
                       <p className="text-sm text-red-500 mt-2">
-                        {field.state.meta.errors.join(", ")}
+                        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                        {field.state.meta.errors.map((error: any) => typeof error === 'string' ? error  : error?.message || JSON.stringify(error)).join(", ")}
                       </p>
                     )}
                   </CardContent>
@@ -794,7 +964,8 @@ export default function CreateProblemForm() {
                     ))}
                     {field.state.meta.errors.length > 0 && (
                       <p className="text-sm text-red-500 mt-2">
-                        {field.state.meta.errors.join(", ")}
+                        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                        {field.state.meta.errors.map((error: any) => typeof error === 'string' ? error : error?.message || JSON.stringify(error)).join(", ")}
                       </p>
                     )}
                   </CardContent>
@@ -832,7 +1003,8 @@ export default function CreateProblemForm() {
                             />
                             {field.state.meta.errors.length > 0 && (
                               <p className="text-sm text-red-500 mt-2">
-                                {field.state.meta.errors.join(", ")}
+                                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                                {field.state.meta.errors.map((error: any) => typeof error === 'string' ? error : error?.message || JSON.stringify(error)).join(", ")}
                               </p>
                             )}
                           </>
@@ -870,7 +1042,8 @@ export default function CreateProblemForm() {
                             />
                             {field.state.meta.errors.length > 0 && (
                               <p className="text-sm text-red-500 mt-2">
-                                {field.state.meta.errors.join(", ")}
+                                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                                {field.state.meta.errors.map((error: any) => typeof error === 'string' ? error : error?.message || JSON.stringify(error)).join(", ")}
                               </p>
                             )}
                           </>
@@ -900,7 +1073,8 @@ export default function CreateProblemForm() {
                             />
                             {field.state.meta.errors.length > 0 && (
                               <p className="text-sm text-red-500 mt-2">
-                                {field.state.meta.errors.join(", ")}
+                                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                                {field.state.meta.errors.map((error: any) => typeof error === 'string' ? error : error?.message || JSON.stringify(error)).join(", ")}
                               </p>
                             )}
                           </>
@@ -938,7 +1112,8 @@ export default function CreateProblemForm() {
                         />
                         {field.state.meta.errors.length > 0 && (
                           <p className="text-sm text-red-500 mt-1">
-                            {field.state.meta.errors.join(", ")}
+                            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                            {field.state.meta.errors.map((error: any) => typeof error === 'string' ? error : error?.message || JSON.stringify(error)).join(", ")}
                           </p>
                         )}
                       </>

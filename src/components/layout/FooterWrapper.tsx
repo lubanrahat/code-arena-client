@@ -11,7 +11,8 @@ export default function FooterWrapper() {
     const hideFooter =
         pathname === "/login" ||
         pathname === "/register" ||
-        pathname.startsWith("/admin")
+        pathname.startsWith("/admin") ||
+        pathname.startsWith("/problems/");
     if (hideFooter) {
         return null;
     }

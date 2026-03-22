@@ -24,9 +24,32 @@ export const createProblemAction = async (problem: ProblemCreateInput) => {
       });
       console.log(response.data);
       return { success: true, message: "Problem created successfully" };
-    } catch (error) {
+    } catch (error: unknown) {
       console.error("Failed to create problem:", error);
-      return { success: false, message: "Failed to create problem" };
+      
+      let errorMessage = "Failed to create problem";
+      let details: string | undefined;
+
+      interface AxiosLike {
+        response?: { data?: { message?: string; details?: unknown } };
+        message?: string;
+      }
+
+      if (error && typeof error === 'object' && 'response' in error) {
+        const axiosError = error as AxiosLike;
+        errorMessage = axiosError.response?.data?.message || axiosError.message || errorMessage;
+        const rawDetails = axiosError.response?.data?.details;
+        if (rawDetails !== undefined) {
+          details = JSON.stringify(rawDetails);
+        }
+      } else if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      
+      return { 
+        success: false, 
+        message: details ? `${errorMessage}: ${details}` : errorMessage 
+      };
     }
   } catch (error) {
     console.error("Failed to create problem:", error);
