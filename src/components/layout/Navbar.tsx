@@ -31,9 +31,11 @@ export default function Navbar() {
   const router = useRouter();
 
   const navItems = [
+    { name: "Home", link: "/" },
     { name: "Practice", link: "/problems" },
-    { name: "Leaderboard", link: "/" },
-    { name: "Discuss", link: "/" },
+    { name: "Discover", link: "/discover" },
+    { name: "Resources", link: "/resources" },
+    { name: "Pricing", link: "/pricing" }
   ];
 
   const handleLogout = () => {
@@ -152,9 +154,9 @@ export const Logo = () => {
   return (
     <Link
       href="/"
-      className="relative z-20 flex items-center space-x-2 px-2 py-1 text-xl font-bold text-neutral-800 dark:text-neutral-100"
+      className="relative z-20 flex items-center space-x-2 px-2 py-1 text-lg font-bold text-neutral-800 dark:text-neutral-100"
     >
-      <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-linear-to-br from-blue-600 to-indigo-600 shadow-lg">
+      <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-linear-to-br from-blue-600 to-indigo-600 shadow-lg">
         <Terminal className="h-5 w-5 text-white" />
       </div>
       <span className="tracking-tight">CodeArena</span>
