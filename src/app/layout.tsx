@@ -5,7 +5,6 @@ import QueryProviders from "@/providers/QueryProvider";
 import { AuthProvider } from "@/providers/AuthProvider";
 import ThemeProvider from "@/providers/ThemeProvider";
 import NavbarWrapper from "@/components/layout/NavbarWrapper";
-import Footer from "@/components/layout/Footer";
 import FooterWrapper from "@/components/layout/FooterWrapper";
 
 const inter = Inter({
@@ -25,7 +24,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={inter.className} suppressHydrationWarning>
-      <body className="antialiased font-sans">
+      <body className="antialiased font-sans h-full">
         <ThemeProvider>
           <AuthProvider>
             <QueryProviders>

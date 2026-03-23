@@ -123,7 +123,7 @@ export default function CreateProblemForm() {
         "const lines = require('fs').readFileSync('/dev/stdin','utf8').trim().split('\\n'); const n = parseInt(lines[0]); const arr = lines[1].split(' ').map(Number); console.log(arr.reduce((a,b)=>a+b,0));"
 
         Example of CORRECT referenceSolution for PYTHON:
-        "import sys\\ndef solve():\\n    data = sys.stdin.read().split()\\n    n = int(data[0])\\n    arr = list(map(int, data[1:n+1]))\\n    print(sum(arr))\\nsolve()"
+        "from typing import List, Dict, Tuple, Set, Optional, Any\\nimport sys\\ndef solve():\\n    data = sys.stdin.read().split()\\n    n = int(data[0])\\n    arr = list(map(int, data[1:n+1]))\\n    print(sum(arr))\\nsolve()"
 
         Example of CORRECT referenceSolution for CPP:
         "#include<bits/stdc++.h>\\nusing namespace std;\\nint main(){int n; cin>>n; int s=0; for(int i=0;i<n;i++){int x; cin>>x; s+=x;} cout<<s<<endl;}"
@@ -151,7 +151,7 @@ export default function CreateProblemForm() {
           "editorial": "Explanation of the optimal approach.",
           "codeSnippets": {
             "JAVASCRIPT": { "code": "// starter code with {{USER_CODE}}", "boilerplate": "complete program template with {{USER_CODE}} placeholder", "language": "javascript" },
-            "PYTHON": { "code": "# starter code with {{USER_CODE}}", "boilerplate": "complete program template with {{USER_CODE}} placeholder", "language": "python" },
+            "PYTHON": { "code": "from typing import List, Dict, Tuple, Set, Optional, Any\\n\\n# starter code with {{USER_CODE}}", "boilerplate": "complete program template with {{USER_CODE}} placeholder", "language": "python" },
             "CPP": { "code": "// starter code with {{USER_CODE}}", "boilerplate": "complete program template with {{USER_CODE}} placeholder", "language": "cpp" },
             "GO": { "code": "// starter code with {{USER_CODE}}", "boilerplate": "complete program template with {{USER_CODE}} placeholder", "language": "go" }
           },
@@ -165,10 +165,16 @@ export default function CreateProblemForm() {
 
         Requirements:
         - The "difficulty" must be exactly one of: "EASY", "MEDIUM", or "HARD".
-        - For codeSnippets boilerplate, use "{{USER_CODE}}" as a placeholder where the user's solution function/class will be injected.
+        - For codeSnippets:
+          - "code": ONLY contain the solution class or function (the part the user sees and edits). e.g., "class Solution { ... };"
+          - "boilerplate": Contain the FULL, runnable program (including all #includes, namespaces, helper functions, and the int main() that reads from stdin and prints to stdout). You MUST use "{{USER_CODE}}" as a placeholder within the boilerplate where the "code" snippet will be injected. 
+          - Example (C++):
+            - code: "class Solution {\npublic:\n    int sum(int a, int b) {\n        return a + b;\n    }\n};"
+            - boilerplate: "#include <iostream>\nusing namespace std;\n{{USER_CODE}}\nint main() {\n    int a, b; cin >> a >> b;\n    Solution sol;\n    cout << sol.sum(a, b) << endl;\n    return 0;\n}"
         - referenceSolutions MUST be complete runnable programs (not just functions) that read from stdin and write to stdout.
         - testCases input/output must match what the referenceSolutions read/print (they are verified by running the reference solution with that stdin and checking stdout).
         - Ensure testCases are sufficient (at least 4) and include hidden ones.
+        - CRITICAL for Python: You MUST include "from typing import List, Dict, Tuple, Set, Optional, Any" in all Python code (both snippets and referenceSolutions). You MUST use them for type hinting (e.g., "List[int]" instead of "list[int]"). The execution environment uses Python 3.8 which does NOT support lowercase generic syntax, so lowercased lists/dicts will fail.
         - For the "description", "editorial", "explanation", "constraints", and "hints" fields, you MUST use HTML tags for formatting (e.g., <p>, <strong>, <code>, <ul>, <li>) because they will be rendered directly in the browser via dangerouslySetInnerHTML.
         - DO NOT use LaTeX inline math formatting like $k$ or $O(N)$. Use standard HTML code tags like <code>k</code> or <code>O(N)</code> for variable names and time complexities.
         - The response must ONLY contain the JSON object. Do not include any markdown formatting like \`\`\`json.
@@ -247,7 +253,10 @@ export default function CreateProblemForm() {
       toast.success("AI has successfully generated the problem!");
     } catch (error: unknown) {
       console.error("AI Generation Error:", error);
-      const errorMessage = error instanceof Error ? error.message : "Please try again.";
+      let errorMessage = error instanceof Error ? error.message : "Please try again.";
+      if (errorMessage.includes("429") || errorMessage.includes("Quota exceeded")) {
+        errorMessage = "AI generation quota limit reached. Please wait a minute and try again.";
+      }
       toast.error(`Failed to generate: ${errorMessage}`);
     } finally {
       setIsAiGenerating(false);

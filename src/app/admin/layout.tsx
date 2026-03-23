@@ -4,13 +4,12 @@ import {
   IconArrowLeft,
   IconUserBolt,
 } from "@tabler/icons-react";
-import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
 import { Sidebar, SidebarBody, SidebarLink } from "@/components/ui/sidebar";
 import { useAuth } from "@/hooks/useAuth";
 import { Code2, Plus, Terminal } from "lucide-react";
 import { LoaderOne } from "@/components/ui/loader";
-
+import Image from "next/image";
 import Link from "next/link";
 
 export default function AdminLayout({
@@ -68,8 +67,7 @@ export default function AdminLayout({
   return (
     <div
       className={cn(
-        "flex w-full flex-col overflow-hidden bg-gray-100 md:flex-row dark:bg-neutral-800",
-        "h-screen",
+        "fixed inset-0 flex w-full h-full flex-col overflow-hidden bg-gray-100 md:flex-row dark:bg-neutral-800",
       )}
     >
       <Sidebar open={open} setOpen={setOpen}>
@@ -88,7 +86,7 @@ export default function AdminLayout({
                 label: user.firstName + " " + user.lastName,
                 href: "/profile",
                 icon: (
-                  <img
+                  <Image
                     src={user.imageUrl as string}
                     className="h-7 w-7 shrink-0 rounded-full"
                     width={50}
