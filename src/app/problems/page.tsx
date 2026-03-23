@@ -11,7 +11,7 @@ export default async function ProblemsPage() {
   });
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] bg-gradient-to-b from-background via-background to-muted/20">
+    <div className="min-h-[calc(100vh-4rem)] bg-gradient-to-b from-background via-background to-muted/20 mt-18">
       <HydrationBoundary state={dehydrate(queryClient)}>
         <ProblemList />
       </HydrationBoundary>

@@ -5,8 +5,9 @@ import Link from "next/link";
 import { ArrowRight, Zap, Code2, Globe, CheckCircle, Star, Terminal, Cpu, Wifi } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
+import { oneDark, oneLight } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { cn } from "@/lib/utils";
+import { useTheme } from "next-themes";
 
 const codeSnippets = [
   {
@@ -83,6 +84,7 @@ const statsItems = [
 ];
 
 export default function Hero() {
+  const { resolvedTheme } = useTheme();
   const [snippetIndex, setSnippetIndex] = useState(0);
   const [displayedCode, setDisplayedCode] = useState("");
   const [isTyping, setIsTyping] = useState(true);
@@ -120,25 +122,54 @@ export default function Hero() {
 
   return (
     <div className="relative min-h-screen flex flex-col justify-center overflow-hidden bg-white dark:bg-zinc-950">
-      {/* Background Grid */}
+      {/* Dashed Center Fade Grid */}
       <div
-        className="absolute inset-0 pointer-events-none"
+        className="absolute inset-0 pointer-events-none opacity-[0.1] dark:opacity-[0.2]"
         style={{
-          backgroundImage: `radial-gradient(circle at center, transparent 30%, hsl(0,0%,100%) 80%), linear-gradient(to right, rgba(0,0,0,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,0.04) 1px, transparent 1px)`,
-          backgroundSize: "100% 100%, 48px 48px, 48px 48px",
+          backgroundImage: `
+            linear-gradient(to right, currentColor 1px, transparent 1px),
+            linear-gradient(to bottom, currentColor 1px, transparent 1px)
+          `,
+          backgroundSize: "32px 32px",
+          backgroundPosition: "0 0, 0 0",
+          maskImage: `
+            repeating-linear-gradient(
+              to right,
+              black 0px,
+              black 2px,
+              transparent 2px,
+              transparent 6px
+            ),
+            repeating-linear-gradient(
+              to bottom,
+              black 0px,
+              black 2px,
+              transparent 2px,
+              transparent 6px
+            ),
+            radial-gradient(ellipse 60% 60% at 50% 50%, black 30%, transparent 80%)
+          `,
+          WebkitMaskImage: `
+            repeating-linear-gradient(
+              to right,
+              black 0px,
+              black 2px,
+              transparent 2px,
+              transparent 6px
+            ),
+            repeating-linear-gradient(
+              to bottom,
+              black 0px,
+              black 2px,
+              transparent 2px,
+              transparent 6px
+            ),
+            radial-gradient(ellipse 60% 60% at 50% 50%, black 30%, transparent 80%)
+          `,
+          maskComposite: "intersect",
+          WebkitMaskComposite: "source-in",
         }}
       />
-      <div
-        className="absolute inset-0 pointer-events-none dark:block hidden"
-        style={{
-          backgroundImage: `radial-gradient(circle at center, transparent 30%, hsl(240,10%,4%) 80%), linear-gradient(to right, rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.03) 1px, transparent 1px)`,
-          backgroundSize: "100% 100%, 48px 48px, 48px 48px",
-        }}
-      />
-
-      {/* Ambient glows */}
-      <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] bg-blue-500/10 rounded-full blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-indigo-500/10 rounded-full blur-[100px] pointer-events-none" />
 
       <div className="relative z-10 container mx-auto px-6 pt-32 pb-20 md:pt-40 md:pb-24">
         <div className="flex flex-col lg:flex-row items-center gap-16 lg:gap-20">
@@ -151,7 +182,7 @@ export default function Hero() {
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
-              className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-gradient-to-r from-blue-500/10 to-indigo-500/10 border border-blue-500/20 text-blue-600 dark:text-blue-400 text-[11px] font-bold uppercase tracking-[0.25em] mb-8"
+              className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-linear-to-r from-blue-500/10 to-indigo-500/10 border border-blue-500/20 text-blue-600 dark:text-blue-400 text-[11px] font-bold uppercase tracking-[0.25em] mb-8"
             >
               <Zap className="w-3 h-3 fill-current" />
               <span>Elite Coding Platform</span>
@@ -166,7 +197,7 @@ export default function Hero() {
             >
               Master Algorithms.
               <br />
-              <span className="bg-gradient-to-r from-blue-600 via-indigo-500 to-violet-600 bg-clip-text text-transparent">
+              <span className="bg-linear-to-r from-blue-600 via-indigo-500 to-violet-600 bg-clip-text text-transparent">
                 Land Your Dream Job.
               </span>
             </motion.h1>
@@ -194,7 +225,7 @@ export default function Hero() {
                 style={{ background: "linear-gradient(135deg, #2563eb, #7c3aed)" }}
               >
                 {/* shimmer overlay */}
-                <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-in-out" />
+                <span className="absolute inset-0 bg-linear-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-in-out" />
                 Start for Free
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </Link>
@@ -219,13 +250,13 @@ export default function Hero() {
                   {["from-sky-400 to-blue-500", "from-violet-400 to-purple-600", "from-emerald-400 to-teal-500", "from-amber-400 to-orange-500"].map((g, i) => (
                     <div
                       key={i}
-                      className={cn("w-9 h-9 rounded-full border-2 border-white dark:border-zinc-950 bg-gradient-to-br shadow-sm", g)}
+                      className={cn("w-9 h-9 rounded-full border-2 border-white dark:border-zinc-950 bg-linear-to-br shadow-sm", g)}
                     />
                   ))}
                 </div>
                 <div className="text-left">
                   <div className="flex items-center gap-1 mb-0.5">
-                    {[1,2,3,4,5].map(i => <Star key={i} className="w-3 h-3 fill-amber-400 text-amber-400" />)}
+                    {[1, 2, 3, 4, 5].map(i => <Star key={i} className="w-3 h-3 fill-amber-400 text-amber-400" />)}
                   </div>
                   <p className="text-xs font-semibold text-zinc-500 dark:text-zinc-400">Trusted by <span className="text-zinc-900 dark:text-white font-black">10,000+</span> developers</p>
                 </div>
@@ -259,7 +290,7 @@ export default function Hero() {
               style={{ boxShadow: "0 0 0 1px rgba(255,255,255,0.08), 0 32px 64px -12px rgba(0,0,0,0.25), 0 0 80px rgba(99,102,241,0.08)" }}
             >
               {/* IDE Chrome */}
-              <div className="bg-zinc-900 px-5 py-3.5 flex items-center justify-between border-b border-white/5">
+              <div className="bg-zinc-100 dark:bg-zinc-900 px-5 py-3.5 flex items-center justify-between border-b border-zinc-200 dark:border-white/5">
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 rounded-full bg-red-400/80" />
                   <div className="w-3 h-3 rounded-full bg-amber-400/80" />
@@ -272,10 +303,10 @@ export default function Hero() {
                     initial={{ opacity: 0, y: -6 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 6 }}
-                    className="flex items-center gap-2.5 px-4 py-1 rounded-full bg-white/5 border border-white/8"
+                    className="flex items-center gap-2.5 px-4 py-1 rounded-full bg-zinc-200/50 dark:bg-white/5 border border-zinc-300 dark:border-white/8"
                   >
                     <Code2 className="w-3.5 h-3.5" style={{ color: currentSnippet.color }} />
-                    <span className="text-[11px] font-mono font-bold text-zinc-300 tracking-wide">{currentSnippet.name}</span>
+                    <span className="text-[11px] font-mono font-bold text-zinc-600 dark:text-zinc-300 tracking-wide">{currentSnippet.name}</span>
                   </motion.div>
                 </AnimatePresence>
 
@@ -295,9 +326,9 @@ export default function Hero() {
               </div>
 
               {/* Code Area */}
-              <div className="bg-[#1a1b26] relative min-h-[320px] overflow-hidden">
+              <div className="bg-zinc-50 dark:bg-[#1a1b26] relative min-h-[320px] overflow-hidden transition-colors duration-300">
                 {/* Line numbers gutter */}
-                <div className="absolute left-0 top-0 bottom-0 w-12 flex flex-col items-center pt-6 text-zinc-700 select-none border-r border-white/5">
+                <div className="absolute left-0 top-0 bottom-0 w-12 flex flex-col items-center pt-6 text-zinc-400 dark:text-zinc-700 select-none border-r border-zinc-200 dark:border-white/5">
                   {Array.from({ length: 10 }, (_, i) => (
                     <span key={i} className="block h-[1.6rem] leading-[1.6rem] text-[11px] font-mono">{i + 1}</span>
                   ))}
@@ -306,7 +337,7 @@ export default function Hero() {
                 <div className="pl-14 pr-5 py-6">
                   <SyntaxHighlighter
                     language={currentSnippet.lang}
-                    style={oneDark}
+                    style={resolvedTheme === "dark" ? oneDark : oneLight}
                     customStyle={{
                       background: "transparent",
                       padding: 0,
@@ -342,7 +373,7 @@ export default function Hero() {
               </div>
 
               {/* Status Bar */}
-              <div className="bg-zinc-900/90 border-t border-white/5 px-5 py-2.5 flex items-center justify-between">
+              <div className="bg-zinc-100/90 dark:bg-zinc-900/90 border-t border-zinc-200 dark:border-white/5 px-5 py-2.5 flex items-center justify-between">
                 <div className="flex items-center gap-4">
                   <div className="flex items-center gap-1.5">
                     <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
@@ -360,7 +391,7 @@ export default function Hero() {
                     </motion.span>
                   </AnimatePresence>
                 </div>
-                <div className="flex items-center gap-4 text-zinc-600">
+                <div className="flex items-center gap-4 text-zinc-400 dark:text-zinc-600">
                   <div className="flex items-center gap-1">
                     <Cpu className="w-3 h-3" />
                     <span className="text-[10px] font-mono">2.3ms</span>

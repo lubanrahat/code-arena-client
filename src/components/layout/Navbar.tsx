@@ -221,7 +221,7 @@ export default function Navbar() {
           <div className="flex flex-col space-y-4 w-full h-[60vh] overflow-y-auto pr-2 scrollbar-hide">
             <Link href="/" className="text-base font-bold px-2 py-1 hover:text-blue-500 transition-colors" onClick={() => setMobileMenuOpen(false)}>Home</Link>
             <Link href="/problems" className="text-base font-bold px-2 py-1 hover:text-blue-500 transition-colors" onClick={() => setMobileMenuOpen(false)}>Practice</Link>
-            
+
             <div className="space-y-4 pt-2">
               <div className="flex items-center gap-2 px-2">
                 <div className="h-px flex-1 bg-primary/10" />
@@ -230,9 +230,9 @@ export default function Navbar() {
               </div>
               <div className="grid grid-cols-1 gap-1">
                 {discoverItems.map((item) => (
-                  <Link 
-                    key={item.href} 
-                    href={item.href} 
+                  <Link
+                    key={item.href}
+                    href={item.href}
                     className="flex items-center gap-4 group p-3 rounded-2xl bg-primary/5 hover:bg-primary/10 active:scale-95 transition-all outline-none"
                     onClick={() => setMobileMenuOpen(false)}
                   >
@@ -256,9 +256,9 @@ export default function Navbar() {
               </div>
               <div className="grid grid-cols-1 gap-1">
                 {resourceItems.map((item) => (
-                  <Link 
-                    key={item.href} 
-                    href={item.href} 
+                  <Link
+                    key={item.href}
+                    href={item.href}
                     className="flex items-center gap-4 group p-3 rounded-2xl bg-primary/5 hover:bg-primary/10 active:scale-95 transition-all outline-none"
                     onClick={() => setMobileMenuOpen(false)}
                   >

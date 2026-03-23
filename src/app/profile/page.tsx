@@ -61,7 +61,7 @@ export default function ProfilePage() {
   const profileData = data || { ...user, stats: {} };
 
   return (
-    <div className="container mx-auto px-4 py-8 flex flex-col lg:flex-row gap-8 max-w-[1280px]">
+    <div className="container mx-auto px-4 py-8 flex flex-col lg:flex-row gap-8 max-w-[1280px] mt-18">
       <ProfileSidebar user={profileData} stats={profileData.stats} />
       
       <div className="flex-1 w-full flex flex-col min-w-0">
