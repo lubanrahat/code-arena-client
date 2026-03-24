@@ -324,11 +324,12 @@ export default function CreateProblemForm() {
 
         if (response.success) {
           toast.success("Problem created successfully");
-          router.push("/problems");
+          router.push("/admin/problems");
         } else {
           toast.error(response.message);
         }
         queryClient.invalidateQueries({ queryKey: ["problems"] });
+        queryClient.invalidateQueries({ queryKey: ["admin-problems"] });
       } catch (error: Error | unknown) {
         console.error("Error creating problem:", error);
         toast.error((error as Error).message || "Failed to create problem");

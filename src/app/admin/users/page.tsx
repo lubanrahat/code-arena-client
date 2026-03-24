@@ -1,7 +1,5 @@
+import AdminUsersTable from "@/components/modules/Admin/AdminUsersTable";
+
 export default function UsersPage() {
-    return (
-        <div>
-            <h1>Users</h1>
-        </div>
-    );
+  return <AdminUsersTable />;
 }

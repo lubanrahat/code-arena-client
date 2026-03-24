@@ -383,7 +383,7 @@ export default function CodeEditorPanel({
       {/* Editor Toolbar */}
       <div
         className={cn(
-          "flex items-center justify-between border-b bg-opacity-80 px-4 py-2.5 text-xs backdrop-blur-sm",
+          "relative flex items-center justify-between gap-2 border-b bg-opacity-80 px-2 py-2 text-xs backdrop-blur-sm sm:px-4 sm:py-2.5",
           isDark
             ? "border-white/5 bg-[#1c1c1f]/80"
             : "border-neutral-200/70 bg-white/70"
@@ -427,7 +427,7 @@ export default function CodeEditorPanel({
         </div>
 
         {/* Centered Modern Timer */}
-        <div className="absolute left-1/2 flex -translate-x-1/2 items-center">
+        <div className="absolute left-1/2 hidden -translate-x-1/2 items-center md:flex">
           <div
             className={cn(
               "flex items-center gap-1.5 rounded-full px-2 py-1.5 shadow-sm backdrop-blur-md transition-all duration-300",
@@ -498,7 +498,7 @@ export default function CodeEditorPanel({
 
 
         <div className="flex items-center gap-1">
-          <div className="mr-2 flex items-center gap-1.5 py-1 px-2 rounded-full bg-zinc-500/10">
+          <div className="mr-1 hidden items-center gap-1.5 rounded-full bg-zinc-500/10 px-2 py-1 sm:mr-2 sm:flex">
              <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
              <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">Ready</span>
           </div>
@@ -625,9 +625,11 @@ export default function CodeEditorPanel({
             <Maximize2 className="h-4 w-4" />
           </button>
           
-          <div className="flex items-center gap-1.5 ml-2 pl-2 border-l border-zinc-500/20">
+          <div className="ml-1 flex items-center gap-1 border-l border-zinc-500/20 pl-1 sm:ml-2 sm:gap-1.5 sm:pl-2">
             <ThemeDropdown />
-            <UserMenu />
+            <div className="hidden sm:block">
+              <UserMenu />
+            </div>
           </div>
         </div>
 
@@ -665,7 +667,7 @@ export default function CodeEditorPanel({
       {/* Bottom Action Bar */}
       <div
         className={cn(
-          "flex items-center justify-end gap-3 border-t bg-opacity-80 px-4 py-3 backdrop-blur-sm",
+          "flex flex-wrap items-center justify-end gap-2 border-t bg-opacity-80 px-2 py-2 backdrop-blur-sm sm:gap-3 sm:px-4 sm:py-3",
           isDark
             ? "border-white/5 bg-[#1c1c1f]/80"
             : "border-neutral-200/70 bg-white/70"
@@ -675,7 +677,7 @@ export default function CodeEditorPanel({
           onClick={handleRun}
           disabled={isRunning || isSubmitting}
           className={cn(
-            "flex items-center gap-2 rounded-xl border px-5 py-2.5 text-sm font-medium transition-all disabled:cursor-not-allowed disabled:opacity-50",
+            "flex flex-1 items-center justify-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-medium transition-all disabled:cursor-not-allowed disabled:opacity-50 sm:flex-none sm:px-5",
             isDark
               ? "border-zinc-600/50 bg-zinc-800/50 text-zinc-200 hover:bg-zinc-700/50"
               : "border-neutral-200 bg-white/80 text-neutral-900 hover:bg-neutral-100/70"
@@ -687,7 +689,7 @@ export default function CodeEditorPanel({
         <button
           onClick={handleSubmit}
           disabled={isRunning || isSubmitting}
-          className="flex items-center gap-2 rounded-xl bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-emerald-500/20 transition-all hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-50"
+          className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-emerald-500/20 transition-all hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-50 sm:flex-none sm:px-5"
         >
           <Send className="h-4 w-4" />
           {isSubmitting ? "Submitting..." : "Submit"}

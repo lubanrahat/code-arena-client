@@ -8,6 +8,7 @@ import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { oneDark, oneLight } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { cn } from "@/lib/utils";
 import { useTheme } from "next-themes";
+import { AnimatedTooltip } from "@/components/ui/animated-tooltip";
 
 const codeSnippets = [
   {
@@ -83,14 +84,51 @@ const statsItems = [
   { label: "Avg Rating", value: "4.9★" },
 ];
 
+const people = [
+  {
+    id: 1,
+    name: "John Doe",
+    designation: "Software Engineer",
+    image:
+      "https://images.unsplash.com/photo-1599566150163-29194dcaad36?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=3387&q=80",
+  },
+  {
+    id: 2,
+    name: "Robert Johnson",
+    designation: "Product Manager",
+    image:
+      "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8YXZhdGFyfGVufDB8fDB8fHww&auto=format&fit=crop&w=800&q=60",
+  },
+  {
+    id: 3,
+    name: "Jane Smith",
+    designation: "Data Scientist",
+    image:
+      "https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8YXZhdGFyfGVufDB8fDB8fHww&auto=format&fit=crop&w=800&q=60",
+  },
+  {
+    id: 4,
+    name: "Dora",
+    designation: "The Explorer",
+    image:
+      "https://images.unsplash.com/photo-1544725176-7c40e5a71c5e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=3534&q=80",
+  },
+];
+
 export default function Hero() {
   const { resolvedTheme } = useTheme();
   const [snippetIndex, setSnippetIndex] = useState(0);
   const [displayedCode, setDisplayedCode] = useState("");
   const [isTyping, setIsTyping] = useState(true);
+  const [mounted, setMounted] = useState(false);
 
   const currentSnippet = codeSnippets[snippetIndex];
   const isDone = isTyping && displayedCode.length === currentSnippet.code.length;
+  const syntaxTheme = mounted && resolvedTheme === "dark" ? oneDark : oneLight;
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     let timeout: NodeJS.Timeout;
@@ -254,6 +292,11 @@ export default function Hero() {
                     />
                   ))}
                 </div>
+
+                 {/* <div className="flex flex-row items-center justify-center mb-10 w-full">
+                      <AnimatedTooltip items={people} />
+                    </div> */}
+
                 <div className="text-left">
                   <div className="flex items-center gap-1 mb-0.5">
                     {[1, 2, 3, 4, 5].map(i => <Star key={i} className="w-3 h-3 fill-amber-400 text-amber-400" />)}
@@ -337,7 +380,7 @@ export default function Hero() {
                 <div className="pl-14 pr-5 py-6">
                   <SyntaxHighlighter
                     language={currentSnippet.lang}
-                    style={resolvedTheme === "dark" ? oneDark : oneLight}
+                    style={syntaxTheme}
                     customStyle={{
                       background: "transparent",
                       padding: 0,

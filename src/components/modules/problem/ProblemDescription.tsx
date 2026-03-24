@@ -106,8 +106,8 @@ export default function ProblemDescription({
   return (
     <div className="flex h-full flex-col bg-background overflow-hidden text-foreground">
       {/* Tabs — pill style */}
-      <div className="flex w-full items-center gap-1 border-b border-border/50 bg-background/70 px-4 py-2 backdrop-blur-sm">
-        <Link href="/problems" className="mr-2">
+      <div className="flex w-full items-center gap-1 overflow-x-auto border-b border-border/50 bg-background/70 px-2 py-2 backdrop-blur-sm sm:px-4">
+        <Link href="/problems" className="mr-1 shrink-0 sm:mr-2">
           <ArrowLeft className="h-5 w-5" />
         </Link>
 
@@ -116,25 +116,25 @@ export default function ProblemDescription({
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
             className={cn(
-              "flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-200",
+              "flex shrink-0 items-center gap-2 whitespace-nowrap rounded-lg px-2.5 py-2 text-xs font-medium transition-all duration-200 sm:px-4 sm:text-sm",
               activeTab === tab.id
                 ? "bg-primary/10 text-foreground shadow-sm dark:bg-white/10 dark:text-white"
                 : "text-muted-foreground hover:bg-primary/5 hover:text-foreground dark:text-zinc-500 dark:hover:bg-white/5 dark:hover:text-zinc-300",
             )}
           >
             <tab.icon className="h-4 w-4" />
-            {tab.label}
+            <span className="hidden sm:inline">{tab.label}</span>
           </button>
         ))}
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-y-auto p-6 scrollbar-thin scrollbar-thumb-border/70 dark:scrollbar-thumb-zinc-700 scrollbar-track-transparent">
+      <div className="flex-1 overflow-y-auto p-3 scrollbar-thin scrollbar-thumb-border/70 dark:scrollbar-thumb-zinc-700 scrollbar-track-transparent sm:p-6">
         {activeTab === "Description" && (
           <div className="space-y-6">
             {/* Header */}
-            <div className="flex items-center gap-3">
-              <h1 className="text-2xl font-bold tracking-tight text-foreground">
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+              <h1 className="text-xl font-bold tracking-tight text-foreground sm:text-2xl">
                 {title}
               </h1>
               {isSolved && (
@@ -163,7 +163,7 @@ export default function ProblemDescription({
             </div>
 
             {/* Actions */}
-            <div className="flex items-center gap-6 border-b border-border/50 pb-4">
+            <div className="flex flex-wrap items-center gap-4 border-b border-border/50 pb-4 sm:gap-6">
               <button className="flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-emerald-500 dark:hover:text-emerald-400">
                 <ThumbsUp className="h-4 w-4" />
                 <span>0</span>

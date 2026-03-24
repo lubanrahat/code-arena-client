@@ -1,7 +1,5 @@
+import AdminStatsDashboard from "@/components/modules/Admin/AdminStatsDashboard";
+
 export default function AdminPage() {
-  return (
-    <div>
-      <h1>Admin Page</h1>
-    </div>
-  );
+  return <AdminStatsDashboard />;
 }
