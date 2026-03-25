@@ -42,6 +42,8 @@ import {
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
 import { cn } from "@/lib/utils";
+import { logoutUser } from "@/app/(auth)/login/_action";
+
 
 const discoverItems = [
   {
@@ -111,7 +113,7 @@ export default function Navbar() {
   const { user } = useAuthUser();
   const router = useRouter();
 
-  const handleLogout = () => {
+  const handleLogout =  () => {
     logout();
     router.push("/login");
   };

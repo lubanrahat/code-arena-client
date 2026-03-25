@@ -25,5 +25,12 @@ export const getCookie = async (name: string) => {
 
 export const deleteCookie = async (name: string) => {
   const cookieStore = await cookies();
-  cookieStore.delete(name);
+  const isProd = process.env.NODE_ENV === "production";
+  cookieStore.set(name, "", {
+    httpOnly: true,
+    secure: isProd,
+    sameSite: "strict",
+    path: "/",
+    maxAge: 0,
+  });
 };

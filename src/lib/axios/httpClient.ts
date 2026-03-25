@@ -16,6 +16,19 @@ const axiosInstance = axios.create({
   },
 });
 
+const isCanceledError = (error: unknown) => {
+  if (axios.isCancel(error)) return true;
+  if (typeof error === "object" && error !== null) {
+    const maybe = error as { code?: string; name?: string; message?: string };
+    if (maybe.code === "ERR_CANCELED") return true;
+    if (maybe.name === "CanceledError" || maybe.name === "AbortError") return true;
+    if (typeof maybe.message === "string" && maybe.message.toLowerCase().includes("canceled")) {
+      return true;
+    }
+  }
+  return false;
+};
+
 export interface ApiResponseOptions {
   params?: Record<string, unknown>;
   headers?: Record<string, string>;
@@ -29,7 +42,10 @@ const httpGet = async (endpoint: string, options?: ApiResponseOptions) => {
     });
     return response.data;
   } catch (error) {
-    console.error(`GET ${endpoint} failed:`, error);
+    if (isCanceledError(error)) return null;
+    if (!isCanceledError(error)) {
+      console.error(`GET ${endpoint} failed:`, error);
+    }
     throw error;
   }
 };
@@ -46,7 +62,10 @@ const httpPost = async (
     });
     return response.data;
   } catch (error) {
-    console.error(`POST ${endpoint} failed:`, error);
+    if (isCanceledError(error)) return null;
+    if (!isCanceledError(error)) {
+      console.error(`POST ${endpoint} failed:`, error);
+    }
     throw error;
   }
 };
@@ -63,7 +82,10 @@ const httpPut = async (
     });
     return response.data;
   } catch (error) {
-    console.error(`PUT ${endpoint} failed:`, error);
+    if (isCanceledError(error)) return null;
+    if (!isCanceledError(error)) {
+      console.error(`PUT ${endpoint} failed:`, error);
+    }
     throw error;
   }
 };
@@ -80,7 +102,10 @@ const httpPatch = async (
     });
     return response.data;
   } catch (error) {
-    console.error(`PATCH ${endpoint} failed:`, error);
+    if (isCanceledError(error)) return null;
+    if (!isCanceledError(error)) {
+      console.error(`PATCH ${endpoint} failed:`, error);
+    }
     throw error;
   }
 };
@@ -93,7 +118,10 @@ const httpDelete = async (endpoint: string, options?: ApiResponseOptions) => {
     });
     return response.data;
   } catch (error) {
-    console.error(`DELETE ${endpoint} failed:`, error);
+    if (isCanceledError(error)) return null;
+    if (!isCanceledError(error)) {
+      console.error(`DELETE ${endpoint} failed:`, error);
+    }
     throw error;
   }
 };

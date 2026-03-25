@@ -1,7 +1,21 @@
 "use server";
 
+import axios from "axios";
 import { httpClient } from "@/lib/axios/httpClient";
 import { getCookie } from "@/lib/cookieUtils";
+
+const isCanceledError = (error: unknown) => {
+  if (axios.isCancel(error)) return true;
+  if (typeof error === "object" && error !== null) {
+    const maybe = error as { code?: string; name?: string; message?: string };
+    if (maybe.code === "ERR_CANCELED") return true;
+    if (maybe.name === "CanceledError" || maybe.name === "AbortError") return true;
+    if (typeof maybe.message === "string" && maybe.message.toLowerCase().includes("canceled")) {
+      return true;
+    }
+  }
+  return false;
+};
 
 export const allProblems = async (params = {}) => {
   try {
@@ -10,8 +24,11 @@ export const allProblems = async (params = {}) => {
     const response = await httpClient.get("/problems", { params, headers });
     return response;
   } catch (error) {
+    if (isCanceledError(error)) {
+      return { data: [], meta: { pagination: { totalPages: 1 } } };
+    }
     console.error("Failed to fetch problems:", error);
-    throw error;
+    return { data: [], meta: { pagination: { totalPages: 1 } } };
   }
 };
 
@@ -22,8 +39,11 @@ export const getProblemById = async (id: string) => {
     const response = await httpClient.get(`/problems/${id}`, { headers });
     return response;
   } catch (error) {
+    if (isCanceledError(error)) {
+      return null;
+    }
     console.error(`Failed to fetch problem ${id}:`, error);
-    throw error;
+    return null;
   }
 };
 
@@ -42,8 +62,11 @@ export const runCode = async (payload: {
     });
     return response;
   } catch (error) {
+    if (isCanceledError(error)) {
+      return null;
+    }
     console.error("Failed to run code:", error);
-    throw error;
+    return null;
   }
 };
 
@@ -62,8 +85,11 @@ export const submitCode = async (payload: {
     });
     return response;
   } catch (error) {
+    if (isCanceledError(error)) {
+      return null;
+    }
     console.error("Failed to submit code:", error);
-    throw error;
+    return null;
   }
 };
 
@@ -76,8 +102,11 @@ export const getSubmissionsForProblem = async (problemId: string) => {
     });
     return response.data;
   } catch (error) {
+    if (isCanceledError(error)) {
+      return [];
+    }
     console.error(`Failed to fetch submissions for problem ${problemId}:`, error);
-    throw error;
+    return [];
   }
 };
 export const getAllSubmissions = async () => {
@@ -89,7 +118,10 @@ export const getAllSubmissions = async () => {
     });
     return response.data;
   } catch (error) {
+    if (isCanceledError(error)) {
+      return [];
+    }
     console.error("Failed to fetch all submissions:", error);
-    throw error;
+    return [];
   }
 };

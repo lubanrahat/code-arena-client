@@ -11,12 +11,24 @@ import { Code2, Plus, Terminal } from "lucide-react";
 import { LoaderOne } from "@/components/ui/loader";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { logoutUser } from "@/app/(auth)/login/_action";
+import { useAuthContext } from "@/providers/AuthProvider";
+
 
 export default function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const router = useRouter();
+  const { logout } = useAuthContext();
+
+  const handleLogout = async () => {
+    logout();
+    router.push("/login");
+  };
+
   const links = [
     {
       label: "Create Problem",
@@ -46,6 +58,7 @@ export default function AdminLayout({
       icon: (
         <IconArrowLeft className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
       ),
+      onClick: handleLogout,
     },
   ];
   const [open, setOpen] = useState(false);
@@ -96,6 +109,7 @@ export default function AdminLayout({
                 ),
               }}
             />
+
           </div>
         </SidebarBody>
       </Sidebar>

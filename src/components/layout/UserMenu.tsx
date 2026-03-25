@@ -42,18 +42,18 @@ export default function UserMenu() {
           >
             <div
               className={`absolute inset-0 ${getRoleBadgeColor(
-                user.role
+                user.role,
               )} opacity-10 group-hover:opacity-20 transition-opacity`}
             />
             <Avatar className="h-10 w-10">
               <AvatarImage src={(user as { imageUrl?: string }).imageUrl} />
               <AvatarFallback
                 className={`flex items-center justify-center h-full w-full text-white font-semibold text-sm ${getRoleBadgeColor(
-                  user.role
+                  user.role,
                 )}`}
               >
                 {getUserInitials(
-                  (user as { userName?: string }).userName || user.email
+                  (user as { userName?: string }).userName || user.email,
                 )}
               </AvatarFallback>
             </Avatar>
@@ -73,7 +73,7 @@ export default function UserMenu() {
               <div className="flex items-center gap-2">
                 <span
                   className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium text-white ${getRoleBadgeColor(
-                    user.role
+                    user.role,
                   )}`}
                 >
                   <Sparkles className="h-3 w-3" />

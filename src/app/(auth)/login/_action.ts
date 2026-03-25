@@ -1,7 +1,7 @@
 "use server";
 
 import { httpClient } from "@/lib/axios/httpClient";
-import { setCookie } from "@/lib/cookieUtils";
+import { deleteCookie, setCookie } from "@/lib/cookieUtils";
 import { LoginInput, loginSchema } from "@/validation/auth.validation";
 
 export const loginAction = async (payload: LoginInput) => {
@@ -28,12 +28,22 @@ export const loginAction = async (payload: LoginInput) => {
 
     await setCookie("role", response.data.user.role, 60 * 60 * 24 * 7);
 
-
     return { success: true, user: response.data.user };
   } catch (error: unknown) {
     return {
       success: false,
       message: `Login failed. ${error instanceof Error ? error.message : "Something went wrong"}`,
     };
+  }
+};
+
+export const logoutUser = async () => {
+  try {
+    await httpClient.post("/auth/logout", {});
+  } catch (error) {
+    console.error("Backend logout failed:", error);
+  } finally {
+    await deleteCookie("token");
+    await deleteCookie("role");
   }
 };

@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useEffect, useReducer } from "react";
 import { AuthUser } from "@/hooks/useAuth";
+import { logoutUser } from "@/app/(auth)/login/_action";
 
 type AuthState = {
   user: AuthUser | null;
@@ -54,6 +55,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const logout = () => {
     localStorage.removeItem("user");
+    logoutUser();
     dispatch({ type: "LOGOUT" });
   };
 

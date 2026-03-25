@@ -209,7 +209,7 @@ function TabButton({ label, icon, active, onClick }: { label: string; icon: Reac
     <button
       onClick={onClick}
       className={cn(
-        "flex items-center gap-2 pb-3 px-1 text-sm font-semibold border-b-2 transition-all",
+        "flex shrink-0 items-center gap-2 border-b-2 px-1 pb-3 text-xs font-semibold transition-all sm:text-sm",
         active
           ? "border-blue-500 text-blue-600 dark:text-blue-400"
           : "border-transparent text-muted-foreground hover:text-foreground hover:border-muted-foreground"
@@ -388,7 +388,7 @@ export default function ProblemList() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-background px-6 py-8 max-w-6xl mx-auto">
+      <div className="min-h-screen max-w-6xl bg-background px-4 py-6 sm:px-6 sm:py-8 mx-auto">
         <div className="space-y-3">
           <Skeleton className="h-10 w-full rounded-lg" />
           {[1, 2, 3, 4, 5, 6].map((i) => <Skeleton key={i} className="h-14 w-full rounded-lg" />)}
@@ -401,7 +401,7 @@ export default function ProblemList() {
     <div ref={containerRef} className="min-h-screen bg-background text-foreground">
       <div className="max-w-6xl mx-auto px-4 py-6">
 
-        <div className="flex items-center gap-6 border-b border-border mb-5">
+        <div className="mb-5 flex items-center gap-4 overflow-x-auto border-b border-border">
           <TabButton
             label="All Questions"
             active={activeTab === "all"}
@@ -438,9 +438,9 @@ export default function ProblemList() {
           />
         </div>
 
-        <div className="flex items-center gap-3 mb-5 flex-wrap">
+        <div className="mb-5 flex flex-wrap items-center gap-2 sm:gap-3">
           {/* Search */}
-          <div className="relative flex-1 min-w-[200px] max-w-xs">
+          <div className="relative w-full min-w-0 sm:flex-1 sm:min-w-[220px] sm:max-w-xs">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <input
               type="text"
@@ -451,7 +451,7 @@ export default function ProblemList() {
             />
           </div>
 
-          <div className="flex items-center gap-2 flex-wrap">
+          <div className="flex w-full items-center gap-2 overflow-x-auto pb-1 sm:w-auto sm:flex-wrap sm:overflow-visible sm:pb-0">
             {/* Difficulty Dropdown */}
             <DropdownMenu
               label="Difficulty"
@@ -540,7 +540,7 @@ export default function ProblemList() {
           <button
             onClick={handlePickRandom}
             disabled={sortedProblems.length === 0}
-            className="ml-auto flex items-center gap-2 h-9 px-5 rounded-lg text-sm font-bold text-white disabled:opacity-40 transition-all hover:opacity-90 shadow-md"
+            className="flex h-9 w-full items-center justify-center gap-2 rounded-lg px-5 text-sm font-bold text-white transition-all hover:opacity-90 disabled:opacity-40 sm:ml-auto sm:w-auto shadow-md"
             style={{ background: "linear-gradient(135deg, #06b6d4, #0891b2)" }}
           >
             <Shuffle className="w-4 h-4" />
@@ -551,7 +551,7 @@ export default function ProblemList() {
         {/* ── Table ────────────────────────────────────────────────────── */}
         <div className="rounded-xl border border-border overflow-hidden bg-white dark:bg-zinc-950 shadow-sm">
           {/* Table Header */}
-          <div className="grid grid-cols-[2.5fr_160px_110px_110px_1fr] gap-4 px-6 py-3 border-b border-border bg-muted/30 text-[11px] font-bold uppercase tracking-widest text-muted-foreground">
+          <div className="hidden md:grid grid-cols-[2.5fr_160px_110px_110px_1fr] gap-4 px-6 py-3 border-b border-border bg-muted/30 text-[11px] font-bold uppercase tracking-widest text-muted-foreground">
             <div className="pl-4">Topic</div>
             <div>Difficulty</div>
             <div className="text-center">Avg Time</div>
@@ -583,97 +583,134 @@ export default function ProblemList() {
               return (
                 <div
                   key={problem.id}
-                  className="group grid grid-cols-[2.5fr_160px_110px_110px_1fr] gap-4 items-center border-b border-border/50 last:border-0 hover:bg-muted/20 transition-colors duration-150 relative"
+                  className="group relative border-b border-border/50 last:border-0 transition-colors duration-150 hover:bg-muted/20 md:grid md:grid-cols-[2.5fr_160px_110px_110px_1fr] md:gap-4 md:items-center"
                 >
                   {/* Left difficulty stripe */}
-                  <div className={cn("absolute left-0 top-[20%] bottom-[20%] w-[3px] rounded-r-full opacity-0 group-hover:opacity-100 transition-opacity", cfg.stripe)} />
+                  <div className={cn("absolute left-0 top-[20%] bottom-[20%] w-[3px] rounded-r-full opacity-0 transition-opacity group-hover:opacity-100", cfg.stripe)} />
 
-                  {/* Problem name + topic */}
-                  <div className="flex items-center gap-3 pl-6 pr-2 py-4 min-w-0">
-                    <button
-                      onClick={(e) => toggleBookmark(problem.id, e)}
-                      className={cn(
-                        "shrink-0 transition-colors",
-                        isBookmarked ? "text-amber-400" : "text-muted-foreground/30 hover:text-muted-foreground"
-                      )}
-                    >
-                      {isBookmarked ? <BookmarkCheck className="w-3.5 h-3.5" /> : <Bookmark className="w-3.5 h-3.5" />}
-                    </button>
-                    <div className="min-w-0">
-                      <Link
-                        href={`/problems/${problem.id}`}
+                  {/* Mobile row card */}
+                  <div className="space-y-3 px-4 py-3 md:hidden">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="min-w-0">
+                        <Link
+                          href={`/problems/${problem.id}`}
+                          className={cn(
+                            "block truncate text-sm font-medium transition-colors hover:text-blue-500 dark:hover:text-blue-400",
+                            isSolved ? "text-emerald-600 dark:text-emerald-400" : "text-blue-600 dark:text-blue-400",
+                          )}
+                        >
+                          {problem.title}
+                        </Link>
+                        {problem.topic && (
+                          <span className="mt-1 inline-block rounded-md border border-border/50 bg-muted/70 px-2 py-0.5 text-[11px] font-medium text-muted-foreground dark:bg-zinc-800">
+                            {problem.topic}
+                          </span>
+                        )}
+                      </div>
+                      <button
+                        onClick={(e) => toggleBookmark(problem.id, e)}
                         className={cn(
-                          "font-medium text-sm hover:text-blue-500 dark:hover:text-blue-400 transition-colors truncate block",
-                          isSolved ? "text-emerald-600 dark:text-emerald-400" : "text-blue-600 dark:text-blue-400"
+                          "shrink-0 transition-colors",
+                          isBookmarked ? "text-amber-400" : "text-muted-foreground/40 hover:text-muted-foreground",
                         )}
                       >
-                        {problem.title}
-                      </Link>
-                      {problem.topic && (
-                        <span className="inline-block mt-0.5 text-[11px] text-muted-foreground bg-muted/70 dark:bg-zinc-800 px-2 py-0.5 rounded-md border border-border/50 font-medium">
-                          {problem.topic}
-                        </span>
-                      )}
+                        {isBookmarked ? <BookmarkCheck className="h-4 w-4" /> : <Bookmark className="h-4 w-4" />}
+                      </button>
                     </div>
-                    {isSolved && (
-                      <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 ml-1" />
-                    )}
+                    <div className="flex items-center gap-2">
+                      <span className={cn("inline-flex rounded-full px-3 py-1 text-xs font-bold", cfg.badge)}>
+                        {cfg.label}
+                      </span>
+                      {isSolved && <CheckCircle2 className="h-4 w-4 text-emerald-500" />}
+                    </div>
+                    <div className="grid grid-cols-2 gap-2 text-xs text-muted-foreground">
+                      <div>Avg: <span className="font-medium">{avgTime} mins</span></div>
+                      <div>Subs: <span className="font-medium">{((problem._count?.submissions ?? Math.floor(20000 + (seed * 1337) % 80000))).toLocaleString()}</span></div>
+                    </div>
                   </div>
 
-                  {/* Difficulty Badge */}
-                  <div className="py-4">
-                    <span className={cn("inline-flex px-3.5 py-1 rounded-full text-xs font-bold", cfg.badge)}>
-                      {cfg.label}
-                    </span>
-                  </div>
+                  {/* Desktop row */}
+                  <div className="hidden md:contents">
+                    <div className="flex min-w-0 items-center gap-3 py-4 pl-6 pr-2">
+                      <button
+                        onClick={(e) => toggleBookmark(problem.id, e)}
+                        className={cn(
+                          "shrink-0 transition-colors",
+                          isBookmarked ? "text-amber-400" : "text-muted-foreground/30 hover:text-muted-foreground",
+                        )}
+                      >
+                        {isBookmarked ? <BookmarkCheck className="w-3.5 h-3.5" /> : <Bookmark className="w-3.5 h-3.5" />}
+                      </button>
+                      <div className="min-w-0">
+                        <Link
+                          href={`/problems/${problem.id}`}
+                          className={cn(
+                            "block truncate text-sm font-medium transition-colors hover:text-blue-500 dark:hover:text-blue-400",
+                            isSolved ? "text-emerald-600 dark:text-emerald-400" : "text-blue-600 dark:text-blue-400",
+                          )}
+                        >
+                          {problem.title}
+                        </Link>
+                        {problem.topic && (
+                          <span className="mt-0.5 inline-block rounded-md border border-border/50 bg-muted/70 px-2 py-0.5 text-[11px] font-medium text-muted-foreground dark:bg-zinc-800">
+                            {problem.topic}
+                          </span>
+                        )}
+                      </div>
+                      {isSolved && <CheckCircle2 className="ml-1 h-4 w-4 shrink-0 text-emerald-500" />}
+                    </div>
 
-                  {/* Avg Time */}
-                  <div className="text-center text-sm text-muted-foreground font-medium py-4">
-                    {avgTime} Mins
-                  </div>
+                    <div className="py-4">
+                      <span className={cn("inline-flex rounded-full px-3.5 py-1 text-xs font-bold", cfg.badge)}>
+                        {cfg.label}
+                      </span>
+                    </div>
 
-                  {/* Submissions */}
-                  <div className="text-center text-sm text-muted-foreground font-medium py-4">
-                    {((problem._count?.submissions ?? Math.floor(20000 + (seed * 1337) % 80000))).toLocaleString()}
-                  </div>
+                    <div className="py-4 text-center text-sm font-medium text-muted-foreground">
+                      {avgTime} Mins
+                    </div>
 
-                  {/* Asked In */}
-                  <div className="pr-6 py-4">
-                    {companies.length > 0 ? (
-                      <div className="flex items-center gap-1.5">
-                        <span className="text-xs text-muted-foreground mr-0.5">Asked in</span>
-                        {displayCompanies.map((c) => {
-                          const svgStr = companyLogo[c as keyof typeof companyLogo];
-                          if (svgStr) {
+                    <div className="py-4 text-center text-sm font-medium text-muted-foreground">
+                      {((problem._count?.submissions ?? Math.floor(20000 + (seed * 1337) % 80000))).toLocaleString()}
+                    </div>
+
+                    <div className="py-4 pr-6">
+                      {companies.length > 0 ? (
+                        <div className="flex items-center gap-1.5">
+                          <span className="mr-0.5 text-xs text-muted-foreground">Asked in</span>
+                          {displayCompanies.map((c) => {
+                            const svgStr = companyLogo[c as keyof typeof companyLogo];
+                            if (svgStr) {
+                              return (
+                                <span
+                                  key={c}
+                                  title={c}
+                                  className="inline-flex h-[22px] w-[22px] shrink-0 items-center justify-center overflow-hidden rounded bg-white/5 [&>svg]:h-[18px] [&>svg]:w-[18px]"
+                                  dangerouslySetInnerHTML={{ __html: svgStr }}
+                                />
+                              );
+                            }
+
+                            const { char, color } = companyInitial(c);
                             return (
                               <span
                                 key={c}
                                 title={c}
-                                className="inline-flex items-center justify-center w-[22px] h-[22px] shrink-0 [&>svg]:w-[18px] [&>svg]:h-[18px] rounded overflow-hidden bg-white/5"
-                                dangerouslySetInnerHTML={{ __html: svgStr }}
-                              />
+                                className="inline-flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded border border-border/60 bg-background text-[9px] font-black shadow-sm"
+                                style={{ color }}
+                              >
+                                {char}
+                              </span>
                             );
-                          }
-
-                          const { char, color } = companyInitial(c);
-                          return (
-                            <span
-                              key={c}
-                              title={c}
-                              className="inline-flex items-center justify-center w-[22px] h-[22px] shrink-0 rounded text-[9px] font-black border border-border/60 bg-background shadow-sm"
-                              style={{ color }}
-                            >
-                              {char}
-                            </span>
-                          );
-                        })}
-                        {overflow > 0 && (
-                          <span className="text-xs font-bold text-blue-500 ml-1">+{overflow}</span>
-                        )}
-                      </div>
-                    ) : (
-                      <span className="text-xs text-muted-foreground/40">—</span>
-                    )}
+                          })}
+                          {overflow > 0 && (
+                            <span className="ml-1 text-xs font-bold text-blue-500">+{overflow}</span>
+                          )}
+                        </div>
+                      ) : (
+                        <span className="text-xs text-muted-foreground/40">—</span>
+                      )}
+                    </div>
                   </div>
                 </div>
               );
