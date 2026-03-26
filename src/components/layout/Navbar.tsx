@@ -24,6 +24,7 @@ import {
   Sparkles,
   SquarePen,
   Terminal,
+  User,
 } from "lucide-react";
 
 import { useAuthUser } from "@/hooks/useAuth";
@@ -220,7 +221,7 @@ export default function Navbar() {
           isOpen={mobileMenuOpen}
           onClose={() => setMobileMenuOpen(false)}
         >
-          <div className="flex flex-col space-y-4 w-full h-[60vh] overflow-y-auto pr-2 scrollbar-hide">
+          <div className="flex flex-col space-y-4 w-full pr-2">
             <Link href="/" className="text-base font-bold px-2 py-1 hover:text-blue-500 transition-colors" onClick={() => setMobileMenuOpen(false)}>Home</Link>
             <Link href="/problems" className="text-base font-bold px-2 py-1 hover:text-blue-500 transition-colors" onClick={() => setMobileMenuOpen(false)}>Practice</Link>
 
@@ -297,14 +298,24 @@ export default function Navbar() {
                     </div>
                   </div>
                 </div>
-                <Link
-                  href={dashboardLink}
-                  className="w-full px-4 py-3 rounded-2xl bg-primary/10 hover:bg-primary/20 text-center font-bold text-sm tracking-tight transition-all flex items-center justify-center gap-2 active:scale-95"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  <LayoutDashboard className="h-4 w-4" />
-                  Dashboard
-                </Link>
+                <div className="grid grid-cols-2 gap-3 w-full">
+                  <Link
+                    href={dashboardLink}
+                    className="w-full px-4 py-3 rounded-2xl bg-primary/10 hover:bg-primary/20 text-center font-bold text-sm tracking-tight transition-all flex items-center justify-center gap-2 active:scale-95"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <LayoutDashboard className="h-4 w-4" />
+                    Dashboard
+                  </Link>
+                  <Link
+                    href="/profile"
+                    className="w-full px-4 py-3 rounded-2xl bg-primary/10 hover:bg-primary/20 text-center font-bold text-sm tracking-tight transition-all flex items-center justify-center gap-2 active:scale-95"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <User className="h-4 w-4" />
+                    Profile
+                  </Link>
+                </div>
                 <Button
                   onClick={handleLogout}
                   variant="outline"

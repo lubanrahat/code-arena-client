@@ -5,6 +5,10 @@ import { Check, Zap, Crown, Rocket, ArrowRight, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useAuthContext } from "@/providers/AuthProvider";
+import { subscribeToPlan } from "./_action";
+import { toast } from "sonner"; // Using sonner if applicable or standard fallback
 
 const plans = [
   {
@@ -29,7 +33,7 @@ const plans = [
   },
   {
     name: "Pro",
-    price: "$19",
+    price: "$20",
     period: "per month",
     description: "For serious developers preparing for interviews",
     icon: Rocket,
@@ -96,6 +100,36 @@ const faqs = [
 
 export default function PricingPage() {
   const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">("monthly");
+  const { user } = useAuthContext();
+  const router = useRouter();
+  const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
+
+  const handleSubscribe = async (planName: string, href: string) => {
+    if (planName === "Free" || planName === "Enterprise") {
+      router.push(href);
+      return;
+    }
+
+    if (!user) {
+      router.push("/login?redirect=/pricing");
+      return;
+    }
+
+    try {
+      setLoadingPlan(planName);
+      const res = await subscribeToPlan(billingCycle);
+      if (res?.url) {
+        window.location.href = res.url;
+      } else {
+        toast.error("Failed to create checkout session");
+      }
+    } catch (e: unknown) {
+      const err = e as { response?: { data?: { message?: string } } };
+      toast.error(err?.response?.data?.message || "Payment service unavailable");
+    } finally {
+      setLoadingPlan(null);
+    }
+  };
 
   return (
     <div className="min-h-screen w-full bg-white dark:bg-zinc-950 relative overflow-x-hidden">
@@ -149,7 +183,7 @@ export default function PricingPage() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="text-lg md:text-xl text-zinc-500 dark:text-zinc-400 leading-relaxed font-medium"
           >
-            Start free, upgrade when you're ready. All plans include access to our world-class coding platform.
+            Start free, upgrade when you&apos;re ready. All plans include access to our world-class coding platform.
           </motion.p>
 
           {/* Billing Toggle */}
@@ -176,7 +210,7 @@ export default function PricingPage() {
               Yearly
             </span>
             <span className="px-2 py-1 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-xs font-bold">
-              Save 20%
+              Save 58%
             </span>
           </motion.div>
         </div>
@@ -225,7 +259,7 @@ export default function PricingPage() {
                   <div className="mb-8">
                     <div className="flex items-baseline gap-2">
                       <span className="text-5xl font-black text-zinc-900 dark:text-white">
-                        {plan.price === "Custom" ? plan.price : billingCycle === "yearly" && plan.price !== "$0" ? `$${Math.round(parseInt(plan.price.slice(1)) * 0.8)}` : plan.price}
+                        {plan.price === "Custom" ? plan.price : billingCycle === "yearly" && plan.price !== "$0" ? `$100` : plan.price}
                       </span>
                       {plan.price !== "Custom" && plan.price !== "$0" && (
                         <span className="text-sm text-zinc-500 dark:text-zinc-400 font-medium">/{billingCycle === "yearly" ? "year" : "month"}</span>
@@ -235,18 +269,20 @@ export default function PricingPage() {
                   </div>
 
                   {/* CTA Button */}
-                  <Link
-                    href={plan.href}
+                  <button
+                    onClick={() => handleSubscribe(plan.name, plan.href)}
+                    disabled={loadingPlan === plan.name}
                     className={cn(
                       "group relative w-full inline-flex items-center justify-center gap-2 h-12 px-6 rounded-xl font-bold text-sm transition-all duration-300 mb-8",
                       plan.popular
                         ? "bg-linear-to-r from-indigo-500 to-violet-500 text-white shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/50 hover:scale-[1.02]"
-                        : "bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white hover:bg-zinc-200 dark:hover:bg-zinc-700"
+                        : "bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white hover:bg-zinc-200 dark:hover:bg-zinc-700",
+                      loadingPlan === plan.name ? "opacity-70 cursor-not-allowed" : ""
                     )}
                   >
-                    {plan.cta}
-                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                  </Link>
+                    {loadingPlan === plan.name ? "Loading..." : plan.cta}
+                    {loadingPlan !== plan.name && <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />}
+                  </button>
 
                   {/* Features */}
                   <div className="space-y-3">
@@ -300,7 +336,7 @@ export default function PricingPage() {
           className="text-center mt-24"
         >
           <p className="text-zinc-500 dark:text-zinc-400 mb-6">
-            Still have questions? We're here to help.
+            Still have questions? We&apos;re here to help.
           </p>
           <Link
             href="/"

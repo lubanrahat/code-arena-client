@@ -43,7 +43,7 @@ export const getProblemById = async (id: string) => {
       return null;
     }
     console.error(`Failed to fetch problem ${id}:`, error);
-    return null;
+    throw error;
   }
 };
 
@@ -123,5 +123,35 @@ export const getAllSubmissions = async () => {
     }
     console.error("Failed to fetch all submissions:", error);
     return [];
+  }
+};
+
+export const toggleBookmark = async (problemId: string) => {
+  try {
+    const token = await getCookie("token");
+    const headers = token ? { Cookie: `token=${token}` } : undefined;
+    const response = await httpClient.post(`/problems/${problemId}/bookmark`, {}, { headers });
+    return response.data;
+  } catch (error) {
+    if (isCanceledError(error)) {
+      return null;
+    }
+    console.error("Failed to toggle bookmark:", error);
+    return null;
+  }
+};
+
+export const getUserProblemStatus = async () => {
+  try {
+    const token = await getCookie("token");
+    const headers = token ? { Cookie: `token=${token}` } : undefined;
+    const response = await httpClient.get("/problems/user/status", { headers });
+    return response.data;
+  } catch (error) {
+    if (isCanceledError(error)) {
+      return { solvedProblemIds: [], attemptedProblemIds: [], bookmarkedProblemIds: [] };
+    }
+    console.error("Failed to fetch user problem status:", error);
+    return { solvedProblemIds: [], attemptedProblemIds: [], bookmarkedProblemIds: [] };
   }
 };

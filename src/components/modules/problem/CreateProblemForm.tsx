@@ -112,11 +112,11 @@ export default function CreateProblemForm() {
         CRITICAL: The test cases and reference solutions MUST be compatible with an online judge (Judge0).
         This means:
         1. Test case "input" must be raw stdin content (e.g., "5\\n1 2 3 4 5" for n=5 followed by an array).
-        2. Test case "output" must be the raw stdout content the program should print (e.g., "15\\n").
+        2. Test case "output" must be the exact raw stdout content the program should print (e.g., "15"). NEVER include trailing spaces or extra newlines at the end of the expected output unless explicitly printed by your code.
         3. Reference solutions MUST be complete, self-contained programs that:
            - Read input from stdin (using standard input reading for each language)
-           - Solve the problem
-           - Print the answer to stdout (with a trailing newline)
+           - Solve the problem with FLAWLESS logic
+           - Print the exact answer to stdout
            - They must NOT be just function definitions — they must be full runnable programs.
 
         Example of CORRECT referenceSolution for JAVASCRIPT (reads from stdin, prints to stdout):
@@ -140,6 +140,7 @@ export default function CreateProblemForm() {
           "tags": ["tag1", "tag2"],
           "askedIn": ["Company1", "Company2"],
           "constraints": "Clear constraints for input size and values.",
+          "isPremium": false,
           "examples": [
             { "input": "raw stdin for example", "output": "raw stdout for example", "explanation": "..." }
           ],
@@ -165,6 +166,9 @@ export default function CreateProblemForm() {
 
         Requirements:
         - The "difficulty" must be exactly one of: "EASY", "MEDIUM", or "HARD".
+        - Set "isPremium" to true if the problem is a highly-requested interview question or is very complex.
+        - EXTREME PRECISION: Double-check that your reference solutions in all 4 languages produce the EXACT SAME output for all test cases. A single mismatch or compile error will cause our backend to reject the problem.
+        - Ensure test cases do NOT have trailing newlines in their expected "output" fields unless absolutely necessary.
         - For codeSnippets:
           - "code": ONLY contain the solution class or function (the part the user sees and edits). e.g., "class Solution { ... };"
           - "boilerplate": Contain the FULL, runnable program (including all #includes, namespaces, helper functions, and the int main() that reads from stdin and prints to stdout). You MUST use "{{USER_CODE}}" as a placeholder within the boilerplate where the "code" snippet will be injected. 
@@ -172,8 +176,8 @@ export default function CreateProblemForm() {
             - code: "class Solution {\npublic:\n    int sum(int a, int b) {\n        return a + b;\n    }\n};"
             - boilerplate: "#include <iostream>\nusing namespace std;\n{{USER_CODE}}\nint main() {\n    int a, b; cin >> a >> b;\n    Solution sol;\n    cout << sol.sum(a, b) << endl;\n    return 0;\n}"
         - referenceSolutions MUST be complete runnable programs (not just functions) that read from stdin and write to stdout.
-        - testCases input/output must match what the referenceSolutions read/print (they are verified by running the reference solution with that stdin and checking stdout).
-        - Ensure testCases are sufficient (at least 4) and include hidden ones.
+        - testCases input/output must match what the referenceSolutions read/print EXACTLY without trailing empty lines.
+        - Ensure testCases are sufficient (at least 4) and include hidden ones. Keep inputs relatively small (under 100 elements) so the LLM doesn't hallucinate the math.
         - CRITICAL for Python: You MUST include "from typing import List, Dict, Tuple, Set, Optional, Any" in all Python code (both snippets and referenceSolutions). You MUST use them for type hinting (e.g., "List[int]" instead of "list[int]"). The execution environment uses Python 3.8 which does NOT support lowercase generic syntax, so lowercased lists/dicts will fail.
         - For the "description", "editorial", "explanation", "constraints", and "hints" fields, you MUST use HTML tags for formatting (e.g., <p>, <strong>, <code>, <ul>, <li>) because they will be rendered directly in the browser via dangerouslySetInnerHTML.
         - DO NOT use LaTeX inline math formatting like $k$ or $O(N)$. Use standard HTML code tags like <code>k</code> or <code>O(N)</code> for variable names and time complexities.
@@ -228,6 +232,7 @@ export default function CreateProblemForm() {
       if (generatedProblem.tags) form.setFieldValue("tags", generatedProblem.tags as string[]);
       if (generatedProblem.askedIn) form.setFieldValue("askedIn", generatedProblem.askedIn as string[]);
       if (generatedProblem.constraints) form.setFieldValue("constraints", generatedProblem.constraints as string);
+      if (generatedProblem.isPremium !== undefined) form.setFieldValue("isPremium", generatedProblem.isPremium as boolean);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       if (generatedProblem.examples) form.setFieldValue("examples", generatedProblem.examples as any);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -280,6 +285,7 @@ export default function CreateProblemForm() {
       hints: [""],
       editorial: "",
       videoUrl: "",
+      isPremium: false,
       testCases: [{ input: "", output: "", isHidden: false }],
 
       codeSnippets: {
@@ -594,6 +600,30 @@ export default function CreateProblemForm() {
                           {field.state.meta.errors.map((error: any) => typeof error === 'string' ? error : error?.message || JSON.stringify(error)).join(", ")}
                         </p>
                       )}
+                    </div>
+                  )}
+                </form.Field>
+              </div>
+
+              {/* Is Premium */}
+              <div className="md:col-span-2 mt-4">
+                <form.Field name="isPremium">
+                  {(field) => (
+                    <div className="flex flex-row items-center justify-between rounded-xl border p-5 shadow-sm bg-linear-to-r from-amber-50/50 to-orange-50/50 dark:from-amber-950/20 dark:to-orange-950/20 border-amber-200/50 dark:border-amber-900/50">
+                      <div className="space-y-1">
+                        <Label htmlFor={field.name} className="text-base font-bold flex items-center gap-2 text-amber-700 dark:text-amber-500">
+                          💎 Premium Problem
+                        </Label>
+                        <p className="text-sm text-muted-foreground">
+                          Turn this on to restrict access to Pro and Enterprise members only.
+                        </p>
+                      </div>
+                      <Checkbox
+                        id={field.name}
+                        checked={field.state.value}
+                        onCheckedChange={(checked) => field.handleChange(checked === true)}
+                        className="data-[state=checked]:bg-amber-500 data-[state=checked]:border-amber-500 w-6 h-6 border-2"
+                      />
                     </div>
                   )}
                 </form.Field>

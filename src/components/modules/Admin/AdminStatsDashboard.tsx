@@ -20,6 +20,8 @@ import {
   Users,
   Activity,
   AlertCircle,
+  Crown,
+  DollarSign,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -39,11 +41,24 @@ type ActivityPoint = {
 type AdminStatsPayload = {
   overview: {
     totalUsers: number;
+    totalPremiumUsers?: number;
     totalProblems: number;
     totalSubmissions: number;
+    totalRevenue?: number;
+    monthlyRevenue?: number;
   };
   difficultyDistribution: DifficultyDistributionItem[];
   activityData: ActivityPoint[];
+  recentPayments?: {
+    id: string;
+    userName: string;
+    email: string;
+    amount: number;
+    currency: string;
+    plan: string;
+    status: string;
+    createdAt: string;
+  }[];
 };
 
 const difficultyColor: Record<string, string> = {
@@ -69,6 +84,7 @@ export default function AdminStatsDashboard() {
   const overview = payload?.overview;
   const difficultyDistribution = payload?.difficultyDistribution ?? [];
   const activityData = payload?.activityData ?? [];
+  const recentPayments = payload?.recentPayments ?? [];
 
   const lastDay = activityData[activityData.length - 1]?.count ?? 0;
   const prevDay =
@@ -100,7 +116,7 @@ export default function AdminStatsDashboard() {
         </Card>
       ) : (
         <>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <Card className="border-t-4 border-t-indigo-500">
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-semibold text-muted-foreground flex items-center gap-2">
@@ -110,6 +126,18 @@ export default function AdminStatsDashboard() {
               </CardHeader>
               <CardContent className="pt-0">
                 {isLoading ? <Skeleton className="h-8 w-24" /> : <div className="text-3xl font-bold">{overview?.totalUsers?.toLocaleString() ?? 0}</div>}
+              </CardContent>
+            </Card>
+
+            <Card className="border-t-4 border-t-amber-500">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm font-semibold text-muted-foreground flex items-center gap-2">
+                  <Crown className="h-4 w-4 text-amber-500" />
+                  Premium Subscribers
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="pt-0">
+                {isLoading ? <Skeleton className="h-8 w-24" /> : <div className="text-3xl font-bold text-amber-600 dark:text-amber-400">{overview?.totalPremiumUsers?.toLocaleString() ?? 0}</div>}
               </CardContent>
             </Card>
 
@@ -163,6 +191,29 @@ export default function AdminStatsDashboard() {
                         {delta === 0 ? "No change" : `${delta > 0 ? "+" : ""}${delta.toFixed(1)}%`}
                       </Badge>
                     </div>
+                  </>
+                )}
+              </CardContent>
+            </Card>
+
+            <Card className="border-t-4 border-t-green-500">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm font-semibold text-muted-foreground flex items-center gap-2">
+                  <DollarSign className="h-4 w-4 text-green-500" />
+                  Total Revenue
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="pt-0 flex flex-col gap-2">
+                {isLoading ? (
+                  <Skeleton className="h-8 w-24" />
+                ) : (
+                  <>
+                    <div className="text-3xl font-bold text-green-600 dark:text-green-400">
+                      ${overview?.totalRevenue?.toLocaleString(undefined, { minimumFractionDigits: 2 }) ?? "0.00"}
+                    </div>
+                    <Badge variant="secondary" className="bg-green-500/10 text-green-700 dark:text-green-300 border-green-500/20 w-fit">
+                      This month: ${overview?.monthlyRevenue?.toLocaleString(undefined, { minimumFractionDigits: 2 }) ?? "0.00"}
+                    </Badge>
                   </>
                 )}
               </CardContent>
@@ -286,6 +337,61 @@ export default function AdminStatsDashboard() {
                       </div>
                     );
                   })}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Recent Payments Table */}
+          <Card className="overflow-hidden">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base flex items-center gap-2">
+                <DollarSign className="h-4 w-4 text-green-500" />
+                Recent Payments
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {isLoading ? (
+                <Skeleton className="h-40 w-full" />
+              ) : recentPayments.length === 0 ? (
+                <p className="text-sm text-muted-foreground text-center py-8">No payments yet.</p>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b border-border/60">
+                        <th className="text-left py-3 px-2 font-semibold text-muted-foreground">User</th>
+                        <th className="text-left py-3 px-2 font-semibold text-muted-foreground">Plan</th>
+                        <th className="text-right py-3 px-2 font-semibold text-muted-foreground">Amount</th>
+                        <th className="text-left py-3 px-2 font-semibold text-muted-foreground">Status</th>
+                        <th className="text-left py-3 px-2 font-semibold text-muted-foreground">Date</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {recentPayments.map((p) => (
+                        <tr key={p.id} className="border-b border-border/30 hover:bg-muted/30 transition-colors">
+                          <td className="py-3 px-2">
+                            <div className="font-medium">{p.userName}</div>
+                            <div className="text-xs text-muted-foreground">{p.email}</div>
+                          </td>
+                          <td className="py-3 px-2">
+                            <Badge variant="secondary" className="capitalize">{p.plan}</Badge>
+                          </td>
+                          <td className="py-3 px-2 text-right font-bold text-green-600 dark:text-green-400">
+                            ${p.amount.toFixed(2)}
+                          </td>
+                          <td className="py-3 px-2">
+                            <Badge variant="secondary" className="bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/20 capitalize">
+                              {p.status}
+                            </Badge>
+                          </td>
+                          <td className="py-3 px-2 text-muted-foreground">
+                            {new Date(p.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
               )}
             </CardContent>

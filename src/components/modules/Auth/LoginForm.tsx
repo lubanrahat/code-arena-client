@@ -7,8 +7,9 @@ import { LoginInput, loginSchema } from "@/validation/auth.validation";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "@tanstack/react-form";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useAuthContext } from "@/providers/AuthProvider";
+import { toast } from "sonner";
 
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -22,6 +23,8 @@ import Link from "next/link";
 export default function LoginForm() {
   const queryClient = useQueryClient();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectTo = searchParams.get("redirect");
   const { setUser } = useAuthContext();
   const [serverError, setServerError] = useState<string | null>(null);
   const { mutateAsync, isPending } = useMutation({
@@ -45,9 +48,12 @@ export default function LoginForm() {
         if (result?.user) {
           localStorage.setItem("user", JSON.stringify(result.user));
           setUser(result.user);
+          toast.success("Logged in successfully!");
 
-          // Redirect based on role
-          if (result.user.role === "ADMIN") {
+          // Redirect to the page the user came from, or default based on role
+          if (redirectTo) {
+            router.push(redirectTo);
+          } else if (result.user.role === "ADMIN") {
             router.push("/admin");
           } else {
             router.push("/problems");

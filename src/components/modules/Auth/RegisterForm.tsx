@@ -12,6 +12,7 @@ import { registerAction } from "@/app/(auth)/register/_action";
 import { RegisterInput, registerSchema } from "@/validation/auth.validation";
 import { useForm } from "@tanstack/react-form";
 import Link from "next/link";
+import { toast } from "sonner";
 
 export default function RegisterForm() {
   const queryClient = useQueryClient();
@@ -36,6 +37,7 @@ export default function RegisterForm() {
           setServerError(result.message);
           return;
         }
+        toast.success("Account created successfully! Please log in.");
         queryClient.invalidateQueries({ queryKey: ["user"] });
       } catch (error) {
         console.log(error);

@@ -5,10 +5,11 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { MapPin, GraduationCap, LinkIcon } from "lucide-react";
+import { MapPin, GraduationCap, LinkIcon, Crown } from "lucide-react";
 import { format } from "date-fns";
 import { useState } from "react";
 import { useUpdateProfile } from "@/hooks/useUser";
+import { toast } from "sonner";
 
 interface ProfileSidebarProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -48,17 +49,22 @@ export default function ProfileSidebar({ user, stats }: ProfileSidebarProps) {
 
   const isSaving = updateProfile.isPending;
   const handleSave = async () => {
-    await updateProfile.mutateAsync({
-      firstName: firstName || undefined,
-      lastName: lastName || undefined,
-      location: location || undefined,
-      institution: institution || undefined,
-      website: website || undefined,
-      github: github || undefined,
-      linkedin: linkedin || undefined,
-      twitter: twitter || undefined,
-    });
-    setOpen(false);
+    try {
+      await updateProfile.mutateAsync({
+        firstName: firstName || undefined,
+        lastName: lastName || undefined,
+        location: location || undefined,
+        institution: institution || undefined,
+        website: website || undefined,
+        github: github || undefined,
+        linkedin: linkedin || undefined,
+        twitter: twitter || undefined,
+      });
+      setOpen(false);
+      toast.success("Profile updated successfully!");
+    } catch (error) {
+      toast.error("Failed to update profile.");
+    }
   };
 
   return (
@@ -82,6 +88,18 @@ export default function ProfileSidebar({ user, stats }: ProfileSidebarProps) {
               <p className="text-xs text-muted-foreground mt-1 truncate">Since: {joinDate}</p>
             </div>
           </div>
+
+          {user?.isPremium && (
+            <div className="w-full px-3 py-2.5 rounded-xl bg-gradient-to-r from-amber-500/10 to-yellow-500/10 border border-amber-500/20 flex items-center gap-2.5">
+              <Crown className="h-4 w-4 text-amber-500 shrink-0" />
+              <div className="flex flex-col">
+                <span className="text-sm font-bold text-amber-600 dark:text-amber-400">💎 Pro Member</span>
+                {user.subscriptionPlan && (
+                  <span className="text-[11px] text-muted-foreground capitalize">{user.subscriptionPlan} plan</span>
+                )}
+              </div>
+            </div>
+          )}
 
           <div className="w-full space-y-3 mt-2">
             <div className="flex items-center gap-2 text-sm text-muted-foreground">

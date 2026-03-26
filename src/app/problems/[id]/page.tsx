@@ -7,7 +7,9 @@ import {
   getSubmissionsForProblem,
 } from "@/app/problems/_action";
 
+import axios from "axios";
 import { motion } from "framer-motion";
+import { useRouter } from "next/navigation";
 import {
   ResizableHandle,
   ResizablePanel,
@@ -56,6 +58,7 @@ interface PageProps {
 
 export default function ProblemDetailsPage({ params }: PageProps) {
   const { id } = use(params);
+  const router = useRouter();
   const [isMobileLayout, setIsMobileLayout] = useState(false);
 
   const [runResult, setRunResult] = useState<RunResult | null>(null);
@@ -94,6 +97,12 @@ export default function ProblemDetailsPage({ params }: PageProps) {
       )
     : false;
 
+  React.useEffect(() => {
+    if (error && axios.isAxiosError(error) && error.response?.status === 403) {
+      router.push("/pricing");
+    }
+  }, [error, router]);
+
   if (isFetchingProblem) {
     return (
       <div className="flex h-screen w-full flex-col items-center justify-center bg-background">
@@ -109,6 +118,13 @@ export default function ProblemDetailsPage({ params }: PageProps) {
         </motion.div>
       </div>
     );
+  }
+
+  if (error) {
+    if (axios.isAxiosError(error) && error.response?.status === 403) {
+      // Redirect handled by useEffect above
+      return null;
+    }
   }
 
   if (error || !data) {

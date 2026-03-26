@@ -79,7 +79,7 @@ export const problemCreateSchema = z.preprocess(
 
   videoUrl: z.string().url("Invalid video URL").optional().or(z.literal("")),
 
-
+  isPremium: z.boolean().default(false).optional(),
 
   testCases: z
     .array(
