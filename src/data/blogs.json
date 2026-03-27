@@ -5,8 +5,8 @@
     "subtitle": "A step-by-step guide to deploying your own code execution engine in minutes.",
     "excerpt": "A step-by-step guide to deploying your own code execution engine in minutes. Learn how to safely run arbitrary user-submitted code on your server.",
     "author": {
-      "name": "CodeArena Team",
-      "avatar": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop",
+      "name": "Luban Rahat",
+      "avatar": "https://res.cloudinary.com/dq4n6leek/image/upload/v1774541212/lubanrahat_v31eu1.png",
       "role": "Platform Engineering",
       "bio": "Building scalable systems and teaching others how to do the same."
     },
@@ -23,8 +23,8 @@
     "subtitle": "Learn how to submit code, poll results, and handle multiple test cases efficiently.",
     "excerpt": "A comprehensive guide to integrating Judge0's REST API into your application. Learn about batch submissions, polling strategies, and language mapping.",
     "author": {
-      "name": "CodeArena Team",
-      "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop",
+      "name": "Luban Rahat",
+      "avatar": "https://res.cloudinary.com/dq4n6leek/image/upload/v1774541212/lubanrahat_v31eu1.png",
       "role": "Platform Engineering",
       "bio": "Building scalable systems and teaching others how to do the same."
     },

@@ -447,70 +447,72 @@ export default function AdminProblemsTable() {
             </DialogDescription>
           </DialogHeader>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <div className="space-y-1">
-                <div className="text-sm font-medium text-muted-foreground">Title</div>
-                <Input value={editTitle} onChange={(e) => setEditTitle(e.target.value)} />
+          <div className="max-h-[60vh] overflow-y-auto px-1 py-1">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <div className="space-y-1">
+                  <div className="text-sm font-medium text-muted-foreground">Title</div>
+                  <Input value={editTitle} onChange={(e) => setEditTitle(e.target.value)} />
+                </div>
+                <div className="space-y-1">
+                  <div className="text-sm font-medium text-muted-foreground">Difficulty</div>
+                  <Select
+                    value={String(editDifficulty)}
+                    onValueChange={(v) => setEditDifficulty(v)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select difficulty" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="EASY">Easy</SelectItem>
+                      <SelectItem value="MEDIUM">Medium</SelectItem>
+                      <SelectItem value="HARD">Hard</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-1">
+                  <div className="text-sm font-medium text-muted-foreground">Topic (optional)</div>
+                  <Input value={editTopic} onChange={(e) => setEditTopic(e.target.value)} />
+                </div>
+                <div className="space-y-1">
+                  <div className="text-sm font-medium text-muted-foreground">Tags (comma separated)</div>
+                  <Input value={editTags} onChange={(e) => setEditTags(e.target.value)} />
+                </div>
+                <div className="space-y-1">
+                  <div className="text-sm font-medium text-muted-foreground">Asked In (comma separated)</div>
+                  <Input value={editAskedIn} onChange={(e) => setEditAskedIn(e.target.value)} />
+                </div>
               </div>
-              <div className="space-y-1">
-                <div className="text-sm font-medium text-muted-foreground">Difficulty</div>
-                <Select
-                  value={String(editDifficulty)}
-                  onValueChange={(v) => setEditDifficulty(v)}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select difficulty" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="EASY">Easy</SelectItem>
-                    <SelectItem value="MEDIUM">Medium</SelectItem>
-                    <SelectItem value="HARD">Hard</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-1">
-                <div className="text-sm font-medium text-muted-foreground">Topic (optional)</div>
-                <Input value={editTopic} onChange={(e) => setEditTopic(e.target.value)} />
-              </div>
-              <div className="space-y-1">
-                <div className="text-sm font-medium text-muted-foreground">Tags (comma separated)</div>
-                <Input value={editTags} onChange={(e) => setEditTags(e.target.value)} />
-              </div>
-              <div className="space-y-1">
-                <div className="text-sm font-medium text-muted-foreground">Asked In (comma separated)</div>
-                <Input value={editAskedIn} onChange={(e) => setEditAskedIn(e.target.value)} />
-              </div>
-            </div>
 
-            <div className="space-y-3">
-              <div className="space-y-1">
-                <div className="text-sm font-medium text-muted-foreground">Description</div>
-                <Textarea
-                  value={editDescription}
-                  onChange={(e) => setEditDescription(e.target.value)}
-                  className="min-h-[120px]"
-                />
-              </div>
-              <div className="space-y-1">
-                <div className="text-sm font-medium text-muted-foreground">Constraints</div>
-                <Textarea
-                  value={editConstraints}
-                  onChange={(e) => setEditConstraints(e.target.value)}
-                  className="min-h-[110px] font-mono"
-                />
-              </div>
-              <div className="space-y-1">
-                <div className="text-sm font-medium text-muted-foreground">Editorial (optional)</div>
-                <Textarea
-                  value={editEditorial}
-                  onChange={(e) => setEditEditorial(e.target.value)}
-                  className="min-h-[90px]"
-                />
-              </div>
-              <div className="space-y-1">
-                <div className="text-sm font-medium text-muted-foreground">Video URL (optional)</div>
-                <Input value={editVideoUrl} onChange={(e) => setEditVideoUrl(e.target.value)} placeholder="https://..." />
+              <div className="space-y-3">
+                <div className="space-y-1">
+                  <div className="text-sm font-medium text-muted-foreground">Description</div>
+                  <Textarea
+                    value={editDescription}
+                    onChange={(e) => setEditDescription(e.target.value)}
+                    className="min-h-[120px]"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <div className="text-sm font-medium text-muted-foreground">Constraints</div>
+                  <Textarea
+                    value={editConstraints}
+                    onChange={(e) => setEditConstraints(e.target.value)}
+                    className="min-h-[110px] font-mono"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <div className="text-sm font-medium text-muted-foreground">Editorial (optional)</div>
+                  <Textarea
+                    value={editEditorial}
+                    onChange={(e) => setEditEditorial(e.target.value)}
+                    className="min-h-[90px]"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <div className="text-sm font-medium text-muted-foreground">Video URL (optional)</div>
+                  <Input value={editVideoUrl} onChange={(e) => setEditVideoUrl(e.target.value)} placeholder="https://..." />
+                </div>
               </div>
             </div>
           </div>

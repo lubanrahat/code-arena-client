@@ -1,9 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import {
-  IconArrowLeft,
-  IconUserBolt,
-} from "@tabler/icons-react";
+import { IconArrowLeft, IconUserBolt } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
 import { Sidebar, SidebarBody, SidebarLink } from "@/components/ui/sidebar";
 import { useAuth } from "@/hooks/useAuth";
@@ -13,7 +10,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuthContext } from "@/providers/AuthProvider";
-
 
 export default function AdminLayout({
   children,
@@ -55,13 +51,6 @@ export default function AdminLayout({
       href: "/admin/premium-users",
       icon: (
         <IconUserBolt className="h-5 w-5 shrink-0 text-amber-500 dark:text-amber-400" />
-      ),
-    },
-    {
-      label: "Revenue",
-      href: "/admin",
-      icon: (
-        <DollarSign className="h-5 w-5 shrink-0 text-green-500 dark:text-green-400" />
       ),
     },
 
@@ -122,7 +111,6 @@ export default function AdminLayout({
                 ),
               }}
             />
-
           </div>
         </SidebarBody>
       </Sidebar>
