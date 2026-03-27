@@ -8,7 +8,7 @@ import React, {
   useCallback,
 } from "react";
 import { useRouter } from "next/navigation";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
 import {
   allProblems,
   getUserProblemStatus,
@@ -366,9 +366,89 @@ export default function ProblemList() {
     setOpenDropdown((prev) => (prev === key ? null : key));
   }, []);
 
-  const { data, isLoading } = useQuery({
-    queryKey: ["problems", { search: debouncedSearch }],
-    queryFn: () => allProblems({ search: debouncedSearch || undefined }),
+  const observerRef = useRef<IntersectionObserver | null>(null);
+  const loadMoreRef = useRef<HTMLDivElement>(null);
+
+  const {
+    data: infiniteData,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading: isProblemsLoading,
+  } = useInfiniteQuery({
+    queryKey: [
+      "problems-infinite",
+      {
+        search: debouncedSearch,
+        difficulty: selectedDifficulties,
+        status: selectedStatuses,
+        activeTab,
+        topics: selectedTopics,
+        companies: selectedCompanies,
+        sortKey,
+      },
+    ],
+    queryFn: async ({ pageParam = 1 }) => {
+      let sortBy: string | undefined;
+      let sortOrder: "asc" | "desc" | undefined;
+
+      if (sortKey === "Title") {
+        sortBy = "title";
+        sortOrder = "asc";
+      } else if (sortKey === "Difficulty") {
+        sortBy = "difficulty";
+        sortOrder = "asc";
+      } else if (sortKey === "Submissions") {
+        sortBy = "submissions";
+        sortOrder = "desc";
+      } else if (sortKey === "Company") {
+        sortBy = "askedIn";
+        sortOrder = "desc";
+      }
+
+      let status: string | undefined;
+      if (activeTab === "all") {
+        if (selectedStatuses.includes("Solved")) status = "SOLVED";
+        else if (selectedStatuses.includes("Attempted")) status = "ATTEMPTED";
+        else if (selectedStatuses.includes("Unsolved")) status = "UNSOLVED";
+      } else {
+        status = activeTab.toUpperCase();
+        if (status === "BOOKMARKS") status = "BOOKMARKED";
+      }
+
+      const difficultyMap: Record<string, string> = {
+        "Very easy": "EASY",
+        Easy: "EASY",
+        Medium: "MEDIUM",
+        Hard: "HARD",
+        "Very hard": "HARD",
+      };
+
+      const res = await allProblems({
+        search: debouncedSearch || undefined,
+        difficulty:
+          selectedDifficulties.length > 0
+            ? selectedDifficulties.map((d) => difficultyMap[d])
+            : undefined,
+        topic: selectedTopics.length > 0 ? selectedTopics : undefined,
+        askedIn: selectedCompanies.length > 0 ? selectedCompanies : undefined,
+        status,
+        sortBy,
+        sortOrder,
+        page: pageParam,
+        limit: 20,
+      });
+
+      return res;
+    },
+    initialPageParam: 1,
+    getNextPageParam: (lastPage: { data: Problem[]; meta: { page: number; limit: number; total: number } }) => {
+      const { page, limit, total } = lastPage.meta;
+      if (page * limit < total) {
+        return page + 1;
+      }
+      return undefined;
+    },
   });
 
   const { data: userStatusData } = useQuery({
@@ -377,21 +457,31 @@ export default function ProblemList() {
     retry: false,
   });
 
-  const allProblemsList: Problem[] = useMemo(() => {
-    const raw = data?.data ?? data ?? [];
-    return Array.isArray(raw) ? raw : [];
-  }, [data]);
+  const sortedProblems = useMemo(() => {
+    return infiniteData?.pages.flatMap((page) => page.data || []) || [];
+  }, [infiniteData]);
+
+  useEffect(() => {
+    if (observerRef.current) observerRef.current.disconnect();
+
+    observerRef.current = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
+        fetchNextPage();
+      }
+    });
+
+    if (loadMoreRef.current) {
+      observerRef.current.observe(loadMoreRef.current);
+    }
+
+    return () => observerRef.current?.disconnect();
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   const solvedProblemIds = useMemo(
     () => new Set((userStatusData?.data?.solvedProblemIds as string[]) || []),
     [userStatusData],
   );
 
-  const attemptedProblemIds = useMemo(
-    () =>
-      new Set((userStatusData?.data?.attemptedProblemIds as string[]) || []),
-    [userStatusData],
-  );
 
   // Initialize bookmarked state from backend on load
   const [prevUserStatusData, setPrevUserStatusData] = useState(userStatusData);
@@ -401,117 +491,6 @@ export default function ProblemList() {
       setBookmarked(new Set(userStatusData.data.bookmarkedProblemIds));
     }
   }
-
-  // Apply tab filter
-  const tabFilteredProblems = useMemo(() => {
-    switch (activeTab) {
-      case "bookmarks":
-        return allProblemsList.filter((p) => bookmarked.has(p.id));
-      case "attempted":
-        return allProblemsList.filter(
-          (p) => attemptedProblemIds.has(p.id) && !solvedProblemIds.has(p.id),
-        );
-      case "solved":
-        return allProblemsList.filter((p) => solvedProblemIds.has(p.id));
-      default:
-        return allProblemsList;
-    }
-  }, [
-    activeTab,
-    allProblemsList,
-    bookmarked,
-    solvedProblemIds,
-    attemptedProblemIds,
-  ]);
-
-  // Apply all filters
-  const filteredProblems = useMemo(() => {
-    let list = tabFilteredProblems;
-
-    // Difficulty filter
-    if (selectedDifficulties.length > 0) {
-      const map: Record<string, string> = {
-        "Very easy": "EASY",
-        Easy: "EASY",
-        Medium: "MEDIUM",
-        Hard: "HARD",
-        "Very hard": "HARD",
-      };
-      const mapped = [
-        ...new Set(selectedDifficulties.map((d) => map[d]).filter(Boolean)),
-      ];
-      list = list.filter((p) => mapped.includes(p.difficulty));
-    }
-
-    // Status filter
-    if (selectedStatuses.length > 0) {
-      list = list.filter((p) => {
-        const isSolved = solvedProblemIds.has(p.id);
-        const isAttempted = attemptedProblemIds.has(p.id) && !isSolved;
-        return (
-          (selectedStatuses.includes("Solved") && isSolved) ||
-          (selectedStatuses.includes("Attempted") && isAttempted) ||
-          (selectedStatuses.includes("Unsolved") && !isSolved && !isAttempted)
-        );
-      });
-    }
-
-    // Topics filter
-    if (selectedTopics.length > 0) {
-      list = list.filter((p) =>
-        selectedTopics.some((t) => p.topic === t || (p.tags ?? []).includes(t)),
-      );
-    }
-
-    // Companies filter
-    if (selectedCompanies.length > 0) {
-      list = list.filter((p) =>
-        selectedCompanies.some((c) => (p.askedIn ?? []).includes(c)),
-      );
-    }
-
-    return list;
-  }, [
-    tabFilteredProblems,
-    selectedDifficulties,
-    selectedStatuses,
-    selectedTopics,
-    selectedCompanies,
-    solvedProblemIds,
-    attemptedProblemIds,
-  ]);
-
-  // Apply sort
-  const sortedProblems = useMemo(() => {
-    const list = [...filteredProblems];
-    switch (sortKey) {
-      case "Title":
-        list.sort((a, b) => a.title.localeCompare(b.title));
-        break;
-      case "Difficulty": {
-        const order = { EASY: 1, MEDIUM: 2, HARD: 3 };
-        list.sort(
-          (a, b) =>
-            (order[a.difficulty as keyof typeof order] ?? 1) -
-            (order[b.difficulty as keyof typeof order] ?? 1),
-        );
-        break;
-      }
-      case "Submissions":
-        list.sort(
-          (a, b) => (b._count?.submissions ?? 0) - (a._count?.submissions ?? 0),
-        );
-        break;
-      case "Company":
-        list.sort(
-          (a, b) => (b.askedIn?.length ?? 0) - (a.askedIn?.length ?? 0),
-        );
-        break;
-      default:
-        break;
-    }
-    return list;
-  }, [filteredProblems, sortKey]);
 
   const handlePickRandom = () => {
     if (sortedProblems.length > 0) {
@@ -528,7 +507,11 @@ export default function ProblemList() {
     // Optimistic UI update
     setBookmarked((prev) => {
       const next = new Set(prev);
-      next.has(id) ? next.delete(id) : next.add(id);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
       return next;
     });
 
@@ -538,7 +521,11 @@ export default function ProblemList() {
         // Revert on failure
         setBookmarked((prev) => {
           const next = new Set(prev);
-          next.has(id) ? next.delete(id) : next.add(id);
+          if (next.has(id)) {
+            next.delete(id);
+          } else {
+            next.add(id);
+          }
           return next;
         });
       }
@@ -554,7 +541,7 @@ export default function ProblemList() {
       prev.includes(v) ? prev.filter((x) => x !== v) : [...prev, v],
     );
 
-  if (isLoading) {
+  if (isProblemsLoading) {
     return (
       <div className="min-h-screen max-w-6xl bg-background px-4 py-6 sm:px-6 sm:py-8 mx-auto">
         <div className="space-y-3">
@@ -995,6 +982,26 @@ export default function ProblemList() {
                 </div>
               );
             })
+          )}
+          
+          {/* Infinite Scroll Sentinel */}
+          <div ref={loadMoreRef} className="h-10 w-full" />
+          
+          {isFetchingNextPage && (
+            <div className="flex items-center justify-center py-6 border-t border-border bg-muted/5">
+              <div className="flex items-center gap-3 text-sm text-muted-foreground font-medium">
+                <div className="w-4 h-4 rounded-full border-2 border-blue-500/30 border-t-blue-500 animate-spin" />
+                Loading more problems...
+              </div>
+            </div>
+          )}
+
+          {!hasNextPage && sortedProblems.length > 0 && (
+            <div className="py-8 text-center border-t border-border bg-muted/5">
+              <p className="text-sm text-muted-foreground font-medium">
+                You&apos;ve reached the end of the list.
+              </p>
+            </div>
           )}
         </div>
       </div>

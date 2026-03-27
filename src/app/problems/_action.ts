@@ -25,10 +25,10 @@ export const allProblems = async (params = {}) => {
     return response;
   } catch (error) {
     if (isCanceledError(error)) {
-      return { data: [], meta: { pagination: { totalPages: 1 } } };
+      return { data: [], meta: { page: 1, limit: 10, total: 0 } };
     }
     console.error("Failed to fetch problems:", error);
-    return { data: [], meta: { pagination: { totalPages: 1 } } };
+    return { data: [], meta: { page: 1, limit: 10, total: 0 } };
   }
 };
 
@@ -146,12 +146,12 @@ export const getUserProblemStatus = async () => {
     const token = await getCookie("token");
     const headers = token ? { Cookie: `token=${token}` } : undefined;
     const response = await httpClient.get("/problems/user/status", { headers });
-    return response.data;
+    return response;
   } catch (error) {
     if (isCanceledError(error)) {
-      return { solvedProblemIds: [], attemptedProblemIds: [], bookmarkedProblemIds: [] };
+      return { data: { solvedProblemIds: [], attemptedProblemIds: [], bookmarkedProblemIds: [] } };
     }
     console.error("Failed to fetch user problem status:", error);
-    return { solvedProblemIds: [], attemptedProblemIds: [], bookmarkedProblemIds: [] };
+    return { data: { solvedProblemIds: [], attemptedProblemIds: [], bookmarkedProblemIds: [] } };
   }
 };
