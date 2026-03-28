@@ -55,6 +55,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const logout = () => {
     localStorage.removeItem("user");
+    localStorage.removeItem("token");
     logoutUser();
     dispatch({ type: "LOGOUT" });
   };

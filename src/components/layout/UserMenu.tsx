@@ -16,6 +16,7 @@ import { useAuthUser } from "@/hooks/useAuth";
 import { useAuthContext } from "@/providers/AuthProvider";
 import { useRouter } from "next/navigation";
 import { getRoleBadgeColor, getUserInitials } from "@/lib/utils";
+import { toast } from "sonner";
 
 export default function UserMenu() {
   const { logout } = useAuthContext();
@@ -26,6 +27,7 @@ export default function UserMenu() {
 
   const handleLogout = () => {
     logout();
+    toast.success("Logged out successfully");
     router.push("/login");
   };
 

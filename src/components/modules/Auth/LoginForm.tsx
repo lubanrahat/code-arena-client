@@ -43,6 +43,7 @@ export default function LoginForm() {
         const result = await mutateAsync(value);
         if (result && !result.success) {
           setServerError(result.message || "Login failed");
+          toast.error(result.message || "Login failed");
           return;
         }
         if (result?.user) {
@@ -152,7 +153,7 @@ export default function LoginForm() {
         )}
 
         <button
-          className="group/btn relative block h-10 w-full rounded-md bg-gradient-to-br from-black to-neutral-600 font-medium text-white shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:bg-zinc-800 dark:from-zinc-900 dark:to-zinc-900 dark:shadow-[0px_1px_0px_0px_#27272a_inset,0px_-1px_0px_0px_#27272a_inset] disabled:opacity-50"
+          className="group/btn relative block h-10 w-full rounded-md bg-linear-to-br from-black to-neutral-600 font-medium text-white shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:bg-zinc-800 dark:from-zinc-900 dark:to-zinc-900 dark:shadow-[0px_1px_0px_0px_#27272a_inset,0px_-1px_0px_0px_#27272a_inset] disabled:opacity-50"
           type="submit"
           disabled={isPending}
         >
@@ -160,7 +161,7 @@ export default function LoginForm() {
           <BottomGradient />
         </button>
 
-        <div className="my-8 h-[1px] w-full bg-gradient-to-r from-transparent via-neutral-300 to-transparent dark:via-neutral-700" />
+        <div className="my-8 h-px flex-1 bg-linear-to-r from-transparent via-zinc-200 dark:via-zinc-800 to-transparent" />
 
         <div className="flex flex-col space-y-4">
           <button

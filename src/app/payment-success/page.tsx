@@ -28,22 +28,22 @@ export default function PaymentSuccessPage() {
     }
   }, [user, setUser, sessionId]);
 
-  // Automatic redirect to profile after 3 seconds if logged in and payment confirmed
+  // Automatic countdown logic
   useEffect(() => {
-    if (isPremiumConfirmed) {
+    if (isPremiumConfirmed && countdown > 0) {
       const timer = setInterval(() => {
-        setCountdown((prev) => {
-          if (prev <= 1) {
-            clearInterval(timer);
-            router.push("/profile");
-            return 0;
-          }
-          return prev - 1;
-        });
+        setCountdown((prev) => prev - 1);
       }, 1000);
       return () => clearInterval(timer);
     }
-  }, [isPremiumConfirmed, router]);
+  }, [isPremiumConfirmed, countdown]);
+
+  // Redirect logic
+  useEffect(() => {
+    if (isPremiumConfirmed && countdown === 0) {
+      router.push("/profile");
+    }
+  }, [isPremiumConfirmed, countdown, router]);
 
   if (!sessionId) {
     return (

@@ -6,6 +6,7 @@ import { AuthProvider } from "@/providers/AuthProvider";
 import ThemeProvider from "@/providers/ThemeProvider";
 import NavbarWrapper from "@/components/layout/NavbarWrapper";
 import FooterWrapper from "@/components/layout/FooterWrapper";
+import { Toaster } from "@/components/ui/sonner";
 
 const inter = Inter({
   subsets: ["latin"], // required
@@ -30,6 +31,7 @@ export default function RootLayout({
             <QueryProviders>
               <NavbarWrapper />
               {children}
+              <Toaster richColors/>
               <FooterWrapper />
             </QueryProviders>
           </AuthProvider>

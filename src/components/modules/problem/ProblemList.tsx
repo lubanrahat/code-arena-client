@@ -15,6 +15,7 @@ import {
   toggleBookmark as apiToggleBookmark,
 } from "@/app/problems/_action";
 import { useProfile } from "@/hooks/useUser";
+import { useAuthUser, type AuthUser } from "@/hooks/useAuth";
 import Link from "next/link";
 import {
   Search,
@@ -27,6 +28,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
+import { toast } from "sonner";
 
 const TOPIC_OPTIONS = [
   "Arrays",
@@ -322,12 +324,8 @@ function TabButton({
 export default function ProblemList() {
   const router = useRouter();
   const { data: profile } = useProfile();
-  // const isPremium = profile?.isPremium;
-  // Temporary hack for testing premium features without backend changes
-  const user = localStorage.getItem("user")
-    ? JSON.parse(localStorage.getItem("user") as string)
-    : null;
-  const isPremium = user?.isPremium;
+  const { user } = useAuthUser();
+  const isPremium = !!((user as AuthUser & { isPremium?: boolean })?.isPremium || profile?.data?.isPremium);
 
   const [activeTab, setActiveTab] = useState<TabKey>("all");
   const [search, setSearch] = useState("");
@@ -339,7 +337,7 @@ export default function ProblemList() {
   const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
   const [selectedCompanies, setSelectedCompanies] = useState<string[]>([]);
   const [sortKey, setSortKey] = useState<SortKey>("Default");
-  const [bookmarked, setBookmarked] = useState<Set<string>>(new Set());
+  const [optimisticBookmarks, setOptimisticBookmarks] = useState<Record<string, boolean>>({});
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -483,14 +481,14 @@ export default function ProblemList() {
   );
 
 
-  // Initialize bookmarked state from backend on load
-  const [prevUserStatusData, setPrevUserStatusData] = useState(userStatusData);
-  if (userStatusData !== prevUserStatusData) {
-    setPrevUserStatusData(userStatusData);
-    if (userStatusData?.data?.bookmarkedProblemIds) {
-      setBookmarked(new Set(userStatusData.data.bookmarkedProblemIds));
-    }
-  }
+  const bookmarkedSet = useMemo(() => {
+    const set = new Set(userStatusData?.data?.bookmarkedProblemIds || []);
+    Object.entries(optimisticBookmarks).forEach(([id, status]) => {
+      if (status) set.add(id);
+      else set.delete(id);
+    });
+    return set;
+  }, [userStatusData, optimisticBookmarks]);
 
   const handlePickRandom = () => {
     if (sortedProblems.length > 0) {
@@ -504,31 +502,34 @@ export default function ProblemList() {
     e.preventDefault();
     e.stopPropagation();
 
+    const isCurrentlyBookmarked = bookmarkedSet.has(id);
+    
     // Optimistic UI update
-    setBookmarked((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) {
-        next.delete(id);
-      } else {
-        next.add(id);
-      }
-      return next;
-    });
+    setOptimisticBookmarks((prev) => ({
+      ...prev,
+      [id]: !isCurrentlyBookmarked,
+    }));
 
-    if (profile?.data) {
+    if (profile?.data || user) {
       const res = await apiToggleBookmark(id);
-      if (!res) {
+      if (res) {
+        toast.success(isCurrentlyBookmarked ? "Bookmark removed" : "Bookmark added");
+      } else {
+        toast.error("Failed to update bookmark");
         // Revert on failure
-        setBookmarked((prev) => {
-          const next = new Set(prev);
-          if (next.has(id)) {
-            next.delete(id);
-          } else {
-            next.add(id);
-          }
-          return next;
-        });
+        setOptimisticBookmarks((prev) => ({
+          ...prev,
+          [id]: isCurrentlyBookmarked, // revert by setting back to old value
+        }));
       }
+    } else {
+      toast.error("Please login to bookmark problems");
+      // Revert if not logged in
+      setOptimisticBookmarks((prev) => {
+        const next = { ...prev };
+        delete next[id];
+        return next;
+      });
     }
   };
 
@@ -758,7 +759,7 @@ export default function ProblemList() {
           ) : (
             sortedProblems.map((problem) => {
               const isSolved = solvedProblemIds.has(problem.id);
-              const isBookmarked = bookmarked.has(problem.id);
+              const isBookmarked = bookmarkedSet.has(problem.id);
               const cfg =
                 difficultyConfig[problem.difficulty] ?? difficultyConfig.MEDIUM;
               const companies = problem.askedIn ?? [];
@@ -983,10 +984,10 @@ export default function ProblemList() {
               );
             })
           )}
-          
+
           {/* Infinite Scroll Sentinel */}
           <div ref={loadMoreRef} className="h-10 w-full" />
-          
+
           {isFetchingNextPage && (
             <div className="flex items-center justify-center py-6 border-t border-border bg-muted/5">
               <div className="flex items-center gap-3 text-sm text-muted-foreground font-medium">

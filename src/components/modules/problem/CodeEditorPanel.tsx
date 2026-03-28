@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import Editor from "@monaco-editor/react";
 import { useTheme } from "next-themes";
 import { motion, AnimatePresence } from "framer-motion";
+import { toast } from "sonner";
 
 import {
   Play,
@@ -263,6 +264,7 @@ export default function CodeEditorPanel({
     onRunResult(null);
 
     try {
+      toast.info("Running code...", { id: "run-toast" });
       const { runCode } = await import("@/app/problems/_action");
       const testCases = problem?.testCases || [];
       const stdin = testCases.length > 0 ? testCases[0].input : "";
@@ -278,8 +280,14 @@ export default function CodeEditorPanel({
 
       const result = response?.data || response;
       onRunResult(result);
+      if (result.status === "Accepted") {
+        toast.success("Code executed successfully!", { id: "run-toast" });
+      } else {
+        toast.error(`Run failed: ${result.status}`, { id: "run-toast" });
+      }
     } catch (error: unknown) {
       const errMsg = error instanceof Error ? error.message : "Unknown error";
+      toast.error(`Error: ${errMsg}`, { id: "run-toast" });
       onRunResult({
         stdout: null,
         stderr: errMsg,
@@ -302,6 +310,7 @@ export default function CodeEditorPanel({
     onSubmitResult(null);
 
     try {
+      toast.info("Submitting code...", { id: "submit-toast" });
       const { submitCode } = await import("@/app/problems/_action");
       const testCases = problem?.testCases || [];
 
@@ -316,8 +325,9 @@ export default function CodeEditorPanel({
       const result = response?.data || response;
       onSubmitResult(result);
 
-      // Trigger confetti if all test cases passed
       if (result && result.status === "Accepted") {
+        toast.success("Accepted! All test cases passed.", { id: "submit-toast" });
+        // Trigger confetti if all test cases passed
         const end = Date.now() + 3 * 1000; // 3 seconds
         const colors = ["#a786ff", "#fd8bbc", "#eca18", "#f8deb1"];
 
@@ -347,9 +357,12 @@ export default function CodeEditorPanel({
         };
 
         frame();
+      } else {
+        toast.error(`Wrong Answer: ${result.status}`, { id: "submit-toast" });
       }
     } catch (error: unknown) {
       const errMsg = error instanceof Error ? error.message : "Submission failed";
+      toast.error(`Error: ${errMsg}`, { id: "submit-toast" });
       onSubmitResult({
         id: "",
         status: "Error",

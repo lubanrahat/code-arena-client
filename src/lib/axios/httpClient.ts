@@ -1,7 +1,8 @@
 import axios from "axios";
 
 const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8080/api/v1";
+  process.env.NEXT_PUBLIC_API_BASE_URL ||
+  "https://code-arena-server.vercel.app/api/v1";
 
 if (!API_BASE_URL) {
   throw new Error("API_BASE_URL is not defined");
@@ -16,13 +17,33 @@ const axiosInstance = axios.create({
   },
 });
 
+// Interceptor to add Authorization header from local storage token
+axiosInstance.interceptors.request.use(
+  (config) => {
+    if (typeof window !== "undefined") {
+      const token = localStorage.getItem("token");
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  },
+);
+
 const isCanceledError = (error: unknown) => {
   if (axios.isCancel(error)) return true;
   if (typeof error === "object" && error !== null) {
     const maybe = error as { code?: string; name?: string; message?: string };
     if (maybe.code === "ERR_CANCELED") return true;
-    if (maybe.name === "CanceledError" || maybe.name === "AbortError") return true;
-    if (typeof maybe.message === "string" && maybe.message.toLowerCase().includes("canceled")) {
+    if (maybe.name === "CanceledError" || maybe.name === "AbortError")
+      return true;
+    if (
+      typeof maybe.message === "string" &&
+      maybe.message.toLowerCase().includes("canceled")
+    ) {
       return true;
     }
   }

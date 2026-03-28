@@ -35,6 +35,7 @@ export default function RegisterForm() {
         const result = await mutateAsync(value);
         if (result && !result.success) {
           setServerError(result.message);
+          toast.error(result.message || "Registration failed");
           return;
         }
         toast.success("Account created successfully! Please log in.");
@@ -201,7 +202,7 @@ export default function RegisterForm() {
           <BottomGradient />
         </button>
 
-        <div className="my-8 h-[1px] w-full bg-gradient-to-r from-transparent via-neutral-300 to-transparent dark:via-neutral-700" />
+        <div className="my-8 h-px flex-1 bg-linear-to-r from-transparent via-zinc-200 dark:via-zinc-800 to-transparent" />
 
         <div className="flex flex-col space-y-4">
           <button
