@@ -2,6 +2,8 @@ import { dehydrate, HydrationBoundary, QueryClient } from "@tanstack/react-query
 import { allProblems } from "./_action";
 import ProblemList from "@/components/modules/Problem/ProblemList";
 
+export const dynamic = "force-dynamic";
+
 export default async function ProblemsPage() {
   const queryClient = new QueryClient();
 

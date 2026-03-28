@@ -114,7 +114,7 @@ export default function Navbar() {
   const { user } = useAuthUser();
   const router = useRouter();
 
-  const handleLogout =  () => {
+  const handleLogout = () => {
     logout();
     router.push("/login");
   };

@@ -2,7 +2,7 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { Calendar, Clock, ArrowLeft, Share2, Bookmark, Twitter, Linkedin, Facebook, Link as LinkIcon } from "lucide-react";
+import { Calendar, Clock, ArrowLeft, Bookmark, Twitter, Linkedin, Facebook, Link as LinkIcon } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { useParams } from "next/navigation";
@@ -236,7 +236,6 @@ function BlogContent({ content }: { content: string }) {
   let currentParagraph: string[] = [];
   let inCodeBlock = false;
   let codeBlockContent: string[] = [];
-  let codeBlockLang = "";
 
   const flushParagraph = () => {
     if (currentParagraph.length > 0) {
@@ -249,13 +248,11 @@ function BlogContent({ content }: { content: string }) {
     }
   };
 
-  lines.forEach((line, index) => {
-    // Code block detection
+  lines.forEach((line) => {
     if (line.startsWith("```")) {
       if (!inCodeBlock) {
         flushParagraph();
         inCodeBlock = true;
-        codeBlockLang = line.slice(3).trim();
         codeBlockContent = [];
       } else {
         elements.push(
