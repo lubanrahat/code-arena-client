@@ -440,8 +440,10 @@ export default function ProblemList() {
       return res;
     },
     initialPageParam: 1,
-    getNextPageParam: (lastPage: { data: Problem[]; meta: { page: number; limit: number; total: number } }) => {
-      const { page, limit, total } = lastPage.meta;
+    getNextPageParam: (lastPage: { data: Problem[]; meta: { pagination?: { page: number; limit: number; total: number; totalPages: number } } }) => {
+      const pagination = lastPage?.meta?.pagination;
+      if (!pagination) return undefined;
+      const { page, limit, total } = pagination;
       if (page * limit < total) {
         return page + 1;
       }

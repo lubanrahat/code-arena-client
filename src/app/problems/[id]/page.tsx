@@ -7,7 +7,6 @@ import {
   getSubmissionsForProblem,
 } from "@/app/problems/_action";
 
-import axios from "axios";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import {
@@ -50,6 +49,11 @@ interface SubmitResult {
 interface Submission {
   id: string;
   status: string;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function isApiError(data: any): data is { error: true; status: number; message: string } {
+  return data && typeof data === "object" && data.error === true && typeof data.status === "number";
 }
 
 interface PageProps {
@@ -97,11 +101,12 @@ export default function ProblemDetailsPage({ params }: PageProps) {
       )
     : false;
 
+  // Handle structured error from server action (403 = premium required)
   React.useEffect(() => {
-    if (error && axios.isAxiosError(error) && error.response?.status === 403) {
+    if (isApiError(data) && data.status === 403) {
       router.push("/pricing");
     }
-  }, [error, router]);
+  }, [data, router]);
 
   if (isFetchingProblem) {
     return (
@@ -120,11 +125,24 @@ export default function ProblemDetailsPage({ params }: PageProps) {
     );
   }
 
-  if (error) {
-    if (axios.isAxiosError(error) && error.response?.status === 403) {
+  // Check for structured error returned from server action
+  if (isApiError(data)) {
+    if (data.status === 403) {
       // Redirect handled by useEffect above
       return null;
     }
+    return (
+      <div className="flex h-screen items-center justify-center bg-background">
+        <div className="text-center">
+          <p className="text-sm font-medium text-muted-foreground">
+            {data.message || "Failed to load problem"}
+          </p>
+          <p className="mt-1 text-xs text-muted-foreground/70">
+            Please try again later.
+          </p>
+        </div>
+      </div>
+    );
   }
 
   if (error || !data) {
