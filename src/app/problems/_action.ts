@@ -29,10 +29,10 @@ export const allProblems = async (params = {}) => {
     return response;
   } catch (error) {
     if (isCanceledError(error)) {
-      return { data: [], meta: { page: 1, limit: 10, total: 0 } };
+      return { data: [], meta: { pagination: { page: 1, limit: 10, total: 0, totalPages: 0 } } };
     }
     console.error("Failed to fetch problems:", error);
-    return { data: [], meta: { page: 1, limit: 10, total: 0 } };
+    return { data: [], meta: { pagination: { page: 1, limit: 10, total: 0, totalPages: 0 } } };
   }
 };
 
@@ -46,12 +46,21 @@ export const getProblemById = async (id: string) => {
     }
     const response = await httpClient.get(`/problems/${id}`, { headers });
     return response;
-  } catch (error) {
+  } catch (error: unknown) {
     if (isCanceledError(error)) {
       return null;
     }
-    console.error(`Failed to fetch problem ${id}:`, error);
-    throw error;
+    // Extract status code before it gets lost during server-action serialization
+    let status = 500;
+    let message = "Failed to load problem";
+    if (axios.isAxiosError(error)) {
+      status = error.response?.status || 500;
+      message = error.response?.data?.error?.message || error.message || message;
+    }
+    console.error(`Failed to fetch problem ${id}:`, { status, message });
+    // Return a structured error object instead of throwing,
+    // because thrown errors lose their type info when crossing the server-action boundary
+    return { error: true, status, message };
   }
 };
 
@@ -172,11 +181,14 @@ export const toggleBookmark = async (problemId: string) => {
 export const getUserProblemStatus = async () => {
   try {
     const token = await getCookie("token");
-    const headers: Record<string, string> = {};
-    if (token) {
-      headers["Cookie"] = `token=${token}`;
-      headers["Authorization"] = `Bearer ${token}`;
+    if (!token) {
+      // No token available — user is not logged in, skip the request entirely
+      return { data: { solvedProblemIds: [], attemptedProblemIds: [], bookmarkedProblemIds: [] } };
     }
+    const headers: Record<string, string> = {
+      cookie: `token=${token}`,
+      Authorization: `Bearer ${token}`,
+    };
     const response = await httpClient.get("/problems/user/status", { headers });
     return response;
   } catch (error) {
