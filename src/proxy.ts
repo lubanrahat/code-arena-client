@@ -8,11 +8,18 @@ export async function proxy(request: NextRequest) {
     path === "/" ||
     path === "/login" ||
     path === "/register" ||
-    path === "/problems";
+    path === "/problems" ||
+    path === "/pricing" ||
+    path === "/payment-success" ||
+    path === "/payment-cancel";
 
   // Redirect to login if accessing protected route without token
   if (!isPublicPath && !token) {
-    return NextResponse.redirect(new URL("/login", request.url));
+    const url = new URL("/login", request.url);
+    // If it's the payment success page, we want to go to profile after login
+    const redirectTo = path === "/payment-success" ? "/profile" : path;
+    url.searchParams.set("redirect", redirectTo);
+    return NextResponse.redirect(url);
   }
 
   let userRole: string | undefined;

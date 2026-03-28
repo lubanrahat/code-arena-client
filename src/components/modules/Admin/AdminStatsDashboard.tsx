@@ -27,6 +27,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { getAdminStatsAction } from "@/app/admin/_action";
+import { useAuth } from "@/hooks/useAuth";
+import { useEffect, useState } from "react";
 
 type DifficultyDistributionItem = {
   difficulty: "EASY" | "MEDIUM" | "HARD" | string;
@@ -74,10 +76,36 @@ function formatDateLabel(dateStr: string) {
 }
 
 export default function AdminStatsDashboard() {
+  const { user, loading: authLoading } = useAuth("ADMIN");
+
   const { data, isLoading, error } = useQuery({
     queryKey: ["admin-stats"],
     queryFn: getAdminStatsAction,
+    enabled: !!user && user.role === "ADMIN",
   });
+
+  if (authLoading || !user || user.role !== "ADMIN") {
+    return (
+      <div className="space-y-6">
+        <div className="flex flex-col gap-2">
+          <Skeleton className="h-10 w-48" />
+          <Skeleton className="h-5 w-72" />
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {[1, 2, 3, 4].map((i) => (
+            <Card key={i}>
+              <CardHeader className="pb-2">
+                <Skeleton className="h-4 w-24" />
+              </CardHeader>
+              <CardContent>
+                <Skeleton className="h-8 w-16" />
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   const payload = (data?.data ?? null) as AdminStatsPayload | null;
 

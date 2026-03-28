@@ -29,8 +29,6 @@ export default function UserMenu() {
     router.push("/login");
   };
 
-  const dashboardLink = user.role === "ADMIN" ? "/admin" : "/problems";
-
   return (
     <div className="flex items-center gap-3">
       <DropdownMenu>
@@ -84,13 +82,15 @@ export default function UserMenu() {
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
-            <DropdownMenuItem
-              onClick={() => router.push(dashboardLink)}
-              className="cursor-pointer py-2"
-            >
-              <LayoutDashboard className="mr-2 h-4 w-4" />
-              <span>Dashboard</span>
-            </DropdownMenuItem>
+            {user.role === "ADMIN" && (
+              <DropdownMenuItem
+                onClick={() => router.push("/admin")}
+                className="cursor-pointer py-2"
+              >
+                <LayoutDashboard className="mr-2 h-4 w-4" />
+                <span>Dashboard</span>
+              </DropdownMenuItem>
+            )}
             <DropdownMenuItem
               onClick={() => router.push("/profile")}
               className="cursor-pointer py-2"

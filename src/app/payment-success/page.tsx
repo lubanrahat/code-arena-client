@@ -3,16 +3,20 @@
 import { motion } from "framer-motion";
 import { CheckCircle, ArrowRight, Loader2, Info } from "lucide-react";
 import Link from "next/link";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAuthContext } from "@/providers/AuthProvider";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 
 
 export default function PaymentSuccessPage() {
   const { user, setUser } = useAuthContext();
   const searchParams = useSearchParams();
+  const router = useRouter();
+  const [countdown, setCountdown] = useState(3);
 
   const sessionId = searchParams.get("session_id");
+
+  const isPremiumConfirmed = !!(sessionId && user && user.isPremium);
 
   useEffect(() => {
     // The backend redirect verified and saved the payment natively.
@@ -23,6 +27,23 @@ export default function PaymentSuccessPage() {
       localStorage.setItem("user", JSON.stringify(updatedUser));
     }
   }, [user, setUser, sessionId]);
+
+  // Automatic redirect to profile after 3 seconds if logged in and payment confirmed
+  useEffect(() => {
+    if (isPremiumConfirmed) {
+      const timer = setInterval(() => {
+        setCountdown((prev) => {
+          if (prev <= 1) {
+            clearInterval(timer);
+            router.push("/profile");
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+      return () => clearInterval(timer);
+    }
+  }, [isPremiumConfirmed, router]);
 
   if (!sessionId) {
     return (
@@ -64,21 +85,29 @@ export default function PaymentSuccessPage() {
         <p className="text-muted-foreground mb-4">
           Welcome to Code Arena Pro. Your account has been upgraded.
         </p>
+        
+        {isPremiumConfirmed && (
+          <p className="text-sm text-emerald-600 dark:text-emerald-400 font-medium mb-6">
+            Redirecting to your profile in {countdown} seconds...
+          </p>
+        )}
+
         {!user && (
-          <div className="bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400 p-3 rounded-lg mb-6 flex flex-col gap-2 items-start text-left text-sm">
-             <div className="flex gap-2 items-center font-bold">
-               <Info className="w-4 h-4" /> Please Login Again
-             </div>
-             <p className="text-xs">
-               Your browser&apos;s strict privacy policy securely locked your session upon returning from Stripe. Please login to access your new premium features.
-             </p>
+          <div className="bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400 p-4 rounded-xl mb-6 flex flex-col gap-2 items-start text-left text-sm">
+            <div className="flex gap-2 items-center font-bold">
+              <Info className="w-4 h-4" /> Session Verification Required
+            </div>
+            <p className="text-xs opacity-90">
+              For your security, please login to activate your new premium features and view your upgraded profile.
+            </p>
           </div>
         )}
+
         <Link
-          href={user ? "/problems" : "/login"}
+          href={user ? "/profile" : "/login?redirect=/profile"}
           className="inline-flex items-center gap-2 bg-linear-to-r from-emerald-500 to-teal-500 text-white font-bold py-3 px-8 rounded-xl shadow-lg shadow-emerald-500/25 hover:shadow-teal-500/40 hover:scale-105 transition-all w-full justify-center"
         >
-          {user ? "Start Coding" : "Login Now"}
+          {user ? "View Profile" : "Login Now"}
           <ArrowRight className="w-5 h-5" />
         </Link>
       </motion.div>
