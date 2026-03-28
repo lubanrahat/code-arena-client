@@ -1,11 +1,15 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getProfileInfo, updateProfileInfo } from "../services/user.service";
 import { toast } from "sonner";
+import { useAuthUser } from "./useAuth";
 
 export const useProfile = () => {
+  const { user } = useAuthUser();
+
   return useQuery({
     queryKey: ["profile"],
     queryFn: getProfileInfo,
+    enabled: !!user,
   });
 };
 

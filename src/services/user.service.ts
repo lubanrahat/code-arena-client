@@ -1,12 +1,19 @@
+"use server";
+
 import { httpClient } from "@/lib/axios/httpClient";
+import { getCookie } from "@/lib/cookieUtils";
 
 export const getProfileInfo = async () => {
-  const { data } = await httpClient.get("/user/profile");
+  const token = await getCookie("token");
+  const headers = token ? { Cookie: `token=${token}` } : undefined;
+  const { data } = await httpClient.get("/user/profile", { headers });
   return data;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const updateProfileInfo = async (payload: any) => {
-  const { data } = await httpClient.put("/user/profile", payload);
+  const token = await getCookie("token");
+  const headers = token ? { Cookie: `token=${token}` } : undefined;
+  const { data } = await httpClient.put("/user/profile", payload, { headers });
   return data;
 };
