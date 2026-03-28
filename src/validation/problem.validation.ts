@@ -39,7 +39,7 @@ export const problemCreateSchema = z.preprocess(
     .trim(),
 
   difficulty: z.nativeEnum(Difficulty, {
-    error: "Difficulty must be EASY, MEDIUM, or HARD",
+    message: "Difficulty must be EASY, MEDIUM, or HARD",
   }),
 
   tags: z
