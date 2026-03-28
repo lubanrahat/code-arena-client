@@ -22,7 +22,7 @@ export const allProblems = async (params = {}) => {
     const token = await getCookie("token");
     const headers: Record<string, string> = {};
     if (token) {
-      headers["Cookie"] = `token=${token}`;
+      headers["cookie"] = `token=${token}`;
       headers["Authorization"] = `Bearer ${token}`;
     }
     const response = await httpClient.get("/problems", { params, headers });
@@ -41,7 +41,7 @@ export const getProblemById = async (id: string) => {
     const token = await getCookie("token");
     const headers: Record<string, string> = {};
     if (token) {
-      headers["Cookie"] = `token=${token}`;
+      headers["cookie"] = `token=${token}`;
       headers["Authorization"] = `Bearer ${token}`;
     }
     const response = await httpClient.get(`/problems/${id}`, { headers });
@@ -66,7 +66,7 @@ export const runCode = async (payload: {
     const token = await getCookie("token");
     const headers: Record<string, string> = {};
     if (token) {
-      headers["Cookie"] = `token=${token}`;
+      headers["cookie"] = `token=${token}`;
       headers["Authorization"] = `Bearer ${token}`;
     }
     const response = await httpClient.post("/execute-code/run", payload, {
@@ -93,7 +93,7 @@ export const submitCode = async (payload: {
     const token = await getCookie("token");
     const headers: Record<string, string> = {};
     if (token) {
-      headers["Cookie"] = `token=${token}`;
+      headers["cookie"] = `token=${token}`;
       headers["Authorization"] = `Bearer ${token}`;
     }
     const response = await httpClient.post("/execute-code", payload, {
@@ -114,7 +114,7 @@ export const getSubmissionsForProblem = async (problemId: string) => {
     const token = await getCookie("token");
     const headers: Record<string, string> = {};
     if (token) {
-      headers["Cookie"] = `token=${token}`;
+      headers["cookie"] = `token=${token}`;
       headers["Authorization"] = `Bearer ${token}`;
     }
     const response = await httpClient.get(`/submission/get-submissions/${problemId}`, {
@@ -134,7 +134,7 @@ export const getAllSubmissions = async () => {
     const token = await getCookie("token");
     const headers: Record<string, string> = {};
     if (token) {
-      headers["Cookie"] = `token=${token}`;
+      headers["cookie"] = `token=${token}`;
       headers["Authorization"] = `Bearer ${token}`;
     }
     const response = await httpClient.get("/submission/get-all-submissions", {
