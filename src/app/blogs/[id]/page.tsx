@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import { motion } from "framer-motion";
 import { Calendar, Clock, ArrowLeft, Share2, Bookmark, Twitter, Linkedin, Facebook, Link as LinkIcon } from "lucide-react";
 import Link from "next/link";
@@ -231,7 +232,7 @@ export default function BlogPostPage() {
 // Component to render markdown-like content
 function BlogContent({ content }: { content: string }) {
   const lines = content.trim().split("\n");
-  const elements: JSX.Element[] = [];
+  const elements: React.ReactNode[] = [];
   let currentParagraph: string[] = [];
   let inCodeBlock = false;
   let codeBlockContent: string[] = [];
