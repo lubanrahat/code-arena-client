@@ -8,7 +8,7 @@ export const verifyPaymentSession = async (sessionId: string) => {
     console.log("[SERVER ACTION] verifyPaymentSession called for sessionId:", sessionId);
     
     // Hardcoded to ensure it reaches the backend, bypassing any httpClient configs
-    const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8080/api/v1";
+    const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "https://code-arena-server.vercel.app/api/v1";
     console.log("[SERVER ACTION] Using API URL:", API_BASE);
     
     // We do NOT use tokens/cookies here because the user is returning from Stripe 
