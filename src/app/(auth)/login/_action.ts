@@ -28,7 +28,7 @@ export const loginAction = async (payload: LoginInput) => {
 
     await setCookie("role", response.data.user.role, 60 * 60 * 24 * 7);
 
-    return { success: true, user: response.data.user };
+    return { success: true, user: response.data.user, token };
   } catch (error: unknown) {
     return {
       success: false,

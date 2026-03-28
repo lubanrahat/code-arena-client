@@ -20,7 +20,11 @@ const isCanceledError = (error: unknown) => {
 export const allProblems = async (params = {}) => {
   try {
     const token = await getCookie("token");
-    const headers = token ? { Cookie: `token=${token}` } : undefined;
+    const headers: Record<string, string> = {};
+    if (token) {
+      headers["Cookie"] = `token=${token}`;
+      headers["Authorization"] = `Bearer ${token}`;
+    }
     const response = await httpClient.get("/problems", { params, headers });
     return response;
   } catch (error) {
@@ -35,7 +39,11 @@ export const allProblems = async (params = {}) => {
 export const getProblemById = async (id: string) => {
   try {
     const token = await getCookie("token");
-    const headers = token ? { Cookie: `token=${token}` } : undefined;
+    const headers: Record<string, string> = {};
+    if (token) {
+      headers["Cookie"] = `token=${token}`;
+      headers["Authorization"] = `Bearer ${token}`;
+    }
     const response = await httpClient.get(`/problems/${id}`, { headers });
     return response;
   } catch (error) {
@@ -56,7 +64,11 @@ export const runCode = async (payload: {
 }) => {
   try {
     const token = await getCookie("token");
-    const headers = token ? { Cookie: `token=${token}` } : undefined;
+    const headers: Record<string, string> = {};
+    if (token) {
+      headers["Cookie"] = `token=${token}`;
+      headers["Authorization"] = `Bearer ${token}`;
+    }
     const response = await httpClient.post("/execute-code/run", payload, {
       headers,
     });
@@ -79,7 +91,11 @@ export const submitCode = async (payload: {
 }) => {
   try {
     const token = await getCookie("token");
-    const headers = token ? { Cookie: `token=${token}` } : undefined;
+    const headers: Record<string, string> = {};
+    if (token) {
+      headers["Cookie"] = `token=${token}`;
+      headers["Authorization"] = `Bearer ${token}`;
+    }
     const response = await httpClient.post("/execute-code", payload, {
       headers,
     });
@@ -96,7 +112,11 @@ export const submitCode = async (payload: {
 export const getSubmissionsForProblem = async (problemId: string) => {
   try {
     const token = await getCookie("token");
-    const headers = token ? { Cookie: `token=${token}` } : undefined;
+    const headers: Record<string, string> = {};
+    if (token) {
+      headers["Cookie"] = `token=${token}`;
+      headers["Authorization"] = `Bearer ${token}`;
+    }
     const response = await httpClient.get(`/submission/get-submissions/${problemId}`, {
       headers,
     });
@@ -112,7 +132,11 @@ export const getSubmissionsForProblem = async (problemId: string) => {
 export const getAllSubmissions = async () => {
   try {
     const token = await getCookie("token");
-    const headers = token ? { Cookie: `token=${token}` } : undefined;
+    const headers: Record<string, string> = {};
+    if (token) {
+      headers["Cookie"] = `token=${token}`;
+      headers["Authorization"] = `Bearer ${token}`;
+    }
     const response = await httpClient.get("/submission/get-all-submissions", {
       headers,
     });
@@ -129,7 +153,11 @@ export const getAllSubmissions = async () => {
 export const toggleBookmark = async (problemId: string) => {
   try {
     const token = await getCookie("token");
-    const headers = token ? { Cookie: `token=${token}` } : undefined;
+    const headers: Record<string, string> = {};
+    if (token) {
+      headers["Cookie"] = `token=${token}`;
+      headers["Authorization"] = `Bearer ${token}`;
+    }
     const response = await httpClient.post(`/problems/${problemId}/bookmark`, {}, { headers });
     return response.data;
   } catch (error) {
@@ -144,7 +172,11 @@ export const toggleBookmark = async (problemId: string) => {
 export const getUserProblemStatus = async () => {
   try {
     const token = await getCookie("token");
-    const headers = token ? { Cookie: `token=${token}` } : undefined;
+    const headers: Record<string, string> = {};
+    if (token) {
+      headers["Cookie"] = `token=${token}`;
+      headers["Authorization"] = `Bearer ${token}`;
+    }
     const response = await httpClient.get("/problems/user/status", { headers });
     return response;
   } catch (error) {

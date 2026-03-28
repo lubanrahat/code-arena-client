@@ -48,6 +48,9 @@ export default function LoginForm() {
         }
         if (result?.user) {
           localStorage.setItem("user", JSON.stringify(result.user));
+          if (result.token) {
+            localStorage.setItem("token", result.token);
+          }
           setUser(result.user);
           toast.success("Logged in successfully!");
 

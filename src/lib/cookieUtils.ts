@@ -12,7 +12,7 @@ export const setCookie = async (
   cookieStore.set(name, value, {
     httpOnly: true,
     secure: isProd,
-    sameSite: "strict",
+    sameSite: "lax",
     path: "/",
     maxAge: maxAgeSeconds,
   });
@@ -29,7 +29,7 @@ export const deleteCookie = async (name: string) => {
   cookieStore.set(name, "", {
     httpOnly: true,
     secure: isProd,
-    sameSite: "strict",
+    sameSite: "lax",
     path: "/",
     maxAge: 0,
   });
