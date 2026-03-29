@@ -1,7 +1,6 @@
 "use client";
 
 import { useForm } from "@tanstack/react-form";
-import { zodValidator } from "@tanstack/zod-form-adapter";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,16 +19,15 @@ import { motion } from "framer-motion";
 import { ContributeService } from "@/services/ContributeService";
 import { useState } from "react";
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const contributionSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   email: z.string().email("Invalid email address"),
   countryCode: z.string().min(1, "Required"),
-  contactNumber: z.string().optional(),
+  contactNumber: z.string(),
   contributionType: z.string().min(1, "Please select a contribution type"),
   experience: z.string().min(10, "Please describe your experience (min 10 chars)"),
   portfolioLink: z.string().url("Invalid URL").or(z.string().length(0)),
-  message: z.string().optional(),
+  message: z.string(),
 });
 
 export default function ContributionForm() {
@@ -60,7 +58,8 @@ export default function ContributionForm() {
         }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (error: any) {
-        toast.error(error?.response?.data?.message || "Something went wrong!");
+        const message = error?.response?.data?.message || error?.message || "Something went wrong!";
+        toast.error(message);
       } finally {
         setIsSubmitting(false);
       }
@@ -105,7 +104,10 @@ export default function ContributionForm() {
         >
           <div className="space-y-4">
             {/* Name */}
-            <form.Field name="name">
+            <form.Field
+              name="name"
+              validators={{ onChange: contributionSchema.shape.name }}
+            >
               {(field) => (
                 <div className="space-y-2">
                   <Label htmlFor={field.name} className="dark:text-zinc-300">Name</Label>
@@ -126,7 +128,10 @@ export default function ContributionForm() {
             </form.Field>
 
             {/* Email */}
-            <form.Field name="email">
+            <form.Field
+              name="email"
+              validators={{ onChange: contributionSchema.shape.email }}
+            >
               {(field) => (
                 <div className="space-y-2">
                   <Label htmlFor={field.name} className="dark:text-zinc-300">Email</Label>
@@ -149,7 +154,10 @@ export default function ContributionForm() {
 
             {/* Contact Info */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <form.Field name="countryCode">
+              <form.Field
+                name="countryCode"
+                validators={{ onChange: contributionSchema.shape.countryCode }}
+              >
                 {(field) => (
                   <div className="space-y-2">
                     <Label className="dark:text-zinc-300">Code</Label>
@@ -169,7 +177,10 @@ export default function ContributionForm() {
                   </div>
                 )}
               </form.Field>
-              <form.Field name="contactNumber">
+              <form.Field
+                name="contactNumber"
+                validators={{ onChange: contributionSchema.shape.contactNumber }}
+              >
                 {(field) => (
                   <div className="md:col-span-2 space-y-2">
                     <Label htmlFor={field.name} className="dark:text-zinc-300">Contact Number (Optional)</Label>
@@ -188,7 +199,10 @@ export default function ContributionForm() {
             </div>
 
             {/* Contribution Type */}
-            <form.Field name="contributionType">
+            <form.Field
+              name="contributionType"
+              validators={{ onChange: contributionSchema.shape.contributionType }}
+            >
               {(field) => (
                 <div className="space-y-2">
                   <Label className="dark:text-zinc-300">Contribution Type</Label>
@@ -217,7 +231,10 @@ export default function ContributionForm() {
             </form.Field>
 
             {/* Experience */}
-            <form.Field name="experience">
+            <form.Field
+              name="experience"
+              validators={{ onChange: contributionSchema.shape.experience }}
+            >
               {(field) => (
                 <div className="space-y-2">
                   <Label htmlFor={field.name} className="dark:text-zinc-300">Experience</Label>
@@ -238,7 +255,10 @@ export default function ContributionForm() {
             </form.Field>
 
             {/* Portfolio Link */}
-            <form.Field name="portfolioLink">
+            <form.Field
+              name="portfolioLink"
+              validators={{ onChange: contributionSchema.shape.portfolioLink }}
+            >
               {(field) => (
                 <div className="space-y-2">
                   <Label htmlFor={field.name} className="dark:text-zinc-300">Github/Portfolio Link</Label>
@@ -259,7 +279,10 @@ export default function ContributionForm() {
             </form.Field>
 
             {/* Message */}
-            <form.Field name="message">
+            <form.Field
+              name="message"
+              validators={{ onChange: contributionSchema.shape.message }}
+            >
               {(field) => (
                 <div className="space-y-2">
                   <Label htmlFor={field.name} className="dark:text-zinc-300">Message (Optional)</Label>

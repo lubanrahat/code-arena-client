@@ -50,7 +50,7 @@ export default function RoadmapListing() {
               </div>
               <h3 className="text-2xl font-black text-foreground mb-2">No Roadmaps Found</h3>
               <p className="text-muted-foreground max-w-sm mx-auto">
-                We couldn't find any roadmaps matching your search. Try a different keyword or filter.
+                We couldn&apos;t find any roadmaps matching your search. Try a different keyword or filter.
               </p>
               <button
                 onClick={() => {
