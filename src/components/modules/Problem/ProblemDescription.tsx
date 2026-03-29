@@ -22,6 +22,7 @@ import {
 
 import SubmissionsList from "./SubmissionsList";
 import AiDiscussion from "./AiDiscussion";
+import SolutionTab from "./SolutionTab";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
@@ -496,14 +497,8 @@ export default function ProblemDescription({
         )}
 
         {activeTab === "Solution" && (
-          <div className="flex flex-col items-center justify-center py-20 text-center">
-            <MessageCircle className="h-12 w-12 text-zinc-600 dark:text-zinc-600" />
-            <p className="mt-4 text-sm text-muted-foreground">
-              Solutions coming soon
-            </p>
-            <p className="mt-1 text-xs text-muted-foreground/70">
-              Share your approach and learn from others
-            </p>
+          <div className="py-2">
+            <SolutionTab problemId={problem.id} problemTitle={title} />
           </div>
         )}
       </div>

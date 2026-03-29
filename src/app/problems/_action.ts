@@ -199,3 +199,162 @@ export const getUserProblemStatus = async () => {
     return { data: { solvedProblemIds: [], attemptedProblemIds: [], bookmarkedProblemIds: [] } };
   }
 };
+
+// ─── Solution Actions ────────────────────────────────────────────────
+
+export const createSolution = async (payload: {
+  problemId: string;
+  title: string;
+  description?: string;
+  sourceCode: string;
+  language: string;
+}) => {
+  try {
+    const token = await getCookie("token");
+    const headers: Record<string, string> = {};
+    if (token) {
+      headers["cookie"] = `token=${token}`;
+      headers["Authorization"] = `Bearer ${token}`;
+    }
+    const response = await httpClient.post("/solution", payload, { headers });
+    return response;
+  } catch (error) {
+    if (isCanceledError(error)) return null;
+    console.error("Failed to create solution:", error);
+    throw error;
+  }
+};
+
+export const getSolutionsForProblem = async (
+  problemId: string,
+  page: number = 1,
+  sortBy: string = "recent",
+) => {
+  try {
+    const token = await getCookie("token");
+    const headers: Record<string, string> = {};
+    if (token) {
+      headers["cookie"] = `token=${token}`;
+      headers["Authorization"] = `Bearer ${token}`;
+    }
+    const response = await httpClient.get(`/solution/problem/${problemId}`, {
+      params: { page, limit: 10, sortBy },
+      headers,
+    });
+    return response;
+  } catch (error) {
+    if (isCanceledError(error)) return { data: [], meta: {} };
+    console.error("Failed to fetch solutions:", error);
+    return { data: [], meta: {} };
+  }
+};
+
+export const getSolutionById = async (id: string) => {
+  try {
+    const token = await getCookie("token");
+    const headers: Record<string, string> = {};
+    if (token) {
+      headers["cookie"] = `token=${token}`;
+      headers["Authorization"] = `Bearer ${token}`;
+    }
+    const response = await httpClient.get(`/solution/${id}`, { headers });
+    return response;
+  } catch (error) {
+    if (isCanceledError(error)) return null;
+    console.error("Failed to fetch solution:", error);
+    return null;
+  }
+};
+
+export const voteSolution = async (solutionId: string, type: "LIKE" | "DISLIKE") => {
+  try {
+    const token = await getCookie("token");
+    const headers: Record<string, string> = {};
+    if (token) {
+      headers["cookie"] = `token=${token}`;
+      headers["Authorization"] = `Bearer ${token}`;
+    }
+    const response = await httpClient.post(`/solution/${solutionId}/vote`, { type }, { headers });
+    return response;
+  } catch (error) {
+    if (isCanceledError(error)) return null;
+    console.error("Failed to vote solution:", error);
+    return null;
+  }
+};
+
+export const addSolutionComment = async (solutionId: string, content: string) => {
+  try {
+    const token = await getCookie("token");
+    const headers: Record<string, string> = {};
+    if (token) {
+      headers["cookie"] = `token=${token}`;
+      headers["Authorization"] = `Bearer ${token}`;
+    }
+    const response = await httpClient.post(
+      `/solution/${solutionId}/comments`,
+      { content },
+      { headers },
+    );
+    return response;
+  } catch (error) {
+    if (isCanceledError(error)) return null;
+    console.error("Failed to add comment:", error);
+    throw error;
+  }
+};
+
+export const getSolutionComments = async (solutionId: string, page: number = 1) => {
+  try {
+    const token = await getCookie("token");
+    const headers: Record<string, string> = {};
+    if (token) {
+      headers["cookie"] = `token=${token}`;
+      headers["Authorization"] = `Bearer ${token}`;
+    }
+    const response = await httpClient.get(`/solution/${solutionId}/comments`, {
+      params: { page, limit: 20 },
+      headers,
+    });
+    return response;
+  } catch (error) {
+    if (isCanceledError(error)) return { data: [], meta: {} };
+    console.error("Failed to fetch comments:", error);
+    return { data: [], meta: {} };
+  }
+};
+
+export const deleteSolution = async (id: string) => {
+  try {
+    const token = await getCookie("token");
+    const headers: Record<string, string> = {};
+    if (token) {
+      headers["cookie"] = `token=${token}`;
+      headers["Authorization"] = `Bearer ${token}`;
+    }
+    const response = await httpClient.delete(`/solution/${id}`, { headers });
+    return response;
+  } catch (error) {
+    if (isCanceledError(error)) return null;
+    console.error("Failed to delete solution:", error);
+    throw error;
+  }
+};
+
+export const deleteSolutionComment = async (commentId: string) => {
+  try {
+    const token = await getCookie("token");
+    const headers: Record<string, string> = {};
+    if (token) {
+      headers["cookie"] = `token=${token}`;
+      headers["Authorization"] = `Bearer ${token}`;
+    }
+    const response = await httpClient.delete(`/solution/comments/${commentId}`, { headers });
+    return response;
+  } catch (error) {
+    if (isCanceledError(error)) return null;
+    console.error("Failed to delete comment:", error);
+    throw error;
+  }
+};
+

@@ -7,8 +7,9 @@ import React, {
   useRef,
   useCallback,
 } from "react";
+
 import { useRouter } from "next/navigation";
-import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
+import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import {
   allProblems,
   getUserProblemStatus,
@@ -344,6 +345,7 @@ export default function ProblemList() {
     Record<string, boolean>
   >({});
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const [page, setPage] = useState(1);
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Close dropdown on outside click
@@ -369,18 +371,19 @@ export default function ProblemList() {
     setOpenDropdown((prev) => (prev === key ? null : key));
   }, []);
 
-  const observerRef = useRef<IntersectionObserver | null>(null);
-  const loadMoreRef = useRef<HTMLDivElement>(null);
+  // Reset page to 1 when filters change
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setPage(1);
+  }, [debouncedSearch, selectedDifficulties, selectedStatuses, activeTab, selectedTopics, selectedCompanies, sortKey]);
 
   const {
-    data: infiniteData,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
+    data: problemsData,
     isLoading: isProblemsLoading,
-  } = useInfiniteQuery({
+    isFetching: isProblemsFetching,
+  } = useQuery({
     queryKey: [
-      "problems-infinite",
+      "problems",
       {
         search: debouncedSearch,
         difficulty: selectedDifficulties,
@@ -389,9 +392,10 @@ export default function ProblemList() {
         topics: selectedTopics,
         companies: selectedCompanies,
         sortKey,
+        page,
       },
     ],
-    queryFn: async ({ pageParam = 1 }) => {
+    queryFn: async () => {
       let sortBy: string | undefined;
       let sortOrder: "asc" | "desc" | undefined;
 
@@ -438,59 +442,32 @@ export default function ProblemList() {
         status,
         sortBy,
         sortOrder,
-        page: pageParam,
+        page,
         limit: 20,
       });
 
       return res;
     },
-    initialPageParam: 1,
-    getNextPageParam: (lastPage: {
-      data: Problem[];
-      meta: {
-        pagination?: {
-          page: number;
-          limit: number;
-          total: number;
-          totalPages: number;
-        };
-      };
-    }) => {
-      const pagination = lastPage?.meta?.pagination;
-      if (!pagination) return undefined;
-      const { page, limit, total } = pagination;
-      if (page * limit < total) {
-        return page + 1;
-      }
-      return undefined;
-    },
+    placeholderData: keepPreviousData,
+    staleTime: 30_000,
   });
 
   const { data: userStatusData } = useQuery({
     queryKey: ["user-problem-status"],
     queryFn: getUserProblemStatus,
     retry: false,
+    staleTime: 60_000,
   });
 
   const sortedProblems = useMemo(() => {
-    return infiniteData?.pages.flatMap((page) => page.data || []) || [];
-  }, [infiniteData]);
+    return problemsData?.data || [];
+  }, [problemsData]);
 
-  useEffect(() => {
-    if (observerRef.current) observerRef.current.disconnect();
+  const pagination = useMemo(() => {
+    return problemsData?.meta?.pagination || { page: 1, limit: 20, total: 0, totalPages: 1 };
+  }, [problemsData]);
 
-    observerRef.current = new IntersectionObserver((entries) => {
-      if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
-        fetchNextPage();
-      }
-    });
-
-    if (loadMoreRef.current) {
-      observerRef.current.observe(loadMoreRef.current);
-    }
-
-    return () => observerRef.current?.disconnect();
-  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+  const totalPages = pagination.totalPages;
 
   const solvedProblemIds = useMemo(
     () => new Set((userStatusData?.data?.solvedProblemIds as string[]) || []),
@@ -752,7 +729,7 @@ export default function ProblemList() {
         </div>
 
         {/* ── Table ────────────────────────────────────────────────────── */}
-        <div className="rounded-xl border border-border overflow-hidden bg-white dark:bg-zinc-950 shadow-sm">
+        <div className="relative rounded-xl border border-border overflow-hidden bg-white dark:bg-zinc-950 shadow-sm">
           {/* Table Header */}
           <div className="hidden md:grid grid-cols-[2.5fr_160px_110px_110px_1fr] gap-4 px-6 py-3 border-b border-border bg-muted/30 text-[11px] font-bold uppercase tracking-widest text-muted-foreground">
             <div className="pl-4">Topic</div>
@@ -774,7 +751,7 @@ export default function ProblemList() {
               </p>
             </div>
           ) : (
-            sortedProblems.map((problem) => {
+            sortedProblems.map((problem: Problem) => {
               const isSolved = solvedProblemIds.has(problem.id);
               const isBookmarked = bookmarkedSet.has(problem.id);
               const cfg =
@@ -1002,23 +979,74 @@ export default function ProblemList() {
             })
           )}
 
-          {/* Infinite Scroll Sentinel */}
-          <div ref={loadMoreRef} className="h-10 w-full" />
+          {/* Pagination Controls */}
+          {sortedProblems.length > 0 && totalPages > 0 && (
+            <div className="flex items-center justify-between py-4 px-6 border-t border-border bg-muted/5">
+              <p className="text-xs text-muted-foreground">
+                Showing{" "}
+                <span className="font-semibold text-foreground">
+                  {(page - 1) * 20 + 1}–{Math.min(page * 20, pagination.total)}
+                </span>
+                {" "}of{" "}
+                <span className="font-semibold text-foreground">{pagination.total}</span>
+                {" "}problems
+              </p>
 
-          {isFetchingNextPage && (
-            <div className="flex items-center justify-center py-6 border-t border-border bg-muted/5">
-              <div className="flex items-center gap-3 text-sm text-muted-foreground font-medium">
-                <div className="w-4 h-4 rounded-full border-2 border-blue-500/30 border-t-blue-500 animate-spin" />
-                Loading more problems...
+              <div className="flex items-center gap-1.5">
+                <button
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                  disabled={page === 1}
+                  className="flex h-8 items-center rounded-md border border-border bg-background px-3 text-xs font-medium text-foreground transition-colors hover:bg-muted disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+                >
+                  Previous
+                </button>
+
+                {/* Page numbers */}
+                {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
+                  let pageNum: number;
+                  if (totalPages <= 5) {
+                    pageNum = i + 1;
+                  } else if (page <= 3) {
+                    pageNum = i + 1;
+                  } else if (page >= totalPages - 2) {
+                    pageNum = totalPages - 4 + i;
+                  } else {
+                    pageNum = page - 2 + i;
+                  }
+                  return (
+                    <button
+                      key={pageNum}
+                      onClick={() => setPage(pageNum)}
+                      className={cn(
+                        "flex h-8 w-8 items-center justify-center rounded-md text-xs font-medium transition-colors cursor-pointer",
+                        page === pageNum
+                          ? "bg-blue-600 text-white shadow-sm"
+                          : "border border-border bg-background text-muted-foreground hover:bg-muted hover:text-foreground",
+                      )}
+                    >
+                      {pageNum}
+                    </button>
+                  );
+                })}
+
+                <button
+                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                  disabled={page === totalPages}
+                  className="flex h-8 items-center rounded-md border border-border bg-background px-3 text-xs font-medium text-foreground transition-colors hover:bg-muted disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+                >
+                  Next
+                </button>
               </div>
             </div>
           )}
 
-          {!hasNextPage && sortedProblems.length > 0 && (
-            <div className="py-8 text-center border-t border-border bg-muted/5">
-              <p className="text-sm text-muted-foreground font-medium">
-                You&apos;ve reached the end of the list.
-              </p>
+          {/* Loading overlay for page transitions */}
+          {isProblemsFetching && !isProblemsLoading && (
+            <div className="absolute inset-0 bg-background/50 backdrop-blur-[1px] flex items-center justify-center rounded-xl z-10">
+              <div className="flex items-center gap-3 text-sm text-muted-foreground font-medium bg-background/90 px-4 py-2 rounded-lg border border-border shadow-sm">
+                <div className="w-4 h-4 rounded-full border-2 border-blue-500/30 border-t-blue-500 animate-spin" />
+                Loading...
+              </div>
             </div>
           )}
         </div>
