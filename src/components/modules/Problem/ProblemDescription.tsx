@@ -116,10 +116,10 @@ export default function ProblemDescription({
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
             className={cn(
-              "flex shrink-0 items-center gap-2 whitespace-nowrap rounded-lg px-2.5 py-2 text-xs font-medium transition-all duration-200 sm:px-4 sm:text-sm",
+              "flex shrink-0 items-center gap-2 whitespace-nowrap rounded-lg px-2.5 py-2 text-xs font-medium transition-all duration-200 sm:px-4 sm:text-sm cursor-pointer",
               activeTab === tab.id
-                ? "bg-primary/10 text-foreground shadow-sm dark:bg-white/10 dark:text-white"
-                : "text-muted-foreground hover:bg-primary/5 hover:text-foreground dark:text-zinc-500 dark:hover:bg-white/5 dark:hover:text-zinc-300",
+                ? "bg-primary/10 text-foreground shadow-sm dark:bg-white/10 dark:text-white cursor-pointer"
+                : "text-muted-foreground hover:bg-primary/5 hover:text-foreground dark:text-zinc-500 dark:hover:bg-white/5 dark:hover:text-zinc-300 cursor-pointer",
             )}
           >
             <tab.icon className="h-4 w-4" />
@@ -168,15 +168,15 @@ export default function ProblemDescription({
                 <ThumbsUp className="h-4 w-4" />
                 <span>0</span>
               </button>
-              <button className="flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-rose-500 dark:hover:text-rose-400">
+              <button className="flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-rose-500 dark:hover:text-rose-400 cursor-pointer">
                 <ThumbsDown className="h-4 w-4" />
                 <span>0</span>
               </button>
-              <button className="flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-amber-500 dark:hover:text-amber-400">
-                <Bookmark className="h-4 w-4" />
+              <button className="flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-amber-500 dark:hover:text-amber-400 cursor-pointer">
+                <Bookmark className="h-4 w-4 cursor-pointer" />
                 Bookmark
               </button>
-              <button className="flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-sky-500 dark:hover:text-sky-400">
+              <button className="flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-sky-500 dark:hover:text-sky-400 cursor-pointer">
                 <Share2 className="h-4 w-4" />
                 Share
               </button>
@@ -260,7 +260,7 @@ export default function ProblemDescription({
             <div className="space-y-3">
               <button
                 onClick={() => setIsTopicsExpanded(!isTopicsExpanded)}
-                className="w-full text-left"
+                className="w-full text-left cursor-pointer"
               >
                 <div className="overflow-hidden rounded-xl border border-border/60 bg-muted/30 transition-colors hover:border-emerald-500/30 dark:border-zinc-700/50 dark:bg-zinc-900/40">
                   <div className="flex items-center justify-between px-4 py-3">
@@ -304,7 +304,7 @@ export default function ProblemDescription({
             <div className="space-y-3">
               <button
                 onClick={() => setIsCompaniesExpanded(!isCompaniesExpanded)}
-                className="w-full text-left"
+                className="w-full text-left cursor-pointer"
               >
                 <div className="overflow-hidden rounded-xl border border-border/60 bg-muted/30 transition-colors hover:border-primary/30 dark:border-zinc-700/50 dark:bg-zinc-900/40">
                   <div className="flex items-center justify-between px-4 py-3">
@@ -350,7 +350,7 @@ export default function ProblemDescription({
                   <button
                     key={idx}
                     onClick={() => toggleHint(idx)}
-                    className="w-full text-left"
+                    className="w-full text-left cursor-pointer"
                   >
                     <div className="overflow-hidden rounded-xl border border-border/60 bg-muted/30 transition-colors hover:border-amber-500/30 dark:border-zinc-700/50 dark:bg-zinc-900/40">
                       <div className="flex items-center justify-between px-4 py-3">

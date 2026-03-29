@@ -21,15 +21,9 @@ export default function BlogsPage() {
   });
 
   return (
-    <div className="min-h-screen w-full bg-zinc-50 dark:bg-zinc-950">
-      {/* Hero Header with Gradient */}
-      <div className="relative bg-linear-to-br from-blue-600 via-indigo-600 to-violet-600 overflow-hidden">
-        {/* Decorative Elements */}
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-0 left-1/4 w-96 h-96 bg-white rounded-full blur-3xl" />
-          <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-white rounded-full blur-3xl" />
-        </div>
-
+    <div className="min-h-screen w-full bg-background">
+      {/* Hero Header */}
+      <div className="relative border-b border-border bg-muted/30 overflow-hidden">
         <div className="relative container mx-auto px-6 py-20 md:py-28">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -37,23 +31,23 @@ export default function BlogsPage() {
             transition={{ duration: 0.6 }}
             className="max-w-4xl mx-auto text-center"
           >
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-4 tracking-tight">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-foreground mb-4 tracking-tight">
               CodeArena Blog
             </h1>
-            <p className="text-lg md:text-xl text-blue-100 mb-10">
+            <p className="text-lg md:text-xl text-muted-foreground mb-10">
               Explore insights, tutorials, and tech trends from our platform and the official community.
             </p>
 
             {/* Search Bar */}
             <div className="max-w-2xl mx-auto mb-8">
               <div className="relative">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-400" />
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                 <input
                   type="text"
                   placeholder="Search blog posts..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full h-14 pl-12 pr-6 rounded-2xl bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-white/50 shadow-xl"
+                  className="w-full h-14 pl-12 pr-6 rounded-2xl bg-background border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400/20 shadow-sm transition-all"
                 />
               </div>
             </div>
@@ -64,10 +58,10 @@ export default function BlogsPage() {
                 <button
                   key={category}
                   onClick={() => setSelectedCategory(category)}
-                  className={`px-6 py-2.5 rounded-xl font-bold text-sm transition-all ${
+                  className={`px-6 py-2.5 rounded-xl font-bold text-sm transition-all border ${
                     selectedCategory === category
-                      ? "bg-white text-indigo-600 shadow-lg"
-                      : "bg-white/20 text-white hover:bg-white/30 backdrop-blur-sm"
+                      ? "bg-blue-600/10 text-blue-600 dark:text-blue-400 border-blue-600/20 shadow-sm"
+                      : "bg-background text-muted-foreground border-border hover:bg-muted/50"
                   }`}
                 >
                   {category}
@@ -92,7 +86,7 @@ export default function BlogsPage() {
                   className="group"
                 >
                   <Link href={`/blogs/${post.id}`}>
-                    <div className="bg-white dark:bg-zinc-900 rounded-2xl overflow-hidden border border-zinc-200 dark:border-zinc-800 hover:border-indigo-500/50 dark:hover:border-indigo-500/50 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 h-full flex flex-col">
+                    <div className="bg-card rounded-2xl overflow-hidden border border-border hover:border-blue-500/50 dark:hover:border-blue-500/50 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 h-full flex flex-col">
                       {/* Image */}
                       <div className="relative h-56 overflow-hidden">
                         <Image
@@ -105,7 +99,7 @@ export default function BlogsPage() {
                         
                         {/* Category Badge */}
                         <div className="absolute top-4 left-4">
-                          <span className="px-3 py-1.5 rounded-lg bg-indigo-600 text-white text-xs font-bold uppercase tracking-wider shadow-lg">
+                          <span className="px-3 py-1.5 rounded-lg bg-blue-600 text-white text-xs font-bold uppercase tracking-wider shadow-lg">
                             {post.category}
                           </span>
                         </div>
@@ -114,7 +108,7 @@ export default function BlogsPage() {
                       {/* Content */}
                       <div className="p-6 flex flex-col flex-1">
                         {/* Meta */}
-                        <div className="flex items-center gap-4 text-xs text-zinc-500 dark:text-zinc-400 mb-3">
+                        <div className="flex items-center gap-4 text-xs text-muted-foreground mb-3">
                           <div className="flex items-center gap-1.5">
                             <Calendar className="w-3.5 h-3.5" />
                             <span>{post.date}</span>
@@ -126,17 +120,17 @@ export default function BlogsPage() {
                         </div>
 
                         {/* Title */}
-                        <h2 className="text-xl font-black text-zinc-900 dark:text-white mb-3 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors leading-tight line-clamp-2">
+                        <h2 className="text-xl font-black text-foreground mb-3 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors leading-tight line-clamp-2">
                           {post.title}
                         </h2>
 
                         {/* Excerpt */}
-                        <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-4 leading-relaxed line-clamp-3 flex-1">
+                        <p className="text-sm text-muted-foreground mb-4 leading-relaxed line-clamp-3 flex-1">
                           {post.excerpt}
                         </p>
 
                         {/* Author & Read More */}
-                        <div className="flex items-center justify-between pt-4 border-t border-zinc-200 dark:border-zinc-800">
+                        <div className="flex items-center justify-between pt-4 border-t border-border">
                           <div className="flex items-center gap-2">
                             <Image
                               src={post.author.avatar}
@@ -146,13 +140,13 @@ export default function BlogsPage() {
                               className="rounded-full"
                             />
                             <div className="text-xs">
-                              <div className="font-bold text-zinc-900 dark:text-white">
+                              <div className="font-bold text-foreground">
                                 {post.author.name}
                               </div>
                             </div>
                           </div>
 
-                          <div className="flex items-center gap-1 text-indigo-600 dark:text-indigo-400 font-bold text-sm group-hover:gap-2 transition-all">
+                          <div className="flex items-center gap-1 text-blue-600 dark:text-blue-400 font-bold text-sm group-hover:gap-2 transition-all">
                             <span>Read</span>
                             <ArrowRight className="w-4 h-4" />
                           </div>
@@ -169,13 +163,13 @@ export default function BlogsPage() {
               animate={{ opacity: 1 }}
               className="text-center py-20"
             >
-              <div className="w-20 h-20 rounded-full bg-zinc-200 dark:bg-zinc-800 flex items-center justify-center mx-auto mb-6">
-                <Search className="w-10 h-10 text-zinc-400" />
+              <div className="w-20 h-20 rounded-full bg-muted flex items-center justify-center mx-auto mb-6">
+                <Search className="w-10 h-10 text-muted-foreground" />
               </div>
-              <h3 className="text-2xl font-black text-zinc-900 dark:text-white mb-2">
+              <h3 className="text-2xl font-black text-foreground mb-2">
                 No posts found
               </h3>
-              <p className="text-zinc-600 dark:text-zinc-400 mb-6">
+              <p className="text-muted-foreground mb-6">
                 Try adjusting your search or filter to find what you're looking for.
               </p>
               <button
@@ -183,7 +177,7 @@ export default function BlogsPage() {
                   setSearchQuery("");
                   setSelectedCategory("All");
                 }}
-                className="px-6 py-3 rounded-xl bg-indigo-600 text-white font-bold hover:bg-indigo-700 transition-colors"
+                className="px-6 py-3 rounded-xl bg-blue-600 text-white font-bold hover:bg-blue-700 transition-colors"
               >
                 Clear Filters
               </button>
@@ -195,28 +189,22 @@ export default function BlogsPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.4 }}
-            className="mt-20 bg-linear-to-br from-blue-600 via-indigo-600 to-violet-600 rounded-3xl p-10 md:p-16 text-center relative overflow-hidden"
+            className="mt-20 border border-border bg-card/50 rounded-3xl p-10 md:p-16 text-center relative overflow-hidden"
           >
-            {/* Decorative Elements */}
-            <div className="absolute inset-0 opacity-10">
-              <div className="absolute top-0 right-0 w-64 h-64 bg-white rounded-full blur-3xl" />
-              <div className="absolute bottom-0 left-0 w-64 h-64 bg-white rounded-full blur-3xl" />
-            </div>
-
             <div className="relative z-10">
-              <h3 className="text-3xl md:text-4xl font-black text-white mb-4">
+              <h3 className="text-3xl md:text-4xl font-black text-foreground mb-4">
                 Stay in the Loop
               </h3>
-              <p className="text-lg text-blue-100 mb-8 max-w-2xl mx-auto">
+              <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
                 Get the latest articles, tutorials, and platform updates delivered to your inbox every week.
               </p>
               <div className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
                 <input
                   type="email"
                   placeholder="Enter your email"
-                  className="flex-1 h-14 px-6 rounded-xl bg-white/20 backdrop-blur-sm border border-white/30 text-white placeholder:text-white/70 focus:outline-none focus:ring-2 focus:ring-white/50"
+                  className="flex-1 h-14 px-6 rounded-xl bg-background border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400/20"
                 />
-                <button className="h-14 px-8 rounded-xl bg-white text-indigo-600 font-bold hover:bg-zinc-100 transition-colors whitespace-nowrap shadow-xl">
+                <button className="h-14 px-8 rounded-xl bg-blue-600 text-white font-bold hover:bg-blue-700 transition-colors whitespace-nowrap shadow-sm">
                   Subscribe
                 </button>
               </div>

@@ -204,7 +204,7 @@ export default function ProblemDetailsPage({ params }: PageProps) {
         />
 
         {/* Right Panel — Editor + Output */}
-        <ResizablePanel defaultSize={60} minSize={30}>
+        <ResizablePanel defaultSize={45} minSize={30}>
           <ResizablePanelGroup orientation="vertical" className="flex-col">
             {/* Code Editor */}
             <ResizablePanel defaultSize={65} minSize={30}>

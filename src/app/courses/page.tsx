@@ -133,7 +133,7 @@ export default function CoursesPage() {
               <span className="text-neutral-950 dark:text-white font-black underline decoration-blue-600 decoration-4 underline-offset-8">
                 Programming Hero
               </span>
-              . Accelerate your career with industry-proven cohorts.
+              . Accelerate your career with industry-proven courses.
             </p>
 
             <div className="flex flex-wrap items-center justify-center lg:justify-start gap-12 pt-6">

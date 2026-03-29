@@ -119,7 +119,7 @@ export default function CodeEditorPanel({
   const [editorTheme, setEditorTheme] = useState("vs-dark");
   const [autoTheme, setAutoTheme] = useState(true);
 
-  const { resolvedTheme, setTheme: setAppTheme } = useTheme();
+  const { resolvedTheme } = useTheme();
   const isDark = resolvedTheme === "dark";
 
   const THEMES = [
@@ -588,18 +588,6 @@ export default function CodeEditorPanel({
                         value={editorTheme}
                         onChange={(e) => {
                           const next = e.target.value;
-                          if (next === "light") {
-                            setAutoTheme(true);
-                            setAppTheme("light");
-                            setEditorTheme("light");
-                            return;
-                          }
-                          if (next === "vs-dark") {
-                            setAutoTheme(true);
-                            setAppTheme("dark");
-                            setEditorTheme("vs-dark");
-                            return;
-                          }
                           setAutoTheme(false);
                           setEditorTheme(next);
                         }}
@@ -690,7 +678,7 @@ export default function CodeEditorPanel({
           onClick={handleRun}
           disabled={isRunning || isSubmitting}
           className={cn(
-            "flex flex-1 items-center justify-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-medium transition-all disabled:cursor-not-allowed disabled:opacity-50 sm:flex-none sm:px-5",
+            "flex flex-1 items-center justify-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-medium transition-all disabled:cursor-not-allowed disabled:opacity-50 sm:flex-none sm:px-5 cursor-pointer",
             isDark
               ? "border-zinc-600/50 bg-zinc-800/50 text-zinc-200 hover:bg-zinc-700/50"
               : "border-neutral-200 bg-white/80 text-neutral-900 hover:bg-neutral-100/70"
@@ -702,7 +690,7 @@ export default function CodeEditorPanel({
         <button
           onClick={handleSubmit}
           disabled={isRunning || isSubmitting}
-          className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-emerald-500/20 transition-all hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-50 sm:flex-none sm:px-5"
+          className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-emerald-500/20 transition-all hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-50 sm:flex-none sm:px-5 cursor-pointer"
         >
           <Send className="h-4 w-4" />
           {isSubmitting ? "Submitting..." : "Submit"}

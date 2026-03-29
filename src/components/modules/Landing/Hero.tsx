@@ -108,10 +108,10 @@ const people = [
   },
   {
     id: 4,
-    name: "Dora",
-    designation: "The Explorer",
+    name: "Emily Davis",
+    designation: "UX Designer",
     image:
-      "https://images.unsplash.com/photo-1544725176-7c40e5a71c5e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=3534&q=80",
+      "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fGF2YXRhcnxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=800&q=60",
   },
 ];
 
@@ -127,6 +127,7 @@ export default function Hero() {
   const syntaxTheme = mounted && resolvedTheme === "dark" ? oneDark : oneLight;
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
   }, []);
 
@@ -284,18 +285,9 @@ export default function Hero() {
             >
               {/* Avatars */}
               <div className="flex items-center gap-3">
-                <div className="flex -space-x-2.5">
-                  {["from-sky-400 to-blue-500", "from-violet-400 to-purple-600", "from-emerald-400 to-teal-500", "from-amber-400 to-orange-500"].map((g, i) => (
-                    <div
-                      key={i}
-                      className={cn("w-9 h-9 rounded-full border-2 border-white dark:border-zinc-950 bg-linear-to-br shadow-sm", g)}
-                    />
-                  ))}
+                <div className="flex flex-row items-center">
+                  <AnimatedTooltip items={people} />
                 </div>
-
-                 {/* <div className="flex flex-row items-center justify-center mb-10 w-full">
-                      <AnimatedTooltip items={people} />
-                    </div> */}
 
                 <div className="text-left">
                   <div className="flex items-center gap-1 mb-0.5">

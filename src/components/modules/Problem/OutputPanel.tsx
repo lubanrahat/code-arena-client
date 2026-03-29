@@ -53,10 +53,10 @@ export default function OutputPanel({
       <div className="flex items-center gap-1 border-b border-border/50 bg-background/70 px-4 py-2 backdrop-blur-sm">
         <button
           onClick={() => onTabChange("run")}
-          className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all ${
+          className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all cursor-pointer ${
             activeTab === "run"
               ? "bg-primary/10 text-foreground dark:bg-white/10 dark:text-white"
-              : "text-muted-foreground hover:bg-primary/5 hover:text-foreground dark:text-zinc-500 dark:hover:bg-white/5 dark:hover:text-zinc-300"
+              : "text-muted-foreground hover:bg-primary/5 hover:text-foreground dark:text-zinc-500 dark:hover:bg-white/5 dark:hover:text-zinc-300 cursor-pointer"
           }`}
         >
           <Terminal className="h-4 w-4" />
@@ -66,8 +66,8 @@ export default function OutputPanel({
           onClick={() => onTabChange("submit")}
           className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all ${
             activeTab === "submit"
-              ? "bg-primary/10 text-foreground dark:bg-white/10 dark:text-white"
-              : "text-muted-foreground hover:bg-primary/5 hover:text-foreground dark:text-zinc-500 dark:hover:bg-white/5 dark:hover:text-zinc-300"
+              ? "bg-primary/10 text-foreground dark:bg-white/10 dark:text-white cursor-pointer"
+              : "text-muted-foreground hover:bg-primary/5 hover:text-foreground dark:text-zinc-500 dark:hover:bg-white/5 dark:hover:text-zinc-300 cursor-pointer"
           }`}
         >
           Submission Result

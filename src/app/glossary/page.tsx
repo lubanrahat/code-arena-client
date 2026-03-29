@@ -23,7 +23,7 @@ export default function GlossaryPage() {
   }, [searchQuery, activeCategory]);
 
   return (
-    <main className="min-h-screen bg-white dark:bg-zinc-950">
+    <main className="min-h-screen bg-background">
       <GlossaryHeader 
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
@@ -32,12 +32,6 @@ export default function GlossaryPage() {
       />
       
       <GlossaryList items={filteredItems} />
-      
-      {/* Background Ornaments */}
-      <div className="fixed inset-0 -z-10 pointer-events-none">
-        <div className="absolute top-1/4 -left-20 w-96 h-96 bg-blue-500/5 rounded-full blur-[100px]" />
-        <div className="absolute bottom-1/4 -right-20 w-96 h-96 bg-indigo-500/5 rounded-full blur-[100px]" />
-      </div>
     </main>
   );
 }

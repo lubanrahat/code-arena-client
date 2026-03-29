@@ -4,7 +4,7 @@ import { IconArrowLeft, IconUserBolt } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
 import { Sidebar, SidebarBody, SidebarLink } from "@/components/ui/sidebar";
 import { useAuth } from "@/hooks/useAuth";
-import { Code2, DollarSign, Plus, Terminal } from "lucide-react";
+import { Code2, DollarSign, Plus, Terminal, ScrollText } from "lucide-react";
 import { LoaderOne } from "@/components/ui/loader";
 import Image from "next/image";
 import Link from "next/link";
@@ -51,6 +51,13 @@ export default function AdminLayout({
       href: "/admin/premium-users",
       icon: (
         <IconUserBolt className="h-5 w-5 shrink-0 text-amber-500 dark:text-amber-400" />
+      ),
+    },
+    {
+      label: "Contributions",
+      href: "/admin/contributions",
+      icon: (
+        <ScrollText className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
       ),
     },
 

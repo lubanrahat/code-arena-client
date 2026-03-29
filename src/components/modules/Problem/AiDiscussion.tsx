@@ -102,9 +102,8 @@ The user is working on the problem: "${problem.title}" (${problem.difficulty}).
 Description: ${problem.description}
 Constraints: ${problem.constraints}
 
-${
-  starterCode
-    ? `The code editor is currently showing this ${langLabel} starter code:
+${starterCode
+          ? `The code editor is currently showing this ${langLabel} starter code:
 \`\`\`${selectedLanguage.toLowerCase()}
 ${starterCode}
 \`\`\`
@@ -129,8 +128,8 @@ func findThreshold(n int, k int64, arr []int64) int {
 }
 \`\`\`
 Never wrap it in a package main or add imports not in the original.`
-    : `The user is coding in ${langLabel}. When providing code solutions, write only the function body — do NOT add a main() function, package declarations, or unnecessary imports.`
-}
+          : `The user is coding in ${langLabel}. When providing code solutions, write only the function body — do NOT add a main() function, package declarations, or unnecessary imports.`
+        }
 
 Always format responses with markdown. Be encouraging and concise. Guide the user with hints first; only provide the full solution if explicitly asked (e.g. "show me the code" or "give me the solution").`;
 
@@ -278,7 +277,7 @@ Always format responses with markdown. Be encouraging and concise. Guide the use
                           className,
                           children,
                           ...props
-                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                          // eslint-disable-next-line @typescript-eslint/no-explicit-any
                         }: any) {
                           const match = /language-(\w+)/.exec(className || "");
                           return !inline && match ? (

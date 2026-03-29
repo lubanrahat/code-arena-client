@@ -17,6 +17,8 @@ import {
 import { useAuthUser } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
+import { ContributeService } from "@/services/ContributeService";
+import { useState } from "react";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const contributionSchema = z.object({
@@ -33,6 +35,8 @@ const contributionSchema = z.object({
 export default function ContributionForm() {
   const { user } = useAuthUser();
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const form = useForm({
     defaultValues: {
       name: "",
@@ -45,10 +49,21 @@ export default function ContributionForm() {
       message: "",
     },
     onSubmit: async ({ value }) => {
-      // Simulate API call
-      console.log("Form values:", value);
-      toast.success("Application submitted successfully!");
-      form.reset();
+      try {
+        setIsSubmitting(true);
+        const result = await ContributeService.createContribution(value);
+        if (result.success) {
+          toast.success("Application submitted successfully!");
+          form.reset();
+        } else {
+          toast.error(result.message || "Failed to submit application");
+        }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } catch (error: any) {
+        toast.error(error?.response?.data?.message || "Something went wrong!");
+      } finally {
+        setIsSubmitting(false);
+      }
     },
   });
 
@@ -262,12 +277,12 @@ export default function ContributionForm() {
             </form.Field>
           </div>
 
-          <form.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting]}>
-            {([canSubmit, isSubmitting]) => (
+          <form.Subscribe selector={(state) => [state.canSubmit]}>
+            {([canSubmit]) => (
               <Button
                 type="submit"
                 disabled={!canSubmit || isSubmitting || !user}
-                className="w-full h-14 text-lg font-bold bg-amber-400 hover:bg-amber-500 dark:bg-amber-500 dark:hover:bg-amber-600 text-zinc-900 rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed transform active:scale-95"
+                className="w-full h-14 text-lg font-bold bg-linear-to-br from-blue-600 to-indigo-600 text-white rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed transform active:scale-95 cursor-pointer"
               >
                 {isSubmitting ? "Submitting..." : "Submit Application"}
               </Button>

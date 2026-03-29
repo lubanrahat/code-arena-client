@@ -325,7 +325,10 @@ export default function ProblemList() {
   const router = useRouter();
   const { data: profile } = useProfile();
   const { user } = useAuthUser();
-  const isPremium = !!((user as AuthUser & { isPremium?: boolean })?.isPremium || profile?.data?.isPremium);
+  const isPremium = !!(
+    (user as AuthUser & { isPremium?: boolean })?.isPremium ||
+    profile?.data?.isPremium
+  );
 
   const [activeTab, setActiveTab] = useState<TabKey>("all");
   const [search, setSearch] = useState("");
@@ -337,7 +340,9 @@ export default function ProblemList() {
   const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
   const [selectedCompanies, setSelectedCompanies] = useState<string[]>([]);
   const [sortKey, setSortKey] = useState<SortKey>("Default");
-  const [optimisticBookmarks, setOptimisticBookmarks] = useState<Record<string, boolean>>({});
+  const [optimisticBookmarks, setOptimisticBookmarks] = useState<
+    Record<string, boolean>
+  >({});
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -440,7 +445,17 @@ export default function ProblemList() {
       return res;
     },
     initialPageParam: 1,
-    getNextPageParam: (lastPage: { data: Problem[]; meta: { pagination?: { page: number; limit: number; total: number; totalPages: number } } }) => {
+    getNextPageParam: (lastPage: {
+      data: Problem[];
+      meta: {
+        pagination?: {
+          page: number;
+          limit: number;
+          total: number;
+          totalPages: number;
+        };
+      };
+    }) => {
       const pagination = lastPage?.meta?.pagination;
       if (!pagination) return undefined;
       const { page, limit, total } = pagination;
@@ -482,7 +497,6 @@ export default function ProblemList() {
     [userStatusData],
   );
 
-
   const bookmarkedSet = useMemo(() => {
     const set = new Set(userStatusData?.data?.bookmarkedProblemIds || []);
     Object.entries(optimisticBookmarks).forEach(([id, status]) => {
@@ -505,7 +519,7 @@ export default function ProblemList() {
     e.stopPropagation();
 
     const isCurrentlyBookmarked = bookmarkedSet.has(id);
-    
+
     // Optimistic UI update
     setOptimisticBookmarks((prev) => ({
       ...prev,
@@ -515,7 +529,9 @@ export default function ProblemList() {
     if (profile?.data || user) {
       const res = await apiToggleBookmark(id);
       if (res) {
-        toast.success(isCurrentlyBookmarked ? "Bookmark removed" : "Bookmark added");
+        toast.success(
+          isCurrentlyBookmarked ? "Bookmark removed" : "Bookmark added",
+        );
       } else {
         toast.error("Failed to update bookmark");
         // Revert on failure
@@ -728,8 +744,7 @@ export default function ProblemList() {
           <button
             onClick={handlePickRandom}
             disabled={sortedProblems.length === 0}
-            className="flex h-9 w-full items-center justify-center gap-2 rounded-lg px-5 text-sm font-bold text-white transition-all hover:opacity-90 disabled:opacity-40 sm:ml-auto sm:w-auto shadow-md"
-            style={{ background: "linear-gradient(135deg, #06b6d4, #0891b2)" }}
+            className="flex h-9 w-full items-center justify-center gap-2 rounded-lg px-5 text-sm font-bold text-white transition-all hover:opacity-90 disabled:opacity-40 sm:ml-auto sm:w-auto shadow-md cursor-pointer bg-linear-to-br from-blue-600 to-indigo-600"
           >
             <Shuffle className="w-4 h-4" />
             Pick Random

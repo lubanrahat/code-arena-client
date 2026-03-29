@@ -45,6 +45,15 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 import { toast } from "sonner";
 
 import { allProblems } from "@/app/problems/_action";
@@ -284,23 +293,6 @@ export default function AdminProblemsTable() {
               </SelectContent>
             </Select>
           </div>
-
-          <div className="flex items-center justify-end gap-2">
-            <Button
-              variant="outline"
-              disabled={page <= 1}
-              onClick={() => setPage((p) => Math.max(1, p - 1))}
-            >
-              Previous
-            </Button>
-            <Button
-              variant="outline"
-              disabled={page >= totalPages}
-              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-            >
-              Next
-            </Button>
-          </div>
         </div>
       </CardHeader>
 
@@ -327,8 +319,9 @@ export default function AdminProblemsTable() {
                 No problems found. Adjust search/filters and try again.
               </div>
             ) : (
-              <div className="rounded-xl border border-border/50 overflow-hidden">
-                <Table>
+              <div className="space-y-4">
+                <div className="rounded-xl border border-border/50 overflow-hidden">
+                  <Table>
                   <TableHeader className="bg-muted/30">
                     <TableRow>
                       <TableHead style={{ width: "34%" }}>Title</TableHead>
@@ -432,6 +425,74 @@ export default function AdminProblemsTable() {
                     ))}
                   </TableBody>
                 </Table>
+              </div>
+
+              {totalPages > 0 && (
+                <div className="mt-6 flex items-center justify-between px-2">
+                  <div className="text-sm text-muted-foreground">
+                    Page {page} of {totalPages}
+                  </div>
+                  <Pagination className="mx-0 w-auto">
+                    <PaginationContent>
+                      <PaginationItem>
+                        <PaginationPrevious
+                          href="#"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            if (page > 1) setPage((p) => p - 1);
+                          }}
+                          className={page <= 1 ? "pointer-events-none opacity-50" : ""}
+                        />
+                      </PaginationItem>
+
+                      {Array.from({ length: totalPages }).map((_, i) => {
+                        const p = i + 1;
+                        if (
+                          p === 1 ||
+                          p === totalPages ||
+                          (p >= page - 1 && p <= page + 1)
+                        ) {
+                          return (
+                            <PaginationItem key={p}>
+                              <PaginationLink
+                                href="#"
+                                isActive={page === p}
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  setPage(p);
+                                }}
+                              >
+                                {p}
+                              </PaginationLink>
+                            </PaginationItem>
+                          );
+                        }
+                        if (p === page - 2 || p === page + 2) {
+                          return (
+                            <PaginationItem key={p}>
+                              <PaginationEllipsis />
+                            </PaginationItem>
+                          );
+                        }
+                        return null;
+                      })}
+
+                      <PaginationItem>
+                        <PaginationNext
+                          href="#"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            if (page < totalPages) setPage((p) => p + 1);
+                          }}
+                          className={
+                            page >= totalPages ? "pointer-events-none opacity-50" : ""
+                          }
+                        />
+                      </PaginationItem>
+                    </PaginationContent>
+                  </Pagination>
+                </div>
+              )}
               </div>
             )}
           </>

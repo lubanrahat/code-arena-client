@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { GlossaryItem as GlossaryItemType } from "@/data/glossary-data";
 import GlossaryItem from "./GlossaryItem";
 
@@ -25,7 +24,7 @@ export default function GlossaryList({ items }: GlossaryListProps) {
   if (items.length === 0) {
     return (
       <div className="text-center py-20">
-        <p className="text-zinc-500 dark:text-zinc-400 text-lg font-medium">
+        <p className="text-muted-foreground text-lg font-medium">
           No terms found matching your criteria.
         </p>
       </div>
@@ -38,10 +37,10 @@ export default function GlossaryList({ items }: GlossaryListProps) {
         {sortedLetters.map((letter) => (
           <section key={letter} id={`letter-${letter}`} className="scroll-mt-32">
             <div className="flex items-center gap-6 mb-10">
-              <h2 className="text-5xl font-black text-zinc-200 dark:text-zinc-800/50 select-none">
+              <h2 className="text-5xl font-black text-muted/50 select-none">
                 {letter}
               </h2>
-              <div className="h-px flex-1 bg-linear-to-r from-zinc-200 dark:from-zinc-800 to-transparent" />
+              <div className="h-px flex-1 bg-border" />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

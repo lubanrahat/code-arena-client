@@ -26,16 +26,16 @@ const features = [
 
 export default function AiFeatures() {
   return (
-    <section className="py-32 relative">
+    <section className="py-32 relative bg-muted/30 border-t border-border">
       <div className="container mx-auto px-6 text-center">
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-5xl md:text-7xl font-black text-zinc-900 dark:text-white mb-8 tracking-[-0.04em]"
+          className="text-5xl md:text-7xl font-black text-foreground mb-8 tracking-[-0.04em]"
         >
           AI-Powered Features <br />
-          <span className="bg-linear-to-r from-blue-600 via-indigo-500 to-violet-600 bg-clip-text text-transparent">
+          <span className="text-blue-600 dark:text-blue-500">
             Coming Soon
           </span>
         </motion.h2>
@@ -44,7 +44,7 @@ export default function AiFeatures() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-lg md:text-xl text-zinc-500 dark:text-zinc-400 mb-20 font-medium max-w-2xl mx-auto"
+          className="text-lg md:text-xl text-muted-foreground mb-20 font-medium max-w-2xl mx-auto"
         >
           Discover the next generation of AI tools designed to elevate your coding journey.
         </motion.p>
@@ -62,25 +62,25 @@ export default function AiFeatures() {
               {/* Card Background with Glow */}
               <div className="absolute -inset-0.5 bg-linear-to-r from-blue-600/20 to-indigo-600/20 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition duration-500" />
 
-              <div className="relative h-full p-10 bg-white dark:bg-zinc-900/50 backdrop-blur-xl border border-zinc-200 dark:border-zinc-800 rounded-3xl flex flex-col items-center text-center transition-all duration-300 group-hover:translate-y-[-8px] group-hover:border-indigo-500/30">
+              <div className="relative h-full p-10 bg-card backdrop-blur-xl border border-border rounded-3xl flex flex-col items-center text-center transition-all duration-300 group-hover:translate-y-[-8px] group-hover:border-blue-500/30 group-hover:shadow-xl">
                 {/* Icon Circle */}
-                <div className={`w-16 h-16 rounded-2xl bg-linear-to-tr ${feature.color} p-4 mb-8 shadow-2xl transition-transform group-hover:scale-110 group-hover:rotate-3`}>
+                <div className={`w-16 h-16 rounded-2xl bg-linear-to-tr ${feature.color} p-4 mb-8 shadow-sm transition-transform group-hover:scale-110 group-hover:rotate-3`}>
                   <feature.icon className="w-full h-full text-white" />
                 </div>
 
-                <h3 className="text-xl font-black text-zinc-900 dark:text-white mb-4 tracking-tight">
+                <h3 className="text-xl font-black text-card-foreground mb-4 tracking-tight">
                   {feature.title}
                 </h3>
 
-                <p className="text-sm text-zinc-500 dark:text-zinc-400 font-medium leading-relaxed">
+                <p className="text-sm text-muted-foreground font-medium leading-relaxed">
                   {feature.description}
                 </p>
 
                 {/* Decorative dots */}
                 <div className="mt-8 flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
                   <div className="w-1.5 h-1.5 rounded-full bg-blue-500" />
-                  <div className="w-1.5 h-1.5 rounded-full bg-indigo-500" />
-                  <div className="w-1.5 h-1.5 rounded-full bg-violet-500" />
+                  <div className="w-1.5 h-1.5 rounded-full bg-blue-500" />
+                  <div className="w-1.5 h-1.5 rounded-full bg-blue-500" />
                 </div>
               </div>
             </motion.div>

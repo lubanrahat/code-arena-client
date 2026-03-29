@@ -19,7 +19,7 @@ export default function RoadmapListing() {
   });
 
   return (
-    <div className="min-h-screen bg-white dark:bg-zinc-950 pb-20">
+    <div className="min-h-screen bg-background pb-20">
       <RoadmapHeader
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
@@ -45,11 +45,11 @@ export default function RoadmapListing() {
               exit={{ opacity: 0, y: -20 }}
               className="flex flex-col items-center justify-center py-32 text-center"
             >
-              <div className="w-24 h-24 bg-zinc-100 dark:bg-zinc-900 rounded-full flex items-center justify-center mb-6">
-                <span className="text-4xl text-zinc-400">🔍</span>
+              <div className="w-24 h-24 bg-muted rounded-full flex items-center justify-center mb-6">
+                <span className="text-4xl text-muted-foreground">🔍</span>
               </div>
-              <h3 className="text-2xl font-black text-zinc-900 dark:text-white mb-2">No Roadmaps Found</h3>
-              <p className="text-zinc-500 dark:text-zinc-400 max-w-sm mx-auto">
+              <h3 className="text-2xl font-black text-foreground mb-2">No Roadmaps Found</h3>
+              <p className="text-muted-foreground max-w-sm mx-auto">
                 We couldn't find any roadmaps matching your search. Try a different keyword or filter.
               </p>
               <button
@@ -57,7 +57,7 @@ export default function RoadmapListing() {
                   setSearchQuery("");
                   setActiveFilter("All");
                 }}
-                className="mt-8 text-amber-600 dark:text-amber-500 font-bold hover:underline"
+                className="mt-8 text-blue-600 dark:text-blue-500 font-bold hover:underline"
               >
                 Clear all filters
               </button>
