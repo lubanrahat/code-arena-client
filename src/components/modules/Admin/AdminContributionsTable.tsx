@@ -80,7 +80,7 @@ export default function AdminContributionsTable() {
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState<string>("ALL");
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError, error } = useQuery({
     queryKey: ["admin-contributions", { page, limit, search, status }],
     queryFn: () =>
       ContributeService.getAllContributions({
@@ -178,6 +178,21 @@ export default function AdminContributionsTable() {
             {Array.from({ length: 5 }).map((_, i) => (
               <Skeleton key={i} className="h-14 w-full" />
             ))}
+          </div>
+        ) : isError ? (
+          <div className="py-12 text-center text-rose-500 bg-rose-500/5 rounded-xl border border-rose-500/10">
+            <XCircle className="h-10 w-10 mx-auto mb-4 opacity-50" />
+            <p className="font-bold mb-1">Failed to load contributions</p>
+            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+            <p className="text-sm opacity-80">{(error as any)?.response?.data?.message || (error as any)?.message || "Please check your connection or try again."}</p>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="mt-4 border-rose-500/20 hover:bg-rose-500/10 text-rose-500"
+              onClick={() => queryClient.invalidateQueries({ queryKey: ["admin-contributions"] })}
+            >
+              Try Again
+            </Button>
           </div>
         ) : contributions.length === 0 ? (
           <div className="py-12 text-center text-muted-foreground">
