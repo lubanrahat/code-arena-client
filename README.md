@@ -49,6 +49,28 @@ CodeArena is a cutting-edge, high-performance practice platform designed for dev
 
 ---
 
+## 📁 Project Structure
+
+```text
+/
+├── public/              # Static assets (images, icons)
+├── src/
+│   ├── app/             # Next.js App Router (pages, layouts, globals)
+│   ├── components/      # UI components (shadcn/ui, layout, modules)
+│   ├── hooks/           # Custom React hooks (auth, user, data fetching)
+│   ├── lib/             # Utilities and Axios configuration
+│   ├── providers/       # Context providers (Auth, Query, Theme)
+│   ├── services/        # API service implementations
+│   ├── shared/          # Shared constants and assets
+│   ├── types/           # TypeScript type definitions
+│   └── validation/      # Zod schemas for form validation
+├── components.json      # shadcn/ui library configuration
+├── package.json         # Project dependencies and scripts
+└── tsconfig.json        # TypeScript configuration
+```
+
+---
+
 ## ⚙️ Setup Instructions
 
 ### Prerequisites
