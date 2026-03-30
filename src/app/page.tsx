@@ -6,6 +6,7 @@ import Footer from "@/components/layout/Footer";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight, Zap } from "lucide-react";
+import { CareerOutcomes } from "@/components/modules/Landing/CareerOutcomes";
 
 export default function Home() {
   return (
@@ -14,7 +15,9 @@ export default function Home() {
         <Hero />
         <Features />
 
-        {/* Modern Premium CTA Section */}
+        <CareerOutcomes />
+
+        {/* CTA Section */}
         <section className="py-32 relative overflow-hidden bg-white dark:bg-zinc-950 border-t border-zinc-100 dark:border-zinc-900">
           {/* Ambient Glows */}
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-indigo-500/10 rounded-full blur-[140px] pointer-events-none" />

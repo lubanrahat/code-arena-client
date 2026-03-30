@@ -29,6 +29,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
+import LeaderboardSidebar from "./LeaderboardSidebar";
 import { toast } from "sonner";
 
 const TOPIC_OPTIONS = [
@@ -443,7 +444,7 @@ export default function ProblemList() {
         sortBy,
         sortOrder,
         page,
-        limit: 20,
+        limit: 10,
       });
 
       return res;
@@ -464,7 +465,7 @@ export default function ProblemList() {
   }, [problemsData]);
 
   const pagination = useMemo(() => {
-    return problemsData?.meta?.pagination || { page: 1, limit: 20, total: 0, totalPages: 1 };
+    return problemsData?.meta?.pagination || { page: 1, limit: 10, total: 0, totalPages: 1 };
   }, [problemsData]);
 
   const totalPages = pagination.totalPages;
@@ -555,8 +556,10 @@ export default function ProblemList() {
       ref={containerRef}
       className="min-h-screen bg-background text-foreground"
     >
-      <div className="max-w-6xl mx-auto px-4 py-6">
-        <div className="mb-5 flex items-center gap-4 overflow-x-auto border-b border-border">
+      <div className="flex flex-col lg:flex-row justify-center gap-6 px-4 py-6 w-full max-w-[1500px] mx-auto items-start">
+        {/* ── Core Problem Area ─────────────────────────── */}
+        <div className="flex-1 w-full max-w-6xl min-w-0">
+          <div className="mb-5 flex items-center gap-4 overflow-x-auto border-b border-border">
           <TabButton
             label="All Questions"
             active={activeTab === "all"}
@@ -730,325 +733,331 @@ export default function ProblemList() {
 
         {/* ── Table ────────────────────────────────────────────────────── */}
         <div className="relative rounded-xl border border-border overflow-hidden bg-white dark:bg-zinc-950 shadow-sm">
-          {/* Table Header */}
-          <div className="hidden md:grid grid-cols-[2.5fr_160px_110px_110px_1fr] gap-4 px-6 py-3 border-b border-border bg-muted/30 text-[11px] font-bold uppercase tracking-widest text-muted-foreground">
-            <div className="pl-4">Topic</div>
-            <div>Difficulty</div>
-            <div className="text-center">Avg Time</div>
-            <div className="text-center">Submissions</div>
-            <div>Asked In</div>
-          </div>
-
-          {/* Rows */}
-          {sortedProblems.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-24 text-center">
-              <div className="w-16 h-16 rounded-2xl bg-muted flex items-center justify-center mb-5">
-                <Zap className="w-8 h-8 text-muted-foreground" />
-              </div>
-              <p className="text-base font-bold mb-2">No problems found</p>
-              <p className="text-sm text-muted-foreground">
-                Try adjusting your filters or search query.
-              </p>
+            {/* Table Header */}
+            <div className="hidden md:grid grid-cols-[2.5fr_160px_110px_110px_1fr] gap-4 px-6 py-3 border-b border-border bg-muted/30 text-[11px] font-bold uppercase tracking-widest text-muted-foreground">
+              <div className="pl-4">Topic</div>
+              <div>Difficulty</div>
+              <div className="text-center">Avg Time</div>
+              <div className="text-center">Submissions</div>
+              <div>Asked In</div>
             </div>
-          ) : (
-            sortedProblems.map((problem: Problem) => {
-              const isSolved = solvedProblemIds.has(problem.id);
-              const isBookmarked = bookmarkedSet.has(problem.id);
-              const cfg =
-                difficultyConfig[problem.difficulty] ?? difficultyConfig.MEDIUM;
-              const companies = problem.askedIn ?? [];
-              const displayCompanies = companies.slice(0, 2);
-              const overflow = companies.length - 2;
-              // Deterministic avg time based on problem id hash
-              const seed =
-                problem.id.charCodeAt(0) +
-                problem.id.charCodeAt(problem.id.length - 1);
-              const avgTime = cfg.avgTime + (seed % 30);
 
-              return (
-                <div
-                  key={problem.id}
-                  className="group relative border-b border-border/50 last:border-0 transition-colors duration-150 hover:bg-muted/20 md:grid md:grid-cols-[2.5fr_160px_110px_110px_1fr] md:gap-4 md:items-center"
-                >
-                  {/* Left difficulty stripe */}
+            {/* Rows */}
+            {sortedProblems.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-24 text-center">
+                <div className="w-16 h-16 rounded-2xl bg-muted flex items-center justify-center mb-5">
+                  <Zap className="w-8 h-8 text-muted-foreground" />
+                </div>
+                <p className="text-base font-bold mb-2">No problems found</p>
+                <p className="text-sm text-muted-foreground">
+                  Try adjusting your filters or search query.
+                </p>
+              </div>
+            ) : (
+              sortedProblems.map((problem: Problem) => {
+                const isSolved = solvedProblemIds.has(problem.id);
+                const isBookmarked = bookmarkedSet.has(problem.id);
+                const cfg =
+                  difficultyConfig[problem.difficulty] ?? difficultyConfig.MEDIUM;
+                const companies = problem.askedIn ?? [];
+                const displayCompanies = companies.slice(0, 2);
+                const overflow = companies.length - 2;
+                // Deterministic avg time based on problem id hash
+                const seed =
+                  problem.id.charCodeAt(0) +
+                  problem.id.charCodeAt(problem.id.length - 1);
+                const avgTime = cfg.avgTime + (seed % 30);
+
+                return (
                   <div
-                    className={cn(
-                      "absolute left-0 top-[20%] bottom-[20%] w-[3px] rounded-r-full opacity-0 transition-opacity group-hover:opacity-100",
-                      cfg.stripe,
-                    )}
-                  />
+                    key={problem.id}
+                    className="group relative border-b border-border/50 last:border-0 transition-colors duration-150 hover:bg-muted/20 md:grid md:grid-cols-[2.5fr_160px_110px_110px_1fr] md:gap-4 md:items-center"
+                  >
+                    {/* Left difficulty stripe */}
+                    <div
+                      className={cn(
+                        "absolute left-0 top-[20%] bottom-[20%] w-[3px] rounded-r-full opacity-0 transition-opacity group-hover:opacity-100",
+                        cfg.stripe,
+                      )}
+                    />
 
-                  {/* Mobile row card */}
-                  <div className="space-y-3 px-4 py-3 md:hidden">
-                    <div className="flex items-start justify-between gap-2">
-                      <div className="min-w-0">
-                        <Link
-                          href={`/problems/${problem.id}`}
-                          onClick={(e) => {
-                            if (problem.isPremium && !isPremium) {
-                              e.preventDefault();
-                              router.push("/pricing");
-                            }
-                          }}
+                    {/* Mobile row card */}
+                    <div className="space-y-3 px-4 py-3 md:hidden">
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="min-w-0">
+                          <Link
+                            href={`/problems/${problem.id}`}
+                            onClick={(e) => {
+                              if (problem.isPremium && !isPremium) {
+                                e.preventDefault();
+                                router.push("/pricing");
+                              }
+                            }}
+                            className={cn(
+                              "block truncate text-sm font-medium transition-colors hover:text-blue-500 dark:hover:text-blue-400",
+                              isSolved
+                                ? "text-emerald-600 dark:text-emerald-400"
+                                : "text-blue-600 dark:text-blue-400",
+                            )}
+                          >
+                            {problem.title}
+                          </Link>
+                          {problem.topic && (
+                            <span className="mt-1 inline-block rounded-md border border-border/50 bg-muted/70 px-2 py-0.5 text-[11px] font-medium text-muted-foreground dark:bg-zinc-800">
+                              {problem.topic}
+                            </span>
+                          )}
+                          {problem.isPremium && !isPremium && (
+                            <span className="ml-2 mt-1 inline-block rounded-md border border-amber-500/50 bg-amber-500/10 px-2 py-0.5 text-[11px] font-bold text-amber-600 dark:text-amber-400">
+                              💎 Premium
+                            </span>
+                          )}
+                        </div>
+                        <button
+                          onClick={(e) => toggleBookmark(problem.id, e)}
                           className={cn(
-                            "block truncate text-sm font-medium transition-colors hover:text-blue-500 dark:hover:text-blue-400",
-                            isSolved
-                              ? "text-emerald-600 dark:text-emerald-400"
-                              : "text-blue-600 dark:text-blue-400",
+                            "shrink-0 transition-colors",
+                            isBookmarked
+                              ? "text-amber-400"
+                              : "text-muted-foreground/40 hover:text-muted-foreground",
                           )}
                         >
-                          {problem.title}
-                        </Link>
-                        {problem.topic && (
-                          <span className="mt-1 inline-block rounded-md border border-border/50 bg-muted/70 px-2 py-0.5 text-[11px] font-medium text-muted-foreground dark:bg-zinc-800">
-                            {problem.topic}
-                          </span>
-                        )}
-                        {problem.isPremium && !isPremium && (
-                          <span className="ml-2 mt-1 inline-block rounded-md border border-amber-500/50 bg-amber-500/10 px-2 py-0.5 text-[11px] font-bold text-amber-600 dark:text-amber-400">
-                            💎 Premium
-                          </span>
+                          {isBookmarked ? (
+                            <BookmarkCheck className="h-4 w-4" />
+                          ) : (
+                            <Bookmark className="h-4 w-4" />
+                          )}
+                        </button>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span
+                          className={cn(
+                            "inline-flex rounded-full px-3 py-1 text-xs font-bold",
+                            cfg.badge,
+                          )}
+                        >
+                          {cfg.label}
+                        </span>
+                        {isSolved && (
+                          <CheckCircle2 className="h-4 w-4 text-emerald-500" />
                         )}
                       </div>
-                      <button
-                        onClick={(e) => toggleBookmark(problem.id, e)}
-                        className={cn(
-                          "shrink-0 transition-colors",
-                          isBookmarked
-                            ? "text-amber-400"
-                            : "text-muted-foreground/40 hover:text-muted-foreground",
-                        )}
-                      >
-                        {isBookmarked ? (
-                          <BookmarkCheck className="h-4 w-4" />
-                        ) : (
-                          <Bookmark className="h-4 w-4" />
-                        )}
-                      </button>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span
-                        className={cn(
-                          "inline-flex rounded-full px-3 py-1 text-xs font-bold",
-                          cfg.badge,
-                        )}
-                      >
-                        {cfg.label}
-                      </span>
-                      {isSolved && (
-                        <CheckCircle2 className="h-4 w-4 text-emerald-500" />
-                      )}
-                    </div>
-                    <div className="grid grid-cols-2 gap-2 text-xs text-muted-foreground">
-                      <div>
-                        Avg: <span className="font-medium">{avgTime} mins</span>
+                      <div className="grid grid-cols-2 gap-2 text-xs text-muted-foreground">
+                        <div>
+                          Avg: <span className="font-medium">{avgTime} mins</span>
+                        </div>
+                        <div>
+                          Subs:{" "}
+                          <span className="font-medium">
+                            {(
+                              problem._count?.submissions ??
+                              Math.floor(20000 + ((seed * 1337) % 80000))
+                            ).toLocaleString()}
+                          </span>
+                        </div>
                       </div>
-                      <div>
-                        Subs:{" "}
-                        <span className="font-medium">
-                          {(
-                            problem._count?.submissions ??
-                            Math.floor(20000 + ((seed * 1337) % 80000))
-                          ).toLocaleString()}
+                    </div>
+
+                    {/* Desktop row */}
+                    <div className="hidden md:contents">
+                      <div className="flex min-w-0 items-center gap-3 py-4 pl-6 pr-2">
+                        <button
+                          onClick={(e) => toggleBookmark(problem.id, e)}
+                          className={cn(
+                            "shrink-0 transition-colors",
+                            isBookmarked
+                              ? "text-amber-400"
+                              : "text-muted-foreground/30 hover:text-muted-foreground",
+                          )}
+                        >
+                          {isBookmarked ? (
+                            <BookmarkCheck className="w-3.5 h-3.5" />
+                          ) : (
+                            <Bookmark className="w-3.5 h-3.5" />
+                          )}
+                        </button>
+                        <div className="min-w-0">
+                          <Link
+                            href={`/problems/${problem.id}`}
+                            onClick={(e) => {
+                              if (problem.isPremium && !isPremium) {
+                                e.preventDefault();
+                                router.push("/pricing");
+                              }
+                            }}
+                            className={cn(
+                              "block truncate text-sm font-medium transition-colors hover:text-blue-500 dark:hover:text-blue-400",
+                              isSolved
+                                ? "text-emerald-600 dark:text-emerald-400"
+                                : "text-blue-600 dark:text-blue-400",
+                            )}
+                          >
+                            {problem.title}
+                          </Link>
+                          {problem.topic && (
+                            <span className="mt-0.5 inline-block rounded-md border border-border/50 bg-muted/70 px-2 py-0.5 text-[11px] font-medium text-muted-foreground dark:bg-zinc-800">
+                              {problem.topic}
+                            </span>
+                          )}
+                          {problem.isPremium && !isPremium && (
+                            <span className="ml-2 mt-0.5 inline-block rounded-md border border-amber-500/50 bg-amber-500/10 px-2 py-0.5 text-[11px] font-bold text-amber-600 dark:text-amber-400">
+                              💎 Premium
+                            </span>
+                          )}
+                        </div>
+                        {isSolved && (
+                          <CheckCircle2 className="ml-1 h-4 w-4 shrink-0 text-emerald-500" />
+                        )}
+                      </div>
+
+                      <div className="py-4">
+                        <span
+                          className={cn(
+                            "inline-flex rounded-full px-3.5 py-1 text-xs font-bold",
+                            cfg.badge,
+                          )}
+                        >
+                          {cfg.label}
                         </span>
                       </div>
-                    </div>
-                  </div>
 
-                  {/* Desktop row */}
-                  <div className="hidden md:contents">
-                    <div className="flex min-w-0 items-center gap-3 py-4 pl-6 pr-2">
-                      <button
-                        onClick={(e) => toggleBookmark(problem.id, e)}
-                        className={cn(
-                          "shrink-0 transition-colors",
-                          isBookmarked
-                            ? "text-amber-400"
-                            : "text-muted-foreground/30 hover:text-muted-foreground",
-                        )}
-                      >
-                        {isBookmarked ? (
-                          <BookmarkCheck className="w-3.5 h-3.5" />
-                        ) : (
-                          <Bookmark className="w-3.5 h-3.5" />
-                        )}
-                      </button>
-                      <div className="min-w-0">
-                        <Link
-                          href={`/problems/${problem.id}`}
-                          onClick={(e) => {
-                            if (problem.isPremium && !isPremium) {
-                              e.preventDefault();
-                              router.push("/pricing");
-                            }
-                          }}
-                          className={cn(
-                            "block truncate text-sm font-medium transition-colors hover:text-blue-500 dark:hover:text-blue-400",
-                            isSolved
-                              ? "text-emerald-600 dark:text-emerald-400"
-                              : "text-blue-600 dark:text-blue-400",
-                          )}
-                        >
-                          {problem.title}
-                        </Link>
-                        {problem.topic && (
-                          <span className="mt-0.5 inline-block rounded-md border border-border/50 bg-muted/70 px-2 py-0.5 text-[11px] font-medium text-muted-foreground dark:bg-zinc-800">
-                            {problem.topic}
-                          </span>
-                        )}
-                        {problem.isPremium && !isPremium && (
-                          <span className="ml-2 mt-0.5 inline-block rounded-md border border-amber-500/50 bg-amber-500/10 px-2 py-0.5 text-[11px] font-bold text-amber-600 dark:text-amber-400">
-                            💎 Premium
-                          </span>
-                        )}
+                      <div className="py-4 text-center text-sm font-medium text-muted-foreground">
+                        {avgTime} Mins
                       </div>
-                      {isSolved && (
-                        <CheckCircle2 className="ml-1 h-4 w-4 shrink-0 text-emerald-500" />
-                      )}
-                    </div>
 
-                    <div className="py-4">
-                      <span
-                        className={cn(
-                          "inline-flex rounded-full px-3.5 py-1 text-xs font-bold",
-                          cfg.badge,
-                        )}
-                      >
-                        {cfg.label}
-                      </span>
-                    </div>
+                      <div className="py-4 text-center text-sm font-medium text-muted-foreground">
+                        {(
+                          problem._count?.submissions ??
+                          Math.floor(20000 + ((seed * 1337) % 80000))
+                        ).toLocaleString()}
+                      </div>
 
-                    <div className="py-4 text-center text-sm font-medium text-muted-foreground">
-                      {avgTime} Mins
-                    </div>
+                      <div className="py-4 pr-6">
+                        {companies.length > 0 ? (
+                          <div className="flex items-center gap-1.5">
+                            <span className="mr-0.5 text-xs text-muted-foreground">
+                              Asked in
+                            </span>
+                            {displayCompanies.map((c) => {
+                              const svgStr =
+                                companyLogo[c as keyof typeof companyLogo];
+                              if (svgStr) {
+                                return (
+                                  <span
+                                    key={c}
+                                    title={c}
+                                    className="inline-flex h-[22px] w-[22px] shrink-0 items-center justify-center overflow-hidden rounded bg-white/5 [&>svg]:h-[18px] [&>svg]:w-[18px]"
+                                    dangerouslySetInnerHTML={{ __html: svgStr }}
+                                  />
+                                );
+                              }
 
-                    <div className="py-4 text-center text-sm font-medium text-muted-foreground">
-                      {(
-                        problem._count?.submissions ??
-                        Math.floor(20000 + ((seed * 1337) % 80000))
-                      ).toLocaleString()}
-                    </div>
-
-                    <div className="py-4 pr-6">
-                      {companies.length > 0 ? (
-                        <div className="flex items-center gap-1.5">
-                          <span className="mr-0.5 text-xs text-muted-foreground">
-                            Asked in
-                          </span>
-                          {displayCompanies.map((c) => {
-                            const svgStr =
-                              companyLogo[c as keyof typeof companyLogo];
-                            if (svgStr) {
+                              const { char, color } = companyInitial(c);
                               return (
                                 <span
                                   key={c}
                                   title={c}
-                                  className="inline-flex h-[22px] w-[22px] shrink-0 items-center justify-center overflow-hidden rounded bg-white/5 [&>svg]:h-[18px] [&>svg]:w-[18px]"
-                                  dangerouslySetInnerHTML={{ __html: svgStr }}
-                                />
+                                  className="inline-flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded border border-border/60 bg-background text-[9px] font-black shadow-sm"
+                                  style={{ color }}
+                                >
+                                  {char}
+                                </span>
                               );
-                            }
-
-                            const { char, color } = companyInitial(c);
-                            return (
-                              <span
-                                key={c}
-                                title={c}
-                                className="inline-flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded border border-border/60 bg-background text-[9px] font-black shadow-sm"
-                                style={{ color }}
-                              >
-                                {char}
+                            })}
+                            {overflow > 0 && (
+                              <span className="ml-1 text-xs font-bold text-blue-500">
+                                +{overflow}
                               </span>
-                            );
-                          })}
-                          {overflow > 0 && (
-                            <span className="ml-1 text-xs font-bold text-blue-500">
-                              +{overflow}
-                            </span>
-                          )}
-                        </div>
-                      ) : (
-                        <span className="text-xs text-muted-foreground/40">
-                          —
-                        </span>
-                      )}
+                            )}
+                          </div>
+                        ) : (
+                          <span className="text-xs text-muted-foreground/40">
+                            —
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
+                );
+              })
+            )}
+
+            {/* Pagination Controls */}
+            {sortedProblems.length > 0 && totalPages > 0 && (
+              <div className="flex items-center justify-between py-4 px-6 border-t border-border bg-muted/5">
+                <p className="text-xs text-muted-foreground">
+                  Showing{" "}
+                  <span className="font-semibold text-foreground">
+                    {(page - 1) * pagination.limit + 1}–{Math.min(page * pagination.limit, pagination.total)}
+                  </span>
+                  {" "}of{" "}
+                  <span className="font-semibold text-foreground">{pagination.total}</span>
+                  {" "}problems
+                </p>
+
+                <div className="flex items-center gap-1.5">
+                  <button
+                    onClick={() => setPage((p) => Math.max(1, p - 1))}
+                    disabled={page === 1}
+                    className="flex h-8 items-center rounded-md border border-border bg-background px-3 text-xs font-medium text-foreground transition-colors hover:bg-muted disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+                  >
+                    Previous
+                  </button>
+
+                  {/* Page numbers */}
+                  {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
+                    let pageNum: number;
+                    if (totalPages <= 5) {
+                      pageNum = i + 1;
+                    } else if (page <= 3) {
+                      pageNum = i + 1;
+                    } else if (page >= totalPages - 2) {
+                      pageNum = totalPages - 4 + i;
+                    } else {
+                      pageNum = page - 2 + i;
+                    }
+                    return (
+                      <button
+                        key={pageNum}
+                        onClick={() => setPage(pageNum)}
+                        className={cn(
+                          "flex h-8 w-8 items-center justify-center rounded-md text-xs font-medium transition-colors cursor-pointer",
+                          page === pageNum
+                            ? "bg-blue-600 text-white shadow-sm"
+                            : "border border-border bg-background text-muted-foreground hover:bg-muted hover:text-foreground",
+                        )}
+                      >
+                        {pageNum}
+                      </button>
+                    );
+                  })}
+
+                  <button
+                    onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                    disabled={page === totalPages}
+                    className="flex h-8 items-center rounded-md border border-border bg-background px-3 text-xs font-medium text-foreground transition-colors hover:bg-muted disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+                  >
+                    Next
+                  </button>
                 </div>
-              );
-            })
-          )}
-
-          {/* Pagination Controls */}
-          {sortedProblems.length > 0 && totalPages > 0 && (
-            <div className="flex items-center justify-between py-4 px-6 border-t border-border bg-muted/5">
-              <p className="text-xs text-muted-foreground">
-                Showing{" "}
-                <span className="font-semibold text-foreground">
-                  {(page - 1) * 20 + 1}–{Math.min(page * 20, pagination.total)}
-                </span>
-                {" "}of{" "}
-                <span className="font-semibold text-foreground">{pagination.total}</span>
-                {" "}problems
-              </p>
-
-              <div className="flex items-center gap-1.5">
-                <button
-                  onClick={() => setPage((p) => Math.max(1, p - 1))}
-                  disabled={page === 1}
-                  className="flex h-8 items-center rounded-md border border-border bg-background px-3 text-xs font-medium text-foreground transition-colors hover:bg-muted disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
-                >
-                  Previous
-                </button>
-
-                {/* Page numbers */}
-                {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
-                  let pageNum: number;
-                  if (totalPages <= 5) {
-                    pageNum = i + 1;
-                  } else if (page <= 3) {
-                    pageNum = i + 1;
-                  } else if (page >= totalPages - 2) {
-                    pageNum = totalPages - 4 + i;
-                  } else {
-                    pageNum = page - 2 + i;
-                  }
-                  return (
-                    <button
-                      key={pageNum}
-                      onClick={() => setPage(pageNum)}
-                      className={cn(
-                        "flex h-8 w-8 items-center justify-center rounded-md text-xs font-medium transition-colors cursor-pointer",
-                        page === pageNum
-                          ? "bg-blue-600 text-white shadow-sm"
-                          : "border border-border bg-background text-muted-foreground hover:bg-muted hover:text-foreground",
-                      )}
-                    >
-                      {pageNum}
-                    </button>
-                  );
-                })}
-
-                <button
-                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                  disabled={page === totalPages}
-                  className="flex h-8 items-center rounded-md border border-border bg-background px-3 text-xs font-medium text-foreground transition-colors hover:bg-muted disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
-                >
-                  Next
-                </button>
               </div>
-            </div>
-          )}
+            )}
 
-          {/* Loading overlay for page transitions */}
-          {isProblemsFetching && !isProblemsLoading && (
-            <div className="absolute inset-0 bg-background/50 backdrop-blur-[1px] flex items-center justify-center rounded-xl z-10">
-              <div className="flex items-center gap-3 text-sm text-muted-foreground font-medium bg-background/90 px-4 py-2 rounded-lg border border-border shadow-sm">
-                <div className="w-4 h-4 rounded-full border-2 border-blue-500/30 border-t-blue-500 animate-spin" />
-                Loading...
+            {/* Loading overlay for page transitions */}
+            {isProblemsFetching && !isProblemsLoading && (
+              <div className="absolute inset-0 bg-background/50 backdrop-blur-[1px] flex items-center justify-center rounded-xl z-10">
+                <div className="flex items-center gap-3 text-sm text-muted-foreground font-medium bg-background/90 px-4 py-2 rounded-lg border border-border shadow-sm">
+                  <div className="w-4 h-4 rounded-full border-2 border-blue-500/30 border-t-blue-500 animate-spin" />
+                  Loading...
+                </div>
               </div>
-            </div>
-          )}
+            )}
+          </div>
+        </div>
+
+        {/* ── Leaderboard Sidebar ─────────────────────────────────────── */}
+        <div className="hidden lg:block w-[280px] shrink-0 sticky top-24 z-10">
+          <LeaderboardSidebar />
         </div>
       </div>
     </div>
