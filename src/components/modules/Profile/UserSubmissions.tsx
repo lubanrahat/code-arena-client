@@ -105,21 +105,25 @@ interface Submission {
   };
 }
 
-export default function UserSubmissions() {
+export default function UserSubmissions({ username }: { username?: string }) {
   const [submissions, setSubmissions] = useState<Submission[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedSubmission, setSelectedSubmission] = useState<Submission | null>(null);
+  const [selectedSubmission, setSelectedSubmission] = useState<Submission | null>(
+    null,
+  );
 
   const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [analysisResult, setAnalysisResult] = useState<AnalysisResult | null>(null);
+  const [analysisResult, setAnalysisResult] = useState<AnalysisResult | null>(
+    null,
+  );
   const [analysisError, setAnalysisError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchSubmissions = async () => {
       try {
         setLoading(true);
-        const res = await getAllSubmissions();
+        const res = await getAllSubmissions(username);
         const data = res?.data || res;
         setSubmissions(Array.isArray(data) ? data : []);
       } catch (err) {
@@ -131,7 +135,7 @@ export default function UserSubmissions() {
     };
 
     fetchSubmissions();
-  }, []);
+  }, [username]);
 
   const formatMetric = (valStr: string | null) => {
     if (!valStr) return "N/A";

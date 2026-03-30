@@ -138,7 +138,7 @@ export const getSubmissionsForProblem = async (problemId: string) => {
     return [];
   }
 };
-export const getAllSubmissions = async () => {
+export const getAllSubmissions = async (username?: string) => {
   try {
     const token = await getCookie("token");
     const headers: Record<string, string> = {};
@@ -147,6 +147,7 @@ export const getAllSubmissions = async () => {
       headers["Authorization"] = `Bearer ${token}`;
     }
     const response = await httpClient.get("/submission/get-all-submissions", {
+      params: username ? { username } : {},
       headers,
     });
     return response.data;

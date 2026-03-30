@@ -3,13 +3,13 @@ import { getProfileInfo, updateProfileInfo } from "../services/user.service";
 import { toast } from "sonner";
 import { useAuthUser } from "./useAuth";
 
-export const useProfile = () => {
+export const useProfile = (username?: string) => {
   const { user } = useAuthUser();
 
   return useQuery({
-    queryKey: ["profile"],
-    queryFn: getProfileInfo,
-    enabled: !!user,
+    queryKey: ["profile", username || "me"],
+    queryFn: () => getProfileInfo(username),
+    enabled: !!user || !!username,
   });
 };
 

@@ -133,15 +133,17 @@ function PodiumCard({
       </div>
 
       {/* Avatar */}
-      <div
-        className={cn(
-          "w-16 h-16 rounded-full flex items-center justify-center text-xl font-bold text-white bg-linear-to-br shadow-lg mb-3",
-          avatarGradient,
-          config.avatarRing,
-        )}
-      >
-        {initials}
-      </div>
+      <Link href={`/profile/${user.userName}`}>
+        <div
+          className={cn(
+            "w-16 h-16 rounded-full flex items-center justify-center text-xl font-bold text-white bg-linear-to-br shadow-lg mb-3",
+            avatarGradient,
+            config.avatarRing,
+          )}
+        >
+          {initials}
+        </div>
+      </Link>
 
       {/* Name */}
       <h3
@@ -150,9 +152,15 @@ function PodiumCard({
           config.nameColor,
         )}
       >
-        {displayName}
+        <Link href={`/profile/${user.userName}`} className="hover:underline">
+          {displayName}
+        </Link>
       </h3>
-      <p className="text-xs text-muted-foreground mb-4">@{user.userName}</p>
+      <p className="text-xs text-muted-foreground mb-4">
+        <Link href={`/profile/${user.userName}`} className="hover:text-foreground transition-colors">
+          @{user.userName}
+        </Link>
+      </p>
 
       {/* Score */}
       <div className="text-center">
@@ -197,7 +205,10 @@ function RankRow({
     >
       {/* User */}
       <td className="py-4 px-4 sm:px-6">
-        <div className="flex items-center gap-3">
+        <Link
+          href={`/profile/${user.userName}`}
+          className="flex items-center gap-3 w-fit group outline-none"
+        >
           <div
             className={cn(
               "w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold text-white bg-linear-to-br shrink-0 shadow-md",
@@ -209,17 +220,17 @@ function RankRow({
           <div className="min-w-0">
             <p
               className={cn(
-                "text-sm font-semibold truncate",
+                "text-sm font-semibold truncate group-hover:underline",
                 isCurrentUser ? "text-blue-400" : "text-foreground",
               )}
             >
               {displayName}
             </p>
-            <p className="text-xs text-muted-foreground truncate">
+            <p className="text-xs text-muted-foreground truncate group-hover:text-foreground transition-colors">
               @{user.userName}
             </p>
           </div>
-        </div>
+        </Link>
       </td>
 
       {/* Institution */}

@@ -114,10 +114,47 @@ export default function CodeEditorPanel({
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Editor Settings
   const [fontSize, setFontSize] = useState(14);
   const [editorTheme, setEditorTheme] = useState("vs-dark");
   const [autoTheme, setAutoTheme] = useState(true);
+  const [isSettingsLoaded, setIsSettingsLoaded] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  // Persistence: Load settings from localStorage once mounted
+  useEffect(() => {
+    setMounted(true);
+    const savedSettings = localStorage.getItem("codearena_editor_settings");
+    if (savedSettings) {
+      try {
+        const settings = JSON.parse(savedSettings);
+        if (settings.language && LANGUAGES.some((l) => l.id === settings.language)) {
+          setLanguage(settings.language);
+        }
+        if (settings.fontSize) setFontSize(settings.fontSize);
+        if (settings.editorTheme) setEditorTheme(settings.editorTheme);
+        if (settings.autoTheme !== undefined) setAutoTheme(settings.autoTheme);
+      } catch (e) {
+        console.error("Failed to parse saved settings", e);
+      }
+    }
+    
+    setTimeout(() => {
+      setIsSettingsLoaded(true);
+    }, 0);
+  }, []);
+
+  
+  useEffect(() => {
+    if (!isSettingsLoaded || !mounted) return;
+
+    const settings = {
+      language,
+      fontSize,
+      editorTheme,
+      autoTheme,
+    };
+    localStorage.setItem("codearena_editor_settings", JSON.stringify(settings));
+  }, [language, fontSize, editorTheme, autoTheme, isSettingsLoaded, mounted]);
 
   const { resolvedTheme } = useTheme();
   const isDark = resolvedTheme === "dark";
@@ -243,9 +280,9 @@ export default function CodeEditorPanel({
 
   // Keep Monaco theme in sync with the app theme unless user picks a custom one.
   useEffect(() => {
-    if (!autoTheme) return;
+    if (!isSettingsLoaded || !autoTheme) return;
     setEditorTheme(isDark ? "vs-dark" : "light");
-  }, [autoTheme, isDark]);
+  }, [autoTheme, isDark, isSettingsLoaded]);
 
   const handleReset = () => {
     const snippets = problem?.codeSnippets;
@@ -385,6 +422,20 @@ export default function CodeEditorPanel({
       onLoadingChange(false);
     }
   }, [code, language, problem, isRunning, isSubmitting, onSubmitResult, onLoadingChange, onActiveTabChange]);
+
+  // Prevent hydration mismatch by returning a loader or skeleton until mounted
+  if (!mounted) {
+    return (
+      <div className="flex h-full w-full items-center justify-center bg-zinc-900/5">
+        <div className="flex flex-col items-center gap-3">
+          <div className="h-8 w-8 animate-spin rounded-full border-2 border-emerald-500 border-t-transparent" />
+          <span className="text-xs font-medium text-muted-foreground">
+            Initializing editor...
+          </span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div
