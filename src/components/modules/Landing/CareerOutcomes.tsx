@@ -1,16 +1,56 @@
 import { Marquee } from "@/components/ui/marquee";
 
 const logos = [
-  { id: 1, name: "Google", img: "/work/google.png" },
-  { id: 2, name: "Cisco", img: "/work/cisco.png" },
-  { id: 3, name: "Programming-Hero", img: "/work/ph.png" },
-  { id: 4, name: "Microsoft", img: "/work/microsoft.png" },
-  { id: 5, name: "Netflix", img: "/work/netflix.png" },
-  { id: 6, name: "Amazon", img: "/work/amazon.png" },
-  { id: 7, name: "Nvidia", img: "/work/nvidia.png" },
-  { id: 8, name: "PayPal", img: "/work/paypal.png" },
-  { id: 9, name: "Oracle", img: "/work/oracle.png" },
-  { id: 10, name: "Spotify", img: "/work/spotify.png" },
+  {
+    id: 1,
+    name: "Google",
+    img: "https://res.cloudinary.com/dq4n6leek/image/upload/v1774874494/google_oxscg7.png",
+  },
+  {
+    id: 2,
+    name: "Cisco",
+    img: "https://res.cloudinary.com/dq4n6leek/image/upload/v1774874493/cisco_yuxkdk.png",
+  },
+  {
+    id: 3,
+    name: "Programming-Hero",
+    img: "https://res.cloudinary.com/dq4n6leek/image/upload/v1774874493/ph_vb5yst.png",
+  },
+  {
+    id: 4,
+    name: "Microsoft",
+    img: "https://res.cloudinary.com/dq4n6leek/image/upload/v1774874493/microsoft_g6amth.png",
+  },
+  {
+    id: 5,
+    name: "Netflix",
+    img: "https://res.cloudinary.com/dq4n6leek/image/upload/v1774874494/netflix_mc5fta.png",
+  },
+  {
+    id: 6,
+    name: "Amazon",
+    img: "https://res.cloudinary.com/dq4n6leek/image/upload/v1774874494/amazon_lcwwwn.png",
+  },
+  {
+    id: 7,
+    name: "Nvidia",
+    img: "https://res.cloudinary.com/dq4n6leek/image/upload/v1774874493/nvidia_zkdc0o.png",
+  },
+  {
+    id: 8,
+    name: "PayPal",
+    img: "https://res.cloudinary.com/dq4n6leek/image/upload/v1774874494/paypal_aek9qr.png",
+  },
+  {
+    id: 9,
+    name: "Oracle",
+    img: "https://res.cloudinary.com/dq4n6leek/image/upload/v1774874493/oracle_cwbwop.png",
+  },
+  {
+    id: 10,
+    name: "Spotify",
+    img: "https://res.cloudinary.com/dq4n6leek/image/upload/v1774874493/spotify_twhpfo.png",
+  },
 ];
 
 const LogoCard = ({ img, name }: { img: string; name: string }) => {
@@ -40,7 +80,8 @@ export function CareerOutcomes() {
           Where Our Learners Work
         </h2>
         <p className="text-xl text-zinc-600 dark:text-zinc-400 max-w-3xl leading-relaxed">
-          From high-growth startups to Fortune 500 tech giants, our alumni are engineering the future at world-class organizations.
+          From high-growth startups to Fortune 500 tech giants, our alumni are
+          engineering the future at world-class organizations.
         </p>
       </div>
 
