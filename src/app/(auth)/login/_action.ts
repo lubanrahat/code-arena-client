@@ -4,6 +4,8 @@ import { httpClient } from "@/lib/axios/httpClient";
 import { deleteCookie, setCookie } from "@/lib/cookieUtils";
 import { LoginInput, loginSchema } from "@/validation/auth.validation";
 
+import { isAxiosError } from "axios";
+
 export const loginAction = async (payload: LoginInput) => {
   const parsedPayload = loginSchema.safeParse(payload);
   if (!parsedPayload.success) {
@@ -30,12 +32,20 @@ export const loginAction = async (payload: LoginInput) => {
 
     return { success: true, user: response.data.user, token };
   } catch (error: unknown) {
+    let errorMessage = "Something went wrong";
+    if (isAxiosError(error)) {
+      errorMessage = error.response?.data?.error?.message || error.response?.data?.message || error.message;
+    } else if (error instanceof Error) {
+      errorMessage = error.message;
+    }
+      
     return {
       success: false,
-      message: `Login failed. ${error instanceof Error ? error.message : "Something went wrong"}`,
+      message: errorMessage,
     };
   }
 };
+
 
 export const logoutUser = async () => {
   try {
