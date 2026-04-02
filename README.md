@@ -12,7 +12,7 @@ A modern, high-performance coding practice platform where developers solve algor
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)](LICENSE)
 
-![CodeArena Banner](https://res.cloudinary.com/dq4n6leek/image/upload/v1774890820/SCR-20250330-uahr_nm95cd.png)
+![CodeArena Banner](https://res.cloudinary.com/dq4n6leek/image/upload/v1774890820/SCR-20260330-uahr_nm95cd.png)
 
 [Live Demo](https://code-arena-client.vercel.app) · [API Server](https://code-arena-server.vercel.app) · [Report Bug](https://github.com/lubanrahat/code-arena-client/issues) · [Request Feature](https://github.com/lubanrahat/code-arena-client/issues)
 
