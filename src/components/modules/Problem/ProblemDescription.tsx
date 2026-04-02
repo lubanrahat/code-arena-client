@@ -17,12 +17,14 @@ import {
   Presentation,
   Video,
   CheckCircle2,
+  ListMusic,
 } from "lucide-react";
 
 
 import SubmissionsList from "./SubmissionsList";
 import AiDiscussion from "./AiDiscussion";
 import SolutionTab from "./SolutionTab";
+import AddToPlaylistDialog from "../Playlist/AddToPlaylistDialog";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
@@ -75,6 +77,7 @@ export default function ProblemDescription({
   const [expandedHints, setExpandedHints] = useState<number[]>([]);
   const [isTopicsExpanded, setIsTopicsExpanded] = useState(false);
   const [isCompaniesExpanded, setIsCompaniesExpanded] = useState(false);
+  const [isPlaylistDialogOpen, setIsPlaylistDialogOpen] = useState(false);
 
   const title = problem?.title || "Loading...";
   const difficulty = problem?.difficulty || "EASY";
@@ -177,6 +180,15 @@ export default function ProblemDescription({
                 <Bookmark className="h-4 w-4 cursor-pointer" />
                 Bookmark
               </button>
+              
+              <button 
+                onClick={() => setIsPlaylistDialogOpen(true)}
+                className="flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-blue-500 dark:hover:text-blue-400 cursor-pointer"
+              >
+                <ListMusic className="h-4 w-4" />
+                Save to Playlist
+              </button>
+              
               <button className="flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-sky-500 dark:hover:text-sky-400 cursor-pointer">
                 <Share2 className="h-4 w-4" />
                 Share
@@ -502,6 +514,12 @@ export default function ProblemDescription({
           </div>
         )}
       </div>
+
+      <AddToPlaylistDialog 
+        open={isPlaylistDialogOpen} 
+        onOpenChange={setIsPlaylistDialogOpen} 
+        problemId={problem.id} 
+      />
     </div>
   );
 }

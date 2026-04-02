@@ -53,6 +53,7 @@ const isCanceledError = (error: unknown) => {
 export interface ApiResponseOptions {
   params?: Record<string, unknown>;
   headers?: Record<string, string>;
+  data?: unknown;
 }
 
 const httpGet = async (endpoint: string, options?: ApiResponseOptions) => {
@@ -136,6 +137,7 @@ const httpDelete = async (endpoint: string, options?: ApiResponseOptions) => {
     const response = await axiosInstance.delete(endpoint, {
       params: options?.params,
       headers: options?.headers,
+      data: options?.data,
     });
     return response.data;
   } catch (error) {

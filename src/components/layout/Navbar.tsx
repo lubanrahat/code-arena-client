@@ -25,6 +25,7 @@ import {
   SquarePen,
   Terminal,
   User,
+  ListMusic,
 } from "lucide-react";
 
 import { useAuthUser } from "@/hooks/useAuth";
@@ -139,6 +140,11 @@ export default function Navbar() {
                 </NavigationMenuLink>
               </NavigationMenuItem>
               <NavigationMenuItem>
+                <NavigationMenuLink asChild className={cn(navigationMenuTriggerStyle(), "bg-transparent font-semibold")}>
+                  <Link href="/playlists">Playlists</Link>
+                </NavigationMenuLink>
+              </NavigationMenuItem>
+              <NavigationMenuItem>
                 <NavigationMenuTrigger className="bg-transparent font-semibold">Discover</NavigationMenuTrigger>
                 <NavigationMenuContent>
                   <ul className="grid w-[400px] gap-3 p-6 md:w-[500px] md:grid-cols-1 lg:w-[600px] bg-white/80 dark:bg-neutral-950/80 backdrop-blur-xl border border-white/20 dark:border-neutral-800/50 rounded-2xl shadow-2xl">
@@ -224,6 +230,7 @@ export default function Navbar() {
           <div className="flex flex-col space-y-4 w-full pr-2">
             <Link href="/" className="text-base font-bold px-2 py-1 hover:text-blue-500 transition-colors" onClick={() => setMobileMenuOpen(false)}>Home</Link>
             <Link href="/problems" className="text-base font-bold px-2 py-1 hover:text-blue-500 transition-colors" onClick={() => setMobileMenuOpen(false)}>Practice</Link>
+            <Link href="/playlists" className="text-base font-bold px-2 py-1 hover:text-blue-500 transition-colors" onClick={() => setMobileMenuOpen(false)}>Playlists</Link>
 
             <div className="space-y-4 pt-2">
               <div className="flex items-center gap-2 px-2">
