@@ -117,7 +117,7 @@ export default function AddToPlaylistDialog({ open, onOpenChange, problemId }: A
             </div>
           ) : (
             <div className="space-y-1">
-              {playlists.map((playlist: Playlist) => {
+              {playlists?.map((playlist: Playlist) => {
                 const added = isProblemInPlaylist(playlist);
                 const isPending = addMutation.isPending && addMutation.variables === playlist.id || 
                                   removeMutation.isPending && removeMutation.variables === playlist.id;
