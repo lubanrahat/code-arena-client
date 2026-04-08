@@ -2,7 +2,12 @@
 
 import Hero from "@/components/modules/Landing/Hero";
 import Features from "@/components/modules/Landing/Features";
-import Footer from "@/components/layout/Footer";
+import HowItWorks from "@/components/modules/Landing/HowItWorks";
+import WhyChoose from "@/components/modules/Landing/WhyChoose";
+import PlatformMetrics from "@/components/modules/Landing/PlatformMetrics";
+import LearningRoadmap from "@/components/modules/Landing/LearningRoadmap";
+import Testimonials from "@/components/modules/Landing/Testimonials";
+import Pricing from "@/components/modules/Landing/Pricing";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight, Zap } from "lucide-react";
@@ -14,8 +19,13 @@ export default function Home() {
       <main className="relative z-10">
         <Hero />
         <Features />
-
+        <HowItWorks />
+        <WhyChoose />
+        <PlatformMetrics />
+        <LearningRoadmap />
+        <Testimonials />
         <CareerOutcomes />
+        <Pricing />
 
         {/* CTA Section */}
         <section className="py-32 relative overflow-hidden bg-white dark:bg-zinc-950 border-t border-zinc-100 dark:border-zinc-900">
