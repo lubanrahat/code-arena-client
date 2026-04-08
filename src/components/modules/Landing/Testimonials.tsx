@@ -7,14 +7,14 @@ import Image from "next/image";
 
 const testimonials = [
   {
-    name: "Sarah Chen",
-    role: "Software Engineer at Google",
+    name: "Asif Khondokar",
+    role: "Full Stack Developer",
     avatar:
-      "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80",
+      "https://res.cloudinary.com/dq4n6leek/image/upload/v1775635645/481085481_656777047010110_2294864799066406839_n_is2kui.jpg",
     quote:
       "CodeArena&apos;s AI feedback completely changed how I prepare for interviews. The instant code reviews helped me spot patterns I was missing. I landed my dream role at Google within 3 months of using it.",
     rating: 5,
-    highlight: "Landed role at Google",
+    highlight: "Best platform experience",
     color: "blue",
     borderHover: "hover:border-blue-500/30",
     badgeBg: "bg-blue-500/10",
@@ -22,10 +22,10 @@ const testimonials = [
     badgeBorder: "border-blue-500/20",
   },
   {
-    name: "Marcus Rodriguez",
-    role: "Senior Developer at Stripe",
+    name: "Luban Rahat",
+    role: "Full Stack Developer",
     avatar:
-      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80",
+      "https://res.cloudinary.com/dq4n6leek/image/upload/v1775636435/me_h43k9o.jpg",
     quote:
       "The structured roadmaps are phenomenal. Instead of randomly grinding problems, I followed a clear path and saw measurable improvement every week. The analytics dashboard kept me accountable.",
     rating: 5,
@@ -37,12 +37,12 @@ const testimonials = [
     badgeBorder: "border-emerald-500/20",
   },
   {
-    name: "Priya Sharma",
-    role: "Full-Stack Engineer at Meta",
+    name: "Rabeya Noor",
+    role: "AI Engineer",
     avatar:
-      "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80",
+      "https://res.cloudinary.com/dq4n6leek/image/upload/v1761210176/samples/animals/cat.jpg",
     quote:
-      "I&apos;ve tried every coding platform out there, and CodeArena is in a league of its own. The premium UI makes practice sessions enjoyable, and the AI mentor feels like having a senior engineer by your side.",
+      "CodeArena stands in a league of its own among coding platforms. Its premium UI transforms practice into an enjoyable experience, while the AI mentor provides guidance that truly feels like working alongside a senior engineer.",
     rating: 5,
     highlight: "Best platform experience",
     color: "violet",
