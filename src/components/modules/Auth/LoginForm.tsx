@@ -17,6 +17,7 @@ import { cn } from "@/lib/utils";
 import {
   IconBrandGithub,
   IconBrandGoogle,
+  IconUserShield,
 } from "@tabler/icons-react";
 import Link from "next/link";
 
@@ -167,6 +168,23 @@ export default function LoginForm() {
         <div className="my-8 h-px flex-1 bg-linear-to-r from-transparent via-zinc-200 dark:via-zinc-800 to-transparent" />
 
         <div className="flex flex-col space-y-4">
+          <p className="text-xs text-center text-neutral-500 dark:text-neutral-400">
+            For testing purposes, you can use the demo admin credentials.
+          </p>
+          <button
+            className="group/btn shadow-input relative flex h-10 w-full items-center justify-start space-x-2 rounded-md bg-emerald-50 px-4 font-medium text-black dark:bg-emerald-950/30 dark:shadow-[0px_0px_1px_1px_#262626]"
+            type="button"
+            onClick={() => {
+              form.setFieldValue("email", "codearena.admin@gmail.com");
+              form.setFieldValue("password", "codearenaadmin1234");
+            }}
+          >
+            <IconUserShield className="h-4 w-4 text-emerald-800 dark:text-emerald-300" />
+            <span className="text-sm text-emerald-800 dark:text-emerald-300">
+              Use Demo Admin
+            </span>
+            <BottomGradient />
+          </button>
           <button
             className="group/btn shadow-input relative flex h-10 w-full items-center justify-start space-x-2 rounded-md bg-gray-50 px-4 font-medium text-black dark:bg-zinc-900 dark:shadow-[0px_0px_1px_1px_#262626]"
             type="button"
