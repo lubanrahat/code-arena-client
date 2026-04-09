@@ -8,44 +8,43 @@ const footerLinks = [
     title: "Platform",
     links: [
       { name: "Practice", href: "/problems" },
-      { name: "Leaderboard", href: "#" },
-      { name: "Contests", href: "#" },
-      { name: "Discuss", href: "#" },
+      { name: "Leaderboard", href: "/leaderboard" },
+      { name: "Contests", href: "/contests" },
     ],
   },
   {
     title: "Support",
     links: [
-      { name: "Documentation", href: "#" },
-      { name: "Getting Started", href: "#" },
-      { name: "Help Center", href: "#" },
-      { name: "Report Bug", href: "#" },
+      { name: "Documentation", href: "/documentation" },
+      { name: "Getting Started", href: "/getting-started" },
+      { name: "Help Center", href: "/help-center" },
+      { name: "Report Bug", href: "/report-bug" },
     ],
   },
   {
     title: "Company",
     links: [
-      { name: "About Us", href: "#" },
-      { name: "Careers", href: "#" },
-      { name: "Blog", href: "#" },
-      { name: "Press Kit", href: "#" },
+      { name: "About Us", href: "/about" },
+      { name: "Careers", href: "/careers" },
+      { name: "Blog", href: "/blogs" },
+      { name: "Press Kit", href: "/press-kit" },
     ],
   },
   {
     title: "Legal",
     links: [
-      { name: "Privacy Policy", href: "#" },
-      { name: "Terms of Service", href: "#" },
-      { name: "Cookie Policy", href: "#" },
+      { name: "Privacy Policy", href: "/privacy-policy" },
+      { name: "Terms of Service", href: "/terms-of-service" },
+      { name: "Cookie Policy", href: "/cookie-policy" },
     ],
   },
 ];
 
 const socialLinks = [
-  { icon: Github, href: "#", label: "GitHub" },
-  { icon: Twitter, href: "#", label: "Twitter" },
-  { icon: MessageSquare, href: "#", label: "Discord" },
-  { icon: Mail, href: "#", label: "Email" },
+  { icon: Github, href: "https://github.com/lubanrahat", label: "GitHub" },
+  { icon: Twitter, href: "https://x.com/lubanrahat", label: "Twitter" },
+  { icon: MessageSquare, href: "https://discord.gg/codearena", label: "Discord" },
+  { icon: Mail, href: "mailto:support@codearena.com", label: "Email" },
 ];
 
 export default function Footer() {
@@ -68,14 +67,15 @@ export default function Footer() {
             
             <div className="flex items-center gap-4">
               {socialLinks.map((social, idx) => (
-                <Link 
+                <a 
                   key={idx} 
                   href={social.href}
+                  {...(social.href.startsWith("http") ? { target: "_blank", rel: "noopener noreferrer" } : {})}
                   className="w-10 h-10 flex items-center justify-center rounded-full bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 hover:text-blue-600 dark:hover:text-blue-500 hover:border-blue-500/30 dark:hover:border-blue-500/30 transition-all duration-300"
                   aria-label={social.label}
                 >
                   <social.icon className="w-5 h-5" />
-                </Link>
+                </a>
               ))}
             </div>
           </div>
